@@ -1,0 +1,28 @@
+{
+  "name": "@factory/lab",
+  "private": true,
+  "version": "0.6.0",
+  "main": "expo-router/entry",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "expo": "~58.0.0",
+    "expo-router": "~58.0.0",
+    "react": "19.3.0",
+    "react-native": "0.88.1",
+    "react-native-screens": "^4.0.0",
+    "react-native-safe-area-context": "^5.0.0",
+    "@factory/ui": "workspace:*",
+    "@factory/catalog": "workspace:*",
+    "expo-image": "~58.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "~19.2.0",
+    "typescript": "~5.9.3"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "answers": {
+    "product.audience": "Local residents and event organizers",
+    "product.outcome": "Discover neighborhood events and RSVP",
+    "experience.navigation": "Photo-first feed; secondary map and organizer profiles",
+    "design.direction": "Editorial photography, simple white canvas, minimal chrome",
+    "identity.required": true,
+    "identity.method": "Provider to be explicitly selected before real implementation",
+    "identity.recovery": "Provider-backed recovery workflow",
+    "data.required": true,
+    "data.persistence": "Database architecture to be selected during technical planning",
+    "release.targets": ["web", "ios", "android"]
+  },
+  "screens": [
+    {"id":"discover","title":"Discover Events","purpose":"Browse upcoming nearby events","route":"/discover","components":["primitives.screen","composites.mediaframe","controls.button"],"states":["loading","ready","empty","error"],"actions":["open-event","filter-events"],"acceptance":["renders fixture events","opens event detail"]},
+    {"id":"event-detail","title":"Event Details","purpose":"Understand and RSVP to an event","route":"/events/:id","components":["patterns.focusscreen","composites.mediaframe","controls.button"],"states":["loading","ready","error"],"actions":["rsvp","share"],"acceptance":["RSVP success and error behavior","requires login for RSVP"]}
+  ],
+  "entities": ["User", "Event", "Venue", "RSVP"],
+  "roles": ["visitor", "member", "organizer", "moderator"],
+  "integrations": ["Authentication provider TBD", "Maps provider TBD"],
+  "decisions": [
+    {"type":"design-direction","value":"Photography prioritized over map"}
+  ]
+}

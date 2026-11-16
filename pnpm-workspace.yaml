@@ -1,0 +1,6 @@
+packages:
+  - "apps/*"
+  - "packages/*"
+
+overrides:
+  react-dom: 19.3.0

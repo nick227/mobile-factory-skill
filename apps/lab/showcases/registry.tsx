@@ -1,0 +1,38 @@
+import React, { useState } from 'react';
+import { Switch, View } from 'react-native';
+import { Text, Stack, Row, Surface, Divider, Screen, Button, TextField, Badge, ListItem, SettingsGroup, useTheme, Spacer, IconButton, Toggle, Checkbox, RadioGroup, SegmentedControl, ProgressBar, Spinner, Avatar, SectionHeader, EmptyState, FormField, ActionFooter, ScreenHeader, FocusScreen, StepProgress, InputStage, ActionDock, CalmSkeleton, MediaFrame, SwipePager } from '@factory/ui';
+
+export const showcases: Record<string, () => React.JSX.Element> = {
+  Text: () => <Stack><Text variant="title">Title typography</Text><Text variant="heading">Section heading</Text><Text>Body text supports dynamic type.</Text><Text muted variant="small">Secondary caption</Text></Stack>,
+  Stack: () => <Stack gap="xl"><Badge label="First" /><Badge label="Second" /><Badge label="Third" /></Stack>,
+  Row: () => <Row gap="lg"><Badge label="Left" /><Badge label="Right" /></Row>,
+  Surface: () => <Surface outlined><Text>Surface with semantic background and border.</Text></Surface>,
+  Divider: () => <Stack><Text>Above</Text><Divider /><Text>Below</Text></Stack>,
+  Screen: () => <Surface outlined><Text>Screen applies background, spacing and scroll options.</Text></Surface>,
+  Button: function ButtonDemo() { const [busy, setBusy] = useState(false); return <Stack><Button label="Primary" onPress={() => setBusy(!busy)} /><Button label="Secondary" variant="secondary" /><Button label="Outline" variant="outline" /><Button label="Ghost" variant="ghost" /><Button label="Disabled" disabled /><Button label="Loading" loading={busy} onPress={() => setBusy(false)} /></Stack>; },
+  TextField: function TextFieldDemo() { const [value, setValue] = useState(''); return <Stack><TextField label="Display name" value={value} onChangeText={setValue} placeholder="Enter a name" hint="The value updates as you type" /><TextField label="Invalid input" error="Please enter a value" /></Stack>; },
+  Badge: () => <Row><Badge label="Neutral" /><Badge label="Accent" tone="accent" /></Row>,
+  ListItem: () => <Stack><ListItem title="Preferences" description="Notifications and display" onPress={() => {}} /><ListItem title="Account" description="Profile and security" /></Stack>,
+  SettingsGroup: () => <SettingsGroup title="Settings" entries={[{id:'a',title:'Appearance',description:'Theme preferences'},{id:'b',title:'Notifications',description:'Alerts and messages'}]} />,
+  Spacer: function SpacerDemo() { const [enabled,setEnabled]=useState(false); const [choice,setChoice]=useState("daily"); return <Row><Badge label="Before"/><Spacer size="xl"/><Badge label="After"/></Row>; },
+  IconButton: function IconButtonDemo() { const [enabled,setEnabled]=useState(false); const [choice,setChoice]=useState("daily"); return <IconButton label="Info" icon={<Text variant="heading">i</Text>} onPress={() => {}} variant="surface"/>; },
+  Toggle: function ToggleDemo() { const [enabled,setEnabled]=useState(false); const [choice,setChoice]=useState("daily"); return <Toggle label="Notifications" description="Receive activity updates" value={enabled} onValueChange={setEnabled}/>; },
+  Checkbox: function CheckboxDemo() { const [enabled,setEnabled]=useState(false); const [choice,setChoice]=useState("daily"); return <Checkbox label="I agree to the terms" value={enabled} onValueChange={setEnabled}/>; },
+  RadioGroup: function RadioGroupDemo() { const [enabled,setEnabled]=useState(false); const [choice,setChoice]=useState("daily"); return <RadioGroup label="Frequency" value={choice} onValueChange={setChoice} options={[{label:"Daily",value:"daily"},{label:"Weekly",value:"weekly"}]}/>; },
+  SegmentedControl: function SegmentedControlDemo() { const [enabled,setEnabled]=useState(false); const [choice,setChoice]=useState("daily"); return <SegmentedControl label="Filter" value={choice} onValueChange={setChoice} options={[{label:"Daily",value:"daily"},{label:"Weekly",value:"weekly"}]}/>; },
+  ProgressBar: function ProgressBarDemo() { const [enabled,setEnabled]=useState(false); const [choice,setChoice]=useState("daily"); return <Stack><Text>72% complete</Text><ProgressBar label="Progress" value={72}/></Stack>; },
+  Spinner: function SpinnerDemo() { const [enabled,setEnabled]=useState(false); const [choice,setChoice]=useState("daily"); return <Spinner label="Loading updates"/>; },
+  Avatar: function AvatarDemo() { const [enabled,setEnabled]=useState(false); const [choice,setChoice]=useState("daily"); return <Row><Avatar name="Ada Lovelace"/><Avatar name="Grace Hopper" size={56}/></Row>; },
+  SectionHeader: function SectionHeaderDemo() { const [enabled,setEnabled]=useState(false); const [choice,setChoice]=useState("daily"); return <SectionHeader title="Recent activity" description="Latest updates" action={<Badge label="New"/>}/>; },
+  EmptyState: function EmptyStateDemo() { const [enabled,setEnabled]=useState(false); const [choice,setChoice]=useState("daily"); return <EmptyState title="Nothing here yet" description="New items will appear here." action={<Button label="Add item" onPress={() => {}}/>}/>; },
+  FormField: function FormFieldDemo() { const [enabled,setEnabled]=useState(false); const [choice,setChoice]=useState("daily"); return <FormField label="Email" hint="Used for account updates"><TextField label="Email address" placeholder="name@example.com"/></FormField>; },
+  ActionFooter: function ActionFooterDemo() { const [enabled,setEnabled]=useState(false); const [choice,setChoice]=useState("daily"); return <ActionFooter primary={{label:"Save",onPress:()=>{}}} secondary={{label:"Cancel",onPress:()=>{}}}/>; },
+  ScreenHeader: () => <ScreenHeader title="Collection" subtitle="One subject, clear navigation" backLabel="Back" onBack={()=>{}} />,
+  FocusScreen: () => <Surface outlined><InputStage title="One focus" description="Only the current decision is visible."><Button label="Continue" onPress={()=>{}}/></InputStage></Surface>,
+  StepProgress: () => <StepProgress step={2} total={4}/>,
+  InputStage: () => <InputStage title="What are you creating?" description="Give it a short name."><TextField label="Name" /></InputStage>,
+  ActionDock: () => <ActionDock><Button label="Continue" fullWidth onPress={()=>{}}/></ActionDock>,
+  CalmSkeleton: () => <Stack><CalmSkeleton height={120}/><CalmSkeleton height={20} width="65%"/></Stack>,
+  MediaFrame: () => <MediaFrame ratio={16/9} label="Reserved media frame" />,
+  SwipePager: () => <SwipePager items={[{id:'a',content:<Surface><Text variant="heading">Page one</Text></Surface>},{id:'b',content:<Surface><Text variant="heading">Page two</Text></Surface>}]}/>,
+};

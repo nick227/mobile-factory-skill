@@ -1,0 +1,17 @@
+{
+  "expo": {
+    "name": "Mobile UI Lab",
+    "slug": "mobile-ui-lab",
+    "scheme": "mobileuilab",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "plugins": [
+      "expo-router",
+      "expo-image"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}

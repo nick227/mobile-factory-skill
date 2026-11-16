@@ -1,0 +1,23 @@
+{
+  "name": "mobile-software-factory",
+  "private": true,
+  "version": "0.6.0",
+  "packageManager": "pnpm@10.20.0",
+  "scripts": {
+    "lab": "pnpm --filter @factory/lab start",
+    "lab:android": "pnpm --filter @factory/lab android",
+    "lab:ios": "pnpm --filter @factory/lab ios",
+    "check": "node scripts/check.mjs && pnpm exec tsc --noEmit -p apps/lab/tsconfig.json && node --test tests/*.test.mjs",
+    "component:new": "node scripts/create-component.mjs",
+    "create:app": "node scripts/create-app.mjs",
+    "skill:build": "node scripts/build-skill.mjs",
+    "skill:verify": "node scripts/verify-skill.mjs",
+    "test:governance": "node --test tests/*.test.mjs",
+    "lab:scenario": "pnpm lab",
+    "test:taxonomy": "node scripts/check.mjs",
+    "lab:typecheck": "pnpm --filter @factory/lab typecheck"
+  },
+  "devDependencies": {
+    "typescript": "~5.9.3"
+  }
+}

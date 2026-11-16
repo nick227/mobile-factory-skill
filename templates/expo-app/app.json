@@ -1,0 +1,12 @@
+{
+  "expo": {
+    "name": "Generated Mobile App",
+    "slug": "generated-mobile-app",
+    "scheme": "generatedmobileapp",
+    "version": "0.1.0",
+    "plugins": [
+      "expo-router"
+    ],
+    "userInterfaceStyle": "automatic"
+  }
+}
