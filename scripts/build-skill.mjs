@@ -12,6 +12,9 @@ copyDir(path.join(root,'packages/ui/src'),path.join(skill,'library'));
 copyDir(path.join(root,'templates/expo-app'),path.join(skill,'templates/expo-app'));
 fs.mkdirSync(path.join(skill,'scripts'),{recursive:true});
 fs.copyFileSync(path.join(root,'scripts/install-source.mjs'),path.join(skill,'scripts/install-source.mjs'));
+// factory-v1: embedded project workflow API
+copyDir(path.join(root,'factory-v1'),path.join(skill,'factory-v1'));
+fs.copyFileSync(path.join(root,'scripts/factory.mjs'),path.join(skill,'scripts/factory.mjs'));
 const version=JSON.parse(fs.readFileSync(path.join(root,'package.json'),'utf8')).version;
 const full=loadCatalog();
 if(full.some(x=>x.status==='development')) throw new Error('Promote or remove development components before building skill');

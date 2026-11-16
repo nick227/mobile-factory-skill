@@ -27,3 +27,8 @@ This folder is a **generated release** of the Mobile Software Factory. `library/
 - Factory is source-of-truth, this ZIP is a frozen distribution; propose reusable fixes upstream.
 
 Read `references/architecture.md`, `references/quality.md`, and included `references/design/` for detailed policy.
+
+<!-- factory-v1-blueprint-workflow -->
+## Blueprint-first production (v1.0)
+
+For new projects, **interview, compose, and gain explicit user approval before writing application code**. Use the factory's CLI for conditional questions, curated component catalog lookup, blueprint auditing, task planning, and fresh-agent task handoffs. Consult [the detailed workflow](references/production-workflow-v1.md). During construction compose JSX from curated factory components; do not assume automatic JSX or backend generation.

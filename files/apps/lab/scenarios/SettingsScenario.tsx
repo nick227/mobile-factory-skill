@@ -1,3 +1,0 @@
-import React, { useState } from 'react';
-import { Stack, Surface, SectionHeader, Toggle, ListItem, Avatar, Text } from '@factory/ui';
-export function SettingsScenario(){const [alerts,setAlerts]=useState(true);return <Stack gap="lg"><SectionHeader title="Settings" description="Personalize your experience"/><Surface><ListItem leading={<Avatar name="Alex Rivera"/>} title="Alex Rivera" description="Manage account" onPress={()=>{}}/><Toggle label="Activity alerts" description="Important updates" value={alerts} onValueChange={setAlerts}/><ListItem title="Privacy" description="Permissions and data" onPress={()=>{}}/></Surface><Text muted variant="small">Preview scenario: no backend connection.</Text></Stack>}
