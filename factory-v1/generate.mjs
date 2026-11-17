@@ -14,9 +14,7 @@ const walk=dir=>fs.readdirSync(dir,{withFileTypes:true}).flatMap(entry=>{
   const full=path.join(dir,entry.name);
   return entry.isDirectory()?walk(full):[full];
 }).sort();
-const shaFile=(file)=>fs.readFileSync(file,'utf8');
 const slug=dir=>path.basename(dir).toLowerCase().replace(/[^a-z0-9-]+/g,'-').replace(/^-+|-+$/g,'')||'factory-app';
-const source=(root,name,packaged)=>path.join(root,...(packaged?[name]:name.split('/')));
 function roots(root){
   const library=fs.existsSync(path.join(root,'packages/ui/src'))?path.join(root,'packages/ui/src'):path.join(root,'library');
   const catalog=fs.existsSync(path.join(root,'packages/catalog/registry.json'))?path.join(root,'packages/catalog/registry.json'):path.join(root,'catalog.json');
@@ -74,6 +72,11 @@ export function generate(projectDir,{dryRun=false,root=ROOT}={}){
     configure(stage,approved.state,project);
     const ui=installSource({libraryDir:library,registryFile:catalog,appDir:stage,all:true});
     if(ui.collisions?.length)throw Error('Unexpected UI source collisions: '+ui.collisions.join(', '));
+    // The general installer records wall-clock time; approved generation must be byte-reproducible.
+    const installManifest=path.join(stage,'factory-install.json');
+    const installed=JSON.parse(fs.readFileSync(installManifest,'utf8'));
+    delete installed.installedAt;
+    fs.writeFileSync(installManifest,JSON.stringify(installed,null,2)+'\\n');
     const result=assembler.assemble(specFile,stage,{root});
     if(!result.ok)throw Error('Assembly preflight failed: '+(result.error??result.errors?.join('; ')));
     const staged=walk(stage).map(file=>path.relative(stage,file)).sort();
