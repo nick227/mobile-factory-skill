@@ -7,8 +7,12 @@ description: Build Expo React Native apps from approved factory source: a search
 
 A frozen release of the Mobile Software Factory. All commands are `node scripts/factory.mjs …`, run from this folder. Expo SDK 58, React Native 0.88, strict TypeScript, Expo Router.
 
+## Choose the path
+- **Fast path:** use it for a small app (≤ ~5 screens) whose spec is already approved, built in one session. Skip the interview, blueprint and plan commands entirely. Do steps 2–5 below, choosing modules yourself from `references/foundations.md` (`module add` doesn't need a project).
+- **Blueprint path:** use it when requirements are still being discovered, the app is larger, approval is still pending, or the work spans sessions or agents. Do steps 1–5.
+
 ## Build workflow (new app)
-1. **Plan:** follow `references/production-workflow-v1.md`. Use `--mode lite` for small apps. If the user has already approved a written spec, ingest it with `source add` and record that approval; otherwise get explicit approval before writing code.
+1. **Plan (blueprint path only):** follow `references/production-workflow-v1.md`. Use `--mode lite` for small apps. If the user has already approved a written spec, ingest it with `source add` and record that approval; otherwise get explicit approval before writing code.
 2. **Find parts:** `catalog search "<need>"` (e.g. "searchable list", "save data on device", "confirm destructive"), then `catalog get <id> --role construct`. That returns the import line, props, constraints and warnings, and for `recipe.*` the full screen code. Don't read library source to learn APIs.
 3. **Create the app:**
    - Copy `templates/expo-app/` to the app folder.
@@ -19,7 +23,9 @@ A frozen release of the Mobile Software Factory. All commands are `node scripts/
    - Copy the matching recipe from `recipes/` into `src/recipes/` and adapt it.
    - Import UI from `@/src/ui` and modules from `@/src/foundations/<module>/…`.
    - Put feature code in `src/features/<feature>/` (`schema.ts`, `api.ts`, `mock.ts`, `store.ts`). See `references/foundations.md`.
-5. **Verify only what you run:** `npx tsc --noEmit` and `npx expo export --platform android|ios`. Name these in `plan done --evidence`. Bundles and types aren't device testing; say so.
+5. **Verify only what you run:** `npx tsc --noEmit` and `npx expo export --platform android|ios`. On the blueprint path, name these in `plan done --evidence`. Bundles and types aren't device testing; say so.
+
+If `npx expo install` doesn't change `package.json`, your npm config may have `save=false`. Re-run it as `npm_config_save=true npx expo install …`. Re-running `module add` is safe, and it reports `expoInstall: null` once every dependency is recorded.
 
 ## Rules
 - Use the installed `src/ui` components and recipes. Don't write replacements.
