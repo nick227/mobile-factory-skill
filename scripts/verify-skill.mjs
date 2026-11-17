@@ -13,6 +13,7 @@ try{
  const extract=spawnSync(python,['-m','zipfile','-e',zip,temp],{stdio:'inherit'});
  if(extract.status!==0)throw new Error('Failed to extract ZIP');
  const skill=path.join(temp,'mobile-development');
+ if(!fs.existsSync(path.join(skill,'scripts/scaffold-workspace.mjs')))throw new Error('Missing packaged workspace scaffolder');
  const app=path.join(temp,'fresh-app');copyDir(path.join(skill,'templates/expo-app'),app);
  const install=spawnSync(process.execPath,[path.join(skill,'scripts/install-source.mjs'),path.join(skill,'library'),path.join(skill,'catalog.json'),app,'--all'],{stdio:'inherit'});
  if(install.status!==0)throw new Error('Package installer failed');
