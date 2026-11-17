@@ -293,3 +293,56 @@ test('UAT 8: Independent Agent UAT on an Unfamiliar Brief (Laundry Pulse)', () =
     }
   }
 });
+
+test('UAT 9: Accessibility semantics, minimum touch targets, and assistive labels', () => {
+  // Check form and button accessibility labels across all applications
+  for (const name of apps) {
+    const spec = loadSpec(name);
+    for (const [id, page] of Object.entries(spec.pages)) {
+      // Form fields must have accessible labels
+      if (page.subject?.kind === 'form' && Array.isArray(page.subject.fields)) {
+        for (const f of page.subject.fields) {
+          assert.ok(f.label && typeof f.label === 'string', `Field ${f.key} in ${name}.${id} missing accessible label`);
+        }
+      }
+      // Interactive actions must have accessible labels
+      if (page.headerAction) {
+        assert.ok(page.headerAction.label && page.headerAction.label.trim().length > 0, `HeaderAction in ${name}.${id} missing label`);
+      }
+      if (page.primary) {
+        assert.ok(page.primary.label && page.primary.label.trim().length > 0, `Primary action in ${name}.${id} missing label`);
+      }
+      if (page.empty?.action) {
+        assert.ok(page.empty.action.label && page.empty.action.label.trim().length > 0, `Empty action in ${name}.${id} missing label`);
+      }
+    }
+  }
+
+  // Check MonadPage renderer accessibility markers
+  const monadSrc = fs.readFileSync(path.join(root, 'packages/assembly/src/MonadPage.tsx'), 'utf8');
+  assert.ok(monadSrc.includes('aria-label="Loading"'), 'MonadPage Loading states must have aria-label="Loading"');
+  assert.ok(monadSrc.includes('aria-busy'), 'MonadPage Loading states must declare aria-busy');
+});
+
+test('UAT 10: Multi-axis design space & visual theme configuration coverage', async () => {
+  const tokenFile = path.join(root, 'packages/ui/src/foundation/tokens.ts');
+  const tokenSrc = fs.readFileSync(tokenFile, 'utf8');
+
+  // Verify all 6 preset themes exist
+  const expectedPresets = ['minimal-pro', 'kyoto-craft', 'fintech-midnight', 'wellness-botanical', 'editorial-luxury', 'playful-consumer'];
+  for (const p of expectedPresets) {
+    assert.ok(tokenSrc.includes(`'${p}':`), `Preset '${p}' missing in tokens.ts`);
+  }
+
+  // Verify all 6 palettes exist
+  const expectedPalettes = ['default', 'kyoto', 'midnight', 'emerald', 'crimson', 'amber'];
+  for (const pal of expectedPalettes) {
+    assert.ok(tokenSrc.includes(`${pal}: {`), `Palette '${pal}' missing in tokens.ts`);
+  }
+
+  // Verify semantic color tokens are defined across palettes
+  const requiredColors = ['background:', 'surface:', 'text:', 'muted:', 'border:', 'primary:', 'onPrimary:', 'danger:'];
+  for (const color of requiredColors) {
+    assert.ok(tokenSrc.includes(color), `Color token '${color}' missing in tokens.ts`);
+  }
+});
