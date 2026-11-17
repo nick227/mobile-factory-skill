@@ -17,7 +17,7 @@ A frozen release of the Mobile Software Factory. All commands are `node scripts/
 3. **Create the app:**
    - Copy `templates/expo-app/` to the app folder.
    - Install the UI with `node scripts/install-source.mjs library catalog.json <app> --all`.
-   - Get modules with `module recommend --project <app>`, then install them with `module add <ids> --app <app>`.
+   - Pick modules: on the blueprint path run `module recommend --project <app>`; on the fast path run `module recommend` with no project to print each module's selection rule. Then install with `module add <ids> --app <app>`.
    - Run the printed `npx expo install …`.
 4. **Compose screens:**
    - Copy the matching recipe from `recipes/` into `src/recipes/` and adapt it.
@@ -30,7 +30,7 @@ If `npx expo install` doesn't change `package.json`, your npm config may have `s
 ## Rules
 - Use the installed `src/ui` components and recipes. Don't write replacements.
 - Every screen has loading, error and empty states. Media has a fixed aspect ratio. There's one primary action per screen. Destructive actions are confirmed with `AlertDialog`.
-- Import Expo Router's `Stack` in `app/_layout.tsx`. Import the UI `Stack` in screens.
+- Import Expo Router's `Stack` in `app/_layout.tsx`. In screens, import the UI `Stack` for layout and `Stack as RouterStack` from `expo-router` for `<RouterStack.Screen options={{ title }} />`.
 - Catalog maturity is computed from evidence. Nothing is `verified` without recorded iOS and Android device evidence.
 - Apps own copied source. The installers never overwrite local edits.
 

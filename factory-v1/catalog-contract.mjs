@@ -175,7 +175,8 @@ export function view(catalog, id, role = 'construct') {
   if (m.effective === 'candidate') warnings.push('Not implemented: create an implement task first; do not import.');
   if (m.claimUnsupported) warnings.push(`Registry claims '${m.claimed}' without supporting evidence; treat as '${m.effective}'.`);
   if (LEVELS.indexOf(m.effective) < LEVELS.indexOf('verified')) warnings.push('No native device evidence: verify on iOS and Android before claiming quality.');
-  if (i.requires.length) warnings.push(`App must mount: ${i.requires.join(', ')}.`);
+  const HOSTS = { SafeAreaProvider: 'SafeAreaProvider (expo-router mounts it; add it yourself only outside expo-router)', PortalProvider: 'PortalProvider in app/_layout.tsx', PortalHost: 'one PortalHost in app/_layout.tsx' };
+  if (i.requires.length) warnings.push(`Needs: ${i.requires.map((r) => HOSTS[r] ?? r).join('; ')}.`);
   if (i.kind === 'module') warnings.push(`Install: node scripts/factory.mjs module add ${i.id} --app <app>`);
   return { ...doc, import: i.kind === 'component' ? `import { ${i.exportName} } from '@/src/ui';` : undefined, uses: i.uses, recipe: i.recipe, warnings };
 }

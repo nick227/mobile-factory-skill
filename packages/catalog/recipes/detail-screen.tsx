@@ -6,7 +6,7 @@
  * @uses primitives.stack, primitives.text, composites.mediaframe, patterns.actiondock, controls.button, controls.calmskeleton, composites.alertdialog, composites.emptystate
  * @constraints Destructive actions need explicit confirmation, Caller owns pending and failure
  */
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ScrollView, View } from 'react-native';
 import { Stack, Text, MediaFrame, ActionDock, Button, CalmSkeleton, AlertDialog, EmptyState, useTheme } from '@/src/ui';
 
@@ -17,6 +17,9 @@ export function DetailScreen({ loading, error, onRetry, title, meta, body, image
 }) {
   const { colors } = useTheme();
   const [confirming, setConfirming] = useState(false);
+  const [awaiting, setAwaiting] = useState(false);
+  // Keep the dialog open with a spinner until the caller's action settles.
+  useEffect(() => { if (awaiting && !pending) { setAwaiting(false); setConfirming(false); } }, [awaiting, pending]);
   if (error) return <View style={{ flex: 1, justifyContent: 'center', padding: 16, backgroundColor: colors.background }}><EmptyState title="Couldn't load this" description={error} action={onRetry ? <Button label="Retry" onPress={onRetry} /> : undefined} /></View>;
   return (
     <View style={{ flex: 1, backgroundColor: colors.background }}>
@@ -32,7 +35,7 @@ export function DetailScreen({ loading, error, onRetry, title, meta, body, image
           label={active ? activeLabel : inactiveLabel} onPress={active ? () => setConfirming(true) : onActivate} />
       </ActionDock>
       <AlertDialog open={confirming} onOpenChange={setConfirming} title={confirmTitle ?? `${activeLabel}?`} description={confirmDescription}
-        destructive confirmLabel={activeLabel} cancelLabel="Keep" onConfirm={() => { setConfirming(false); onDeactivate(); }} />
+        destructive loading={awaiting} confirmLabel={activeLabel} cancelLabel="Keep" onConfirm={() => { setAwaiting(true); onDeactivate(); }} />
     </View>
   );
 }
