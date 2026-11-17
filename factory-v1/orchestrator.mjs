@@ -8,6 +8,7 @@ import * as engine from './engine.mjs';
 import * as plan from './planner.mjs';
 import * as cat from './catalog-contract.mjs';
 import * as batches from './batches.mjs';
+import * as editorial from './editorial.mjs';
 
 export const SEGMENTS = [
   { id: '02-discovery', title: 'Discovery', goal: 'Understand the product: purpose, audience, scope, accounts and data' },
@@ -78,9 +79,9 @@ function evaluateConditions(dir, p) {
   // 05 Blueprint: user confirmation for this revision, then approval.
   const b = out['05-blueprint'];
   const confirmations = (p.decisions ?? []).filter((x) => x?.type === 'user-confirmation');
-  const current = confirmations.some((x) => x.revision === undefined || x.revision === p.revision);
+  const current = confirmations.some((x) => p.batches ? (x.revision===p.revision && typeof x.value==='string' && x.value.startsWith('USER: ')) : (x.revision === undefined || x.revision === p.revision));
   b.push(condition('user:confirmed', current, confirmations.length ? `User confirmation for revision ${p.revision}` : 'User has confirmed the blueprint', 'Show blueprint brief + wireframes; after explicit approval: blueprint set --file confirm.json {"decisions":[{"type":"user-confirmation","value":"USER: <their words>"}]}'));
-  const approved = p.approval?.revision === p.revision;
+  const approved = p.batches ? editorial.approved(p) : p.approval?.revision === p.revision;
   b.push(condition('blueprint:approved', approved, `Blueprint approved at revision ${p.revision}`, 'blueprint audit (must be ready), then: blueprint approve'));
 
   // 06 Catalog & plan: approved parts resolve and the task plan matches this approval.
