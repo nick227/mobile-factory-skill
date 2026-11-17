@@ -1,0 +1,187 @@
+[
+  {
+    "id": "view",
+    "kind": "display",
+    "ui": "detail",
+    "requires": [],
+    "conflicts": [],
+    "status": "planning-only"
+  },
+  {
+    "id": "search",
+    "kind": "control",
+    "ui": "search-field",
+    "requires": [],
+    "conflicts": [],
+    "status": "planning-only"
+  },
+  {
+    "id": "filter",
+    "kind": "control",
+    "ui": "filter-controls",
+    "requires": [
+      "search"
+    ],
+    "conflicts": [],
+    "status": "planning-only"
+  },
+  {
+    "id": "create",
+    "kind": "action",
+    "ui": "create-form",
+    "requires": [],
+    "conflicts": [
+      "read-only"
+    ],
+    "status": "planning-only"
+  },
+  {
+    "id": "update",
+    "kind": "action",
+    "ui": "edit-form",
+    "requires": [],
+    "conflicts": [
+      "read-only"
+    ],
+    "status": "planning-only"
+  },
+  {
+    "id": "remove",
+    "kind": "action",
+    "ui": "confirm-remove",
+    "requires": [],
+    "conflicts": [
+      "read-only"
+    ],
+    "status": "planning-only"
+  },
+  {
+    "id": "complete",
+    "kind": "action",
+    "ui": "completion-control",
+    "requires": [],
+    "conflicts": [
+      "read-only"
+    ],
+    "status": "planning-only"
+  },
+  {
+    "id": "pause",
+    "kind": "action",
+    "ui": "pause-control",
+    "requires": [],
+    "conflicts": [
+      "read-only"
+    ],
+    "status": "planning-only"
+  },
+  {
+    "id": "progress",
+    "kind": "display",
+    "ui": "progress-indicator",
+    "requires": [],
+    "conflicts": [],
+    "status": "planning-only"
+  },
+  {
+    "id": "add-to-cart",
+    "kind": "action",
+    "ui": "cart-control",
+    "requires": [],
+    "conflicts": [
+      "read-only"
+    ],
+    "status": "planning-only"
+  },
+  {
+    "id": "checkout",
+    "kind": "action",
+    "ui": "checkout-control",
+    "requires": [],
+    "conflicts": [
+      "read-only"
+    ],
+    "status": "planning-only"
+  },
+  {
+    "id": "reschedule",
+    "kind": "action",
+    "ui": "date-editor",
+    "requires": [
+      "view"
+    ],
+    "conflicts": [
+      "read-only"
+    ],
+    "status": "planning-only"
+  },
+  {
+    "id": "cancel",
+    "kind": "action",
+    "ui": "confirm-cancel",
+    "requires": [],
+    "conflicts": [
+      "read-only"
+    ],
+    "status": "planning-only"
+  },
+  {
+    "id": "publish",
+    "kind": "action",
+    "ui": "publish-control",
+    "requires": [],
+    "conflicts": [
+      "read-only"
+    ],
+    "status": "planning-only"
+  },
+  {
+    "id": "react",
+    "kind": "action",
+    "ui": "reaction-control",
+    "requires": [],
+    "conflicts": [
+      "read-only"
+    ],
+    "status": "planning-only"
+  },
+  {
+    "id": "send",
+    "kind": "action",
+    "ui": "message-composer",
+    "requires": [],
+    "conflicts": [
+      "read-only"
+    ],
+    "status": "planning-only"
+  },
+  {
+    "id": "read-only",
+    "kind": "policy",
+    "ui": "read-only",
+    "requires": [],
+    "conflicts": [
+      "create",
+      "update",
+      "remove",
+      "complete",
+      "pause",
+      "add-to-cart",
+      "checkout",
+      "reschedule",
+      "cancel",
+      "publish",
+      "react",
+      "send"
+    ],
+    "status": "planning-only"
+  },
+  {
+    "id": "auth.basic",
+    "kind": "system",
+    "ui": "auth-entry",
+    "requires": [],
+    "conflicts": [],
+    "status": "planning-only"
+  }
+]

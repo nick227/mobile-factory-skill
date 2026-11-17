@@ -52,6 +52,7 @@
         "event"
       ],
       "capabilities": [
+        "event.view",
         "event.create",
         "event.reschedule",
         "event.cancel"
