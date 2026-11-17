@@ -1,34 +1,37 @@
 ---
 name: mobile-development
-description: Build Expo React Native apps by selecting approved factory source, screen patterns, and native Focus-First design standards. Use for mobile development, existing-app UI refactors, and new Expo applications.
+description: Build Expo React Native apps from approved factory source: a searchable component catalog, typechecked screen recipes, optional construction modules (navigation, API/mock data, persistence, validation, env, error recovery, auth) and Focus-First design standards. Use for new Expo apps and existing-app UI work.
 ---
 
-# Mobile Development Skill v0.6
+# Mobile Development Skill
 
-This folder is a **generated release** of the Mobile Software Factory. `library/` contains actual TSX source and `catalog.json` records approved components and preview maturity. The skill does not depend on the factory repository at runtime.
+A frozen release of the Mobile Software Factory. All commands are `node scripts/factory.mjs …`, run from this folder. Expo SDK 58, React Native 0.88, strict TypeScript, Expo Router.
 
-## Default workflow
+## Choose the path
+- **Fast path:** use it for a small app (≤ ~5 screens) whose spec is already approved, built in one session. Skip the interview, blueprint and plan commands entirely. Do steps 2–5 below, choosing modules yourself from `references/foundations.md` (`module add` doesn't need a project).
+- **Blueprint path:** use it when requirements are still being discovered, the app is larger, approval is still pending, or the work spans sessions or agents. Do steps 1–5.
 
-1. Inspect the app and requirements; preserve existing constraints.
-2. Read `catalog.json`. Select controls/composites/patterns before inventing UI.
-3. Read `references/design/README.md`, `screens.md`, `geometry.md`, and `rendering.md` when designing screens. Use Focus-First Native defaults.
-4. For new apps copy `templates/expo-app/`. Install compatible Expo dependencies.
-5. Run `node scripts/install-source.mjs library catalog.json /path/to/app --all` from the unpacked skill. This currently installs the full library to avoid unresolved transitive dependencies; `--components` is not selective installation.
-6. Compose in app features and Expo Router route files. Use the installed `src/ui` source, not independently generated replacements.
-7. Ensure focused flows, minimal navigation chrome, stable media aspect ratios, measured tap areas, calm loading, and recoverable error states.
-8. Validate types/interactions/devices **only to the extent actually executed**. Report gaps without pretending a preview component is certified.
+## Build workflow (new app)
+1. **Plan (blueprint path only):** follow `references/production-workflow-v1.md`. Use `--mode lite` for small apps. If the user has already approved a written spec, ingest it with `source add` and record that approval; otherwise get explicit approval before writing code.
+2. **Find parts:** `catalog search "<need>"` (e.g. "searchable list", "save data on device", "confirm destructive"), then `catalog get <id> --role construct`. That returns the import line, props, constraints and warnings, and for `recipe.*` the full screen code. Don't read library source to learn APIs.
+3. **Create the app:**
+   - Copy `templates/expo-app/` to the app folder.
+   - Install the UI with `node scripts/install-source.mjs library catalog.json <app> --all`.
+   - Pick modules: on the blueprint path run `module recommend --project <app>`; on the fast path run `module recommend` with no project to print each module's selection rule. Then install with `module add <ids> --app <app>`.
+   - Run the printed `npx expo install …`.
+4. **Compose screens:**
+   - Copy the matching recipe from `recipes/` into `src/recipes/` and adapt it.
+   - Import UI from `@/src/ui` and modules from `@/src/foundations/<module>/…`.
+   - Put feature code in `src/features/<feature>/` (`schema.ts`, `api.ts`, `mock.ts`, `store.ts`). See `references/foundations.md`.
+5. **Verify only what you run:** `npx tsc --noEmit` and `npx expo export --platform android|ios`. On the blueprint path, name these in `plan done --evidence`. Bundles and types aren't device testing; say so.
 
-## Structural boundaries
+If `npx expo install` doesn't change `package.json`, your npm config may have `save=false`. Re-run it as `npm_config_save=true npx expo install …`. Re-running `module add` is safe, and it reports `expoInstall: null` once every dependency is recorded.
 
-- Expo SDK 58 baseline, React Native 0.88, strict TypeScript, Expo Router.
-- `foundation → primitives → controls → composites → patterns`. No upward UI imports.
-- One canonical implementation; apps own copied source. Never overwrite local customizations without explicit approval.
-- No replacement UI kit, custom router, or screen-level decorative design system.
-- Factory is source-of-truth, this ZIP is a frozen distribution; propose reusable fixes upstream.
+## Rules
+- Use the installed `src/ui` components and recipes. Don't write replacements.
+- Every screen has loading, error and empty states. Media has a fixed aspect ratio. There's one primary action per screen. Destructive actions are confirmed with `AlertDialog`.
+- Import Expo Router's `Stack` in `app/_layout.tsx`. In screens, import the UI `Stack` for layout and `Stack as RouterStack` from `expo-router` for `<RouterStack.Screen options={{ title }} />`.
+- Catalog maturity is computed from evidence. Nothing is `verified` without recorded iOS and Android device evidence.
+- Apps own copied source. The installers never overwrite local edits.
 
-Read `references/architecture.md`, `references/quality.md`, and included `references/design/` for detailed policy.
-
-<!-- factory-v1-blueprint-workflow -->
-## Blueprint-first production (v1.0)
-
-For new projects, **interview, compose, and gain explicit user approval before writing application code**. Use the factory's CLI for conditional questions, curated component catalog lookup, blueprint auditing, task planning, and fresh-agent task handoffs. Consult [the detailed workflow](references/production-workflow-v1.md). During construction compose JSX from curated factory components; do not assume automatic JSX or backend generation.
+Design policy: `references/design/` (Focus-First Native), `references/architecture.md`, `references/quality.md`, `references/catalog-contract.md`.

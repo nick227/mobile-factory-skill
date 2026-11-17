@@ -1,0 +1,1 @@
+{ "modules": ["module.navigation", "module.api-client", "module.persistence", "module.validation"], "recipes": ["collection-screen", "detail-screen", "form-screen"] }

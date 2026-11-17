@@ -1,0 +1,40 @@
+{
+  "app": "/home/administrator/web/cmf-bench/runs/plain-1/app",
+  "verification": {
+    "tsc": {
+      "skipped": true
+    },
+    "androidExport": {
+      "skipped": true
+    },
+    "note": "Re-run independently by the scorer. Types and bundles only; no device, simulator or screen reader."
+  },
+  "volume": {
+    "customFiles": 15,
+    "customLoc": 983,
+    "customTsxLoc": 720,
+    "recipeLocCopiedAndAdapted": 0,
+    "factoryFilesInstalled": 0,
+    "factoryLocInstalled": 0,
+    "factoryUiComponentsUsed": [],
+    "factoryModulesUsed": []
+  },
+  "staticSpecChecks": {
+    "_note": "Source-pattern heuristics only; a pass means the pattern exists, not that it behaves correctly.",
+    "routeList": true,
+    "routeDetail": true,
+    "routeCreate": true,
+    "persistence": true,
+    "destructiveConfirm": true,
+    "errorBoundary": true,
+    "validationLength": true,
+    "validationIsoDate": true,
+    "validationNotPast": true,
+    "descriptionMax500": true,
+    "simulatedLatency": true,
+    "forcedErrors": true,
+    "darkMode": true,
+    "accessibilityLabels": 26,
+    "fixedAspectRatio": true
+  }
+}
