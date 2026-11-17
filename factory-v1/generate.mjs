@@ -23,14 +23,14 @@ function roots(root){
     throw Error('Generator needs packaged Expo template, UI library and catalog');
   return {library,catalog,template};
 }
-function approvedSpec(project) {
+function approvedSpec(project,{allowPending=false}={}) {
   const state=engine.load(project);
   if(!state.batches)throw Error('factory generate requires an opted-in batch blueprint; legacy builds use app scaffold and assemble');
   if(!editorial.approved(state))throw Error('Generation blocked: approval is missing, stale or does not match the current AppSpec');
   const check=engine.audit(state);
   if(!check.ready)throw Error('Generation blocked: blueprint audit failed: '+check.problems.map(p=>p.message).join('; '));
   const finalized=editorial.materialize(state);
-  if(finalized.engineering.length)throw Error('Generation blocked: approved custom engineering contracts require controlled construction; use engineering MR 3 workflow');
+  if(finalized.engineering.length&&!allowPending)throw Error('Generation blocked: approved custom engineering contracts require controlled construction; use engineering prepare');
   if(finalized.hash!==state.approval.appSpecHash||finalized.hash!==state.batches.selections.review.specHash)
     throw Error('Generation blocked: executable AppSpec hash mismatch');
   const validation=assembler.validateSpec(finalized.spec);
@@ -51,9 +51,9 @@ function configure(stage,state,project){
   fs.writeFileSync(configFile,JSON.stringify(app,null,2)+'\n');
 }
 /** Generate into project root. dryRun inspects everything without writing to the project. */
-export function generate(projectDir,{dryRun=false,root=ROOT}={}){
+export function generate(projectDir,{dryRun=false,root=ROOT,allowPending=false}={}){
   const project=path.resolve(projectDir);
-  const approved=approvedSpec(project); // Always verify before creating any destination output.
+  const approved=approvedSpec(project,{allowPending}); // Always verify before creating any destination output.
   const {library,catalog,template}=roots(root);
   const isExisting=fs.existsSync(path.join(project,'package.json'));
   const scratch=fs.mkdtempSync(path.join(os.tmpdir(),'mobile-factory-generate-'));
@@ -85,7 +85,7 @@ export function generate(projectDir,{dryRun=false,root=ROOT}={}){
     if(conflicts.length)throw Error('Generation would overwrite existing project files: '+conflicts.slice(0,8).join(', '));
     if(dryRun)return {ok:true,project,revision:approved.revision,appSpecHash:approved.hash,mode:'create',dryRun:true,files:staged,pages:result.pages};
     // Recheck current approval in case another process modified the project while staging.
-    if(approvedSpec(project).hash!==approved.hash)throw Error('Approved AppSpec changed during generation');
+    if(approvedSpec(project,{allowPending}).hash!==approved.hash)throw Error('Approved AppSpec changed during generation');
     const created=[];
     try{
       for(const rel of staged){

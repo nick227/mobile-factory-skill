@@ -80,6 +80,7 @@ Load **one** segment reference at a time. Don't preload the others.
 - **Revisit**: when new information changes an earlier decision, record it. The engine bumps the revision, drops
   approval and stales only the dependent finished tasks. `workflow status` then names the reopened segment.
   Fix only what reopened. Never restart the project.
+- **Approved engineering exceptions:** If an approved batch blueprint has nonempty content.engineering, run `engineering prepare`, then `engineering tasks`, implement only the returned allowlisted paths, and use `engineering verify --run-checks true` before manual platform acceptance. Do not call factory generate directly or claim that planned code already works. See `references/workflow-batches.md`.
 - **Optional documentation batches:** after requirements are confirmed, `workflow batch init --project <dir>` activates seven ordered, persisted decision batches. `workflow next --project <dir>` then names exactly one batch and the selection shape. After an explicit revision-locked user approval, `factory generate --project <dir>` emits the application directly from the approved AppSpec, with no extra AI construction step. See `references/workflow-batches.md`. Existing projects remain on the legacy path unless this is explicitly enabled.
 - **Advisory** conditions (`advisory` in the status output) improve quality but don't block the gate. Fill them
   when it's cheap, or when the segment reference says they matter for this project.
