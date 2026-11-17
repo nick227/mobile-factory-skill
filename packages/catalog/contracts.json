@@ -51,7 +51,18 @@
       "nav.paging": "Horizontal paging with tappable previous/next",
       "list.row": "Tappable list row with leading/trailing slots",
       "list.grouped": "Titled group of rows (settings style)",
-      "section.header": "Section title with description and action"
+      "section.header": "Section title with description and action",
+      "app.navigation": "Root navigation structure and route conventions",
+      "app.error-recovery": "Recover from render errors without crashing",
+      "app.config": "Typed, validated public configuration",
+      "data.api": "Typed HTTP client with timeouts, retries and errors",
+      "data.mock-api": "In-app mock backend with latency and failure modes",
+      "data.screen-state": "Loading/ready/error screen state that keeps data during refresh",
+      "data.persistence": "Typed on-device storage that survives restarts",
+      "data.secure-storage": "Keychain/keystore storage for tokens",
+      "form.schema-validation": "Schema-based form and data validation",
+      "auth.session": "Session restore, sign-in and sign-out state",
+      "auth.route-guard": "Restrict routes to signed-in or signed-out users"
     },
     "experiences": {
       "browse-collection": "Scan many items and open one",

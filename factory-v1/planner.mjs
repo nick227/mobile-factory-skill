@@ -8,6 +8,7 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import * as engine from './engine.mjs';
 import * as cat from './catalog-contract.mjs';
+import * as mods from './modules.mjs';
 
 const KEY = /^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$/;
 const STATUSES = ['stated', 'inferred', 'proposed', 'confirmed'];
@@ -39,6 +40,25 @@ export const liteDefaults = {
 // Which work depends on which fact keys (for selective invalidation).
 const MODULE_KEYS = { 'module-auth': /^identity\./, 'module-data': /^data\./ };
 const GLOBAL_KEYS = /^(product\.outcome|design\.|experience\.navigation)/;
+
+// Clear consequences of stated facts update unconfirmed defaults (never stated or confirmed facts).
+const IMPLIES = [
+  { when: (k, v) => /^data\.(persistence|source|offline)$/.test(k) && v && !/^(none|no)\b/i.test(String(v)), set: 'data.required', value: true },
+  { when: (k, v) => /^identity\.(method|recovery)$/.test(k) && v && !/^(none|no)\b/i.test(String(v)), set: 'identity.required', value: true },
+];
+function applyImplications(p) {
+  const out = [];
+  for (const [key, f] of Object.entries(p.facts)) {
+    if (!PROJECTED.has(f.status)) continue;
+    for (const rule of IMPLIES) {
+      const target = p.facts[rule.set];
+      if (!rule.when(key, f.value) || (target && !['proposed', 'inferred'].includes(target.status)) || target?.value === rule.value) continue;
+      p.facts[rule.set] = { value: rule.value, status: 'inferred', sources: [{ id: 'factory', note: `implied by ${key}` }], history: target ? [...target.history, { value: target.value, status: target.status, sources: target.sources, replacedAtRevision: p.revision }] : [] };
+      out.push(`${rule.set} = ${rule.value} (implied by ${key}; confirm with the user)`);
+    }
+  }
+  return out;
+}
 
 function ensure(p) {
   p.facts ??= {}; p.sources ??= []; p.conflicts ??= []; p.profile ??= { mode: 'standard' }; p.skipped ??= [];
@@ -142,7 +162,7 @@ function cited(p) {
 export function record(dir, findings) {
   const list = Array.isArray(findings) ? findings : [findings];
   return withProject(dir, (p) => {
-    const changed = [], conflicts = [], unchanged = [];
+    const changed = [], conflicts = [], unchanged = [], implied = [];
     for (const f of list) {
       if (f.skip) { for (const a of f.skip) if (!p.skipped.includes(a)) p.skipped.push(a); continue; }
       if (!KEY.test(f.key ?? '')) throw Error(`Invalid fact key '${f.key}'; use dotted lowercase like data.source`);
@@ -176,10 +196,11 @@ export function record(dir, findings) {
       if (status === 'confirmed') p.conflicts = p.conflicts.filter((c) => c.key !== f.key);
       changed.push(f.key);
     }
+    implied.push(...applyImplications(p));
     project(p);
     const wasProjected = changed.filter((k) => PROJECTED.has(p.facts[k].status) || p.facts[k].history.some((h) => PROJECTED.has(h.status)));
     const stale = wasProjected.length ? invalidate(p, wasProjected) : [];
-    return { changed, unchanged, conflicts, revision: p.revision, staleTasks: stale };
+    return { changed, unchanged, conflicts, implied: implied.length ? implied : undefined, revision: p.revision, staleTasks: stale };
   });
 }
 
@@ -228,10 +249,17 @@ export function setBlueprint(dir, patch) {
   const allowed = ['screens', 'entities', 'roles', 'integrations', 'decisions', 'remove'];
   for (const k of Object.keys(patch)) if (!allowed.includes(k)) throw Error(`Unsupported field ${k}; facts go through interview record`);
   return withProject(dir, (p) => {
-    const touchedScreens = [], keys = [];
+    const touchedScreens = [], keys = [], notes = [];
     for (const col of ['screens', 'entities', 'roles', 'integrations']) {
       for (const raw of patch[col] ?? []) {
-        const item = typeof raw === 'string' ? { id: raw.toLowerCase().replace(/[^a-z0-9]+/g, '-') } : raw;
+        const item = typeof raw === 'string' ? { id: raw.toLowerCase().replace(/[^a-z0-9]+/g, '-') } : { ...raw };
+        // Recipes are compositions, not registered components: keep them in screen.recipe so audit accepts the screen.
+        if (col === 'screens' && Array.isArray(item.components) && item.components.some((c) => String(c).startsWith('recipe.'))) {
+          const recipes = item.components.filter((c) => String(c).startsWith('recipe.'));
+          item.components = item.components.filter((c) => !String(c).startsWith('recipe.'));
+          if (!item.recipe) item.recipe = recipes[0];
+          notes.push(`${item.id}: moved ${recipes.join(', ')} from components to recipe`);
+        }
         if (!KEY.test(item.id ?? '')) throw Error(`${col} item needs a lowercase id`);
         if (col === 'entities' && item.fields) for (const [name, type] of Object.entries(item.fields)) parseType(type, `${item.id}.${name}`);
         p[col] ??= [];
@@ -245,7 +273,7 @@ export function setBlueprint(dir, patch) {
     for (const [col, ids] of Object.entries(patch.remove ?? {})) { p[col] = (p[col] ?? []).filter((x) => !ids.includes(x.id)); if (col === 'screens') { p.tasks = (p.tasks ?? []).filter((t) => !ids.includes(t.screenId)); touchedScreens.push(...ids); } }
     const changed = touchedScreens.length || keys.length || (patch.decisions ?? []).length;
     const stale = changed ? invalidate(p, keys, touchedScreens) : [];
-    return { revision: p.revision, screens: touchedScreens, staleTasks: stale };
+    return { revision: p.revision, screens: touchedScreens, staleTasks: stale, notes: notes.length ? notes : undefined };
   });
 }
 
@@ -339,6 +367,7 @@ export function brief(dir, { write = true } = {}) {
     model ? `\n## Data model\n\`\`\`ts\n${model}\n\`\`\`` : '',
     (p.roles ?? []).length ? `\n## Roles\n${p.roles.map((r) => `- ${typeof r === 'string' ? r : `${r.id}${r.can ? `: ${r.can.join(', ')}` : ''}`}`).join('\n')}` : '',
     `\n## Readiness\n${audit.ready ? 'Blueprint audit: ready.' : audit.problems.map((x) => `- ${x.scope}${x.id ? ' ' + x.id : ''}: ${x.message}`).join('\n')}`,
+    (p.tasks ?? []).some((t) => t.gaps?.length) ? `\n## Unverified (done without evidence for)\n${p.tasks.filter((t) => t.gaps?.length).map((t) => `- ${t.id}: ${t.gaps.join('; ')}`).join('\n')}` : '',
     nextTasks.length ? `\n## Next tasks\n${nextTasks.map((t) => `- ${t} → \`plan task ${t}\``).join('\n')}` : '',
   ].filter((x) => x !== '').join('\n') + '\n';
   if (write) {
@@ -368,6 +397,7 @@ export function taskPackage(dir, id) {
     decisions: relevantFacts, model: entities.length ? typescriptModel(entities) : undefined,
     components: views.length ? views : undefined,
     recipe: recipe ? { id: recipe.id, code: recipe.recipe, constraints: recipe.constraints } : undefined,
+    modules: /^(setup-|module-)/.test(id) ? (() => { const r = mods.recommend(p); const all = mods.loadModules(); const scope = id === 'module-auth' ? /auth|persistence/ : id === 'module-data' ? /api-client|persistence|validation|env/ : /./; return { install: r.install, expoInstall: r.expoInstall, items: r.modules.filter((m) => scope.test(m.id)).map((m) => ({ ...m, usage: all.find((x) => x.id === m.id)?.usage })) }; })() : undefined,
     rules: ['Compose the listed components; do not reimplement them.', 'Report only verification you actually ran; device quality needs device evidence.', `Finish with: plan done ${id} --evidence "<commands run and results>"`],
   };
 }
@@ -396,5 +426,10 @@ export function done(dir, id, evidence) {
   const task = p.tasks.find((t) => t.id === id);
   if (task && task.type !== 'user-gated' && !EVIDENCE.test(text)) throw Error('Evidence must name the checks you actually ran and their result (e.g. "tsc --noEmit exit 0; expo export android ok").');
   if (/\b(device|simulator|emulator|screen reader|voiceover|talkback)\b/i.test(text) && !/\b(not|no|without|unverified|pending)\b/i.test(text) && !/\b(ios|android)\b.*\b(\d{1,2}(\.\d+)*)\b/i.test(text)) throw Error('Device/screen-reader claims need the platform and OS version (e.g. "Android 16 Pixel 8: TalkBack labels ok"), or say explicitly that it was not done.');
-  return engine.doneTask(dir, id, text);
+  const result = engine.doneTask(dir, id, text);
+  // Record acceptance items the evidence did not cover, so they stay visible instead of silently "done".
+  const visual = (task?.acceptance ?? []).some((a) => /visual|device/i.test(a));
+  const deviceEvidence = /\b(ios|android|web|chrome|safari)\b[^.;]*\d/i.test(text) && !/\b(not|no|without)\b[^.;]*\b(visual|device|browser)/i.test(text);
+  if (visual && !deviceEvidence) withProject(dir, (q) => { const t = q.tasks.find((x) => x.id === id); t.gaps = ['visual review: no device/browser evidence recorded']; });
+  return visual && !deviceEvidence ? { ...result, gaps: ['visual review: no device/browser evidence recorded'] } : result;
 }

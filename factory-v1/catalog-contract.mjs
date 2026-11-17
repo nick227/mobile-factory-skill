@@ -3,6 +3,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { loadModules, moduleLayout } from './modules.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 export const LEVELS = ['candidate', 'implemented', 'tested', 'verified', 'recommended'];
@@ -113,6 +114,13 @@ export function load(paths = layout()) {
       items.push({ ...r, name: r.id, requires: [...new Set(parts.flatMap((p) => p.requires))], dependencies: { npm: [...new Set(parts.flatMap((p) => p.dependencies.npm))].sort(), files: [] }, props: '', compat: {}, evidence: [], maturity: { claimed: LEVELS[floor], effective: LEVELS[floor], claimUnsupported: false, basis: 'lowest maturity of components used' } });
     }
   }
+  // Construction modules (packages/foundations/registry.json) share the catalog and vocabulary.
+  const ml = moduleLayout(paths.root);
+  for (const m of loadModules(ml)) {
+    const tests = (m.tests ?? []).filter((t) => fs.existsSync(path.join(ml.base, t)));
+    const level = tests.length ? 'tested' : fs.existsSync(path.join(ml.source, m.dir)) ? 'implemented' : 'candidate';
+    items.push({ id: m.id, kind: 'module', name: m.id, summary: m.summary, capabilities: m.capabilities, experiences: [], props: '', constraints: m.constraints ?? [], recipe: m.usage, compat: { platforms: ['ios', 'android'] }, evidence: [], requires: [], dependencies: { npm: m.npm, files: [] }, uses: m.dependsOn, maturity: { claimed: level, effective: level, claimUnsupported: false, basis: tests.length ? 'pure-logic Node tests (hooks/components untested)' : 'source exists; no behaviour test' } });
+  }
   const vocab = contract.vocabulary ?? { capabilities: {}, experiences: {} };
   for (const item of items) {
     for (const cap of item.capabilities) if (!(cap in vocab.capabilities)) problems.push(`${item.id}: unknown capability '${cap}'`);
@@ -121,18 +129,29 @@ export function load(paths = layout()) {
   return { items, vocabulary: vocab, problems, warnings, exported };
 }
 
-const words = (s) => String(s).toLowerCase().split(/[^a-z0-9]+/).filter((w) => w.length > 1);
+const STOP = new Set(['a', 'an', 'and', 'the', 'to', 'for', 'of', 'in', 'on', 'with', 'my', 'is', 'it', 'by', 'or', 'at', 'from', 'into', 'that', 'this']);
+const words = (s) => String(s).toLowerCase().split(/[^a-z0-9]+/).filter((w) => w.length > 1 && !STOP.has(w));
+// Common agent phrasings mapped onto catalog vocabulary.
+const SYNONYMS = { sign: ['auth'], login: ['sign', 'auth'], logout: ['sign', 'auth'], signin: ['sign', 'auth'], account: ['auth', 'session'], persist: ['save', 'persistence'], store: ['save', 'persistence'], storage: ['persistence'], offline: ['device', 'persistence'], fetch: ['api'], http: ['api'], network: ['api'], picture: ['image'], photo: ['image'], crash: ['error', 'recovery'], delete: ['destructive', 'confirmation'], remove: ['destructive'], wizard: ['multi', 'step'], onboarding: ['paging', 'guided'], spinner: ['loading'], placeholder: ['skeleton'] };
+const expand = (ws) => [...new Set(ws.flatMap((w) => [w, ...(SYNONYMS[w] ?? [])]))];
 /** Rank items for a free-text need, with optional exact filters. */
 export function find(catalog, { text = '', capability, experience, minMaturity = 'candidate', kind, limit = 8 } = {}) {
   const floor = LEVELS.indexOf(minMaturity);
-  const q = words(text);
+  const q = expand(words(text));
+  const hayOf = (i) => ({ cap: words(i.capabilities.join(' ')), exp: words(i.experiences.join(' ')), name: words(`${i.name} ${i.id}`), sum: words(i.summary) });
+  // Inverse document frequency: rare, specific words outweigh common ones like "data".
+  const all = catalog.items.map(hayOf);
+  const idf = Object.fromEntries(q.map((w) => {
+    const df = all.filter((h) => [...h.cap, ...h.exp, ...h.name, ...h.sum].some((x) => x.startsWith(w))).length;
+    return [w, Math.log(1 + catalog.items.length / (1 + df))];
+  }));
   return catalog.items
     .filter((i) => (!capability || i.capabilities.some((c) => c === capability || c.startsWith(capability + '.') || c.startsWith(capability + '-')))
       && (!experience || i.experiences.includes(experience)) && (!kind || i.kind === kind)
       && LEVELS.indexOf(i.maturity.effective) >= floor && !i.replacedBy)
     .map((i) => {
-      const hay = { cap: words(i.capabilities.join(' ')), exp: words(i.experiences.join(' ')), name: words(`${i.name} ${i.id}`), sum: words(i.summary) };
-      const score = q.reduce((s, w) => s + (hay.name.includes(w) ? 4 : 0) + (hay.cap.includes(w) ? 3 : 0) + (hay.exp.includes(w) ? 2 : 0) + (hay.sum.some((x) => x.startsWith(w)) ? 1 : 0), 0);
+      const hay = hayOf(i);
+      const score = q.reduce((s, w) => s + idf[w] * ((hay.name.includes(w) ? 4 : 0) + (hay.cap.some((x) => x.startsWith(w)) ? 3 : 0) + (hay.exp.includes(w) ? 2 : 0) + (hay.sum.some((x) => x.startsWith(w)) ? 1 : 0)), 0);
       return { item: i, score };
     })
     .filter((r) => !q.length || r.score > 0)
@@ -156,7 +175,9 @@ export function view(catalog, id, role = 'construct') {
   if (m.effective === 'candidate') warnings.push('Not implemented: create an implement task first; do not import.');
   if (m.claimUnsupported) warnings.push(`Registry claims '${m.claimed}' without supporting evidence; treat as '${m.effective}'.`);
   if (LEVELS.indexOf(m.effective) < LEVELS.indexOf('verified')) warnings.push('No native device evidence: verify on iOS and Android before claiming quality.');
-  if (i.requires.length) warnings.push(`App must mount: ${i.requires.join(', ')}.`);
+  const HOSTS = { SafeAreaProvider: 'SafeAreaProvider (expo-router mounts it; add it yourself only outside expo-router)', PortalProvider: 'PortalProvider in app/_layout.tsx', PortalHost: 'one PortalHost in app/_layout.tsx' };
+  if (i.requires.length) warnings.push(`Needs: ${i.requires.map((r) => HOSTS[r] ?? r).join('; ')}.`);
+  if (i.kind === 'module') warnings.push(`Install: node scripts/factory.mjs module add ${i.id} --app <app>`);
   return { ...doc, import: i.kind === 'component' ? `import { ${i.exportName} } from '@/src/ui';` : undefined, uses: i.uses, recipe: i.recipe, warnings };
 }
 

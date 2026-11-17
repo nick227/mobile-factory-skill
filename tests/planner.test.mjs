@@ -203,3 +203,36 @@ test('the fresh-agent brief is small and states approval status', () => {
   assert.ok(b.tokensApprox < 1500, `brief ~${b.tokensApprox} tokens`);
   for (const f of ['BRIEF.md', 'SCREENS.md', 'DECISIONS.md', 'model.ts']) assert.ok(fs.existsSync(path.join(dir, '.factory/docs', f)), f);
 });
+
+// Regressions from benchmark run 3 (improved factory).
+test('recipe ids listed as components are moved to screen.recipe so audit accepts them', () => {
+  const dir = work();
+  plan.initProject(dir, 'X');
+  const r = plan.setBlueprint(dir, { screens: [{ ...screens[0], components: ['recipe.collection-screen', 'composites.listitem'] }] });
+  const s = engine.load(dir).screens[0];
+  assert.equal(s.recipe, 'recipe.collection-screen');
+  assert.deepEqual(s.components, ['composites.listitem']);
+  assert.match(r.notes[0], /moved recipe.collection-screen/);
+  assert.ok(!engine.audit(engine.load(dir)).problems.some((x) => /Unknown catalog component/.test(x.message)));
+});
+
+test('stated persistence overrides an unconfirmed lite default and asks for confirmation', () => {
+  const dir = work();
+  plan.initProject(dir, 'X', 'lite');
+  const r = plan.record(dir, { key: 'data.persistence', value: 'device storage for RSVPs', source: { id: 'chat', quote: 'RSVPs survive restarts' } });
+  assert.match(r.implied[0], /data.required = true/);
+  assert.equal(engine.load(dir).facts['data.required'].status, 'inferred');
+  assert.equal(plan.next(dir).items[0].facts['data.required'], true);
+  plan.record(dir, { key: 'data.required', value: false, status: 'confirmed', source: { id: 'chat', quote: 'actually no data' } });
+  plan.record(dir, { key: 'data.source', value: 'local', source: { id: 'chat', quote: 'local' } });
+  assert.equal(engine.load(dir).facts['data.required'].value, false, 'confirmed facts are never overridden');
+});
+
+test('verify tasks done without device or browser evidence keep a visible gap', () => {
+  const dir = work();
+  approvedProject(dir);
+  for (const id of ['setup-project', 'setup-design', 'module-data', 'screen-events']) plan.done(dir, id, 'tsc --noEmit exit 0');
+  const r = plan.done(dir, 'verify-events', 'tsc --noEmit exit 0; expo export android ok; no device testing');
+  assert.deepEqual(r.gaps, ['visual review: no device/browser evidence recorded']);
+  assert.match(plan.brief(dir, { write: false }).markdown, /Unverified[\s\S]*verify-events/);
+});
