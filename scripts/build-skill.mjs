@@ -25,6 +25,10 @@ fs.copyFileSync(path.join(root,'packages/catalog/contracts.json'),path.join(skil
 fs.copyFileSync(path.join(root,'packages/catalog/CONTRACT.md'),path.join(skill,'references/catalog-contract.md'));
 fs.mkdirSync(path.join(skill,'recipes'),{recursive:true});
 for(const f of fs.readdirSync(path.join(root,'packages/catalog/recipes')).filter(f=>f.endsWith('.tsx')))fs.copyFileSync(path.join(root,'packages/catalog/recipes',f),path.join(skill,'recipes',f));
+// Construction modules (copy-in source + registry).
+copyDir(path.join(root,'packages/foundations/src'),path.join(skill,'foundations/src'));
+fs.copyFileSync(path.join(root,'packages/foundations/registry.json'),path.join(skill,'foundations/registry.json'));
+fs.copyFileSync(path.join(root,'packages/foundations/README.md'),path.join(skill,'references/foundations.md'));
 fs.writeFileSync(path.join(skill,'RELEASE.json'),JSON.stringify({version,designStandard:'focus-first-native/0.6',components:stable.length,schemaVersion:1,source:'mobile-software-factory'},null,2)+'\n');
 // Standard-library Python ZIP packaging, no JS ZIP dependency.
 const zip=path.join(dist,`mobile-development-skill-v${version}.zip`);fs.rmSync(zip,{force:true});

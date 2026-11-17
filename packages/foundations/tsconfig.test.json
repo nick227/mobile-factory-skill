@@ -1,0 +1,5 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": { "noEmit": false, "outDir": ".test-build", "module": "commonjs", "moduleResolution": "node10", "customConditions": null, "jsx": "react-jsx", "types": ["node"], "esModuleInterop": true },
+  "include": ["src/api-client/client.ts", "src/api-client/mock.ts", "src/api-client/resource.ts", "src/persistence/store.ts", "src/validation/*.ts", "src/env/env.ts", "src/auth/auth.ts", "tests/*.ts"]
+}

@@ -8,6 +8,7 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import * as engine from './engine.mjs';
 import * as cat from './catalog-contract.mjs';
+import * as mods from './modules.mjs';
 
 const KEY = /^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$/;
 const STATUSES = ['stated', 'inferred', 'proposed', 'confirmed'];
@@ -368,6 +369,7 @@ export function taskPackage(dir, id) {
     decisions: relevantFacts, model: entities.length ? typescriptModel(entities) : undefined,
     components: views.length ? views : undefined,
     recipe: recipe ? { id: recipe.id, code: recipe.recipe, constraints: recipe.constraints } : undefined,
+    modules: /^(setup-|module-)/.test(id) ? (() => { const r = mods.recommend(p); const all = mods.loadModules(); const scope = id === 'module-auth' ? /auth|persistence/ : id === 'module-data' ? /api-client|persistence|validation|env/ : /./; return { install: r.install, expoInstall: r.expoInstall, items: r.modules.filter((m) => scope.test(m.id)).map((m) => ({ ...m, usage: all.find((x) => x.id === m.id)?.usage })) }; })() : undefined,
     rules: ['Compose the listed components; do not reimplement them.', 'Report only verification you actually ran; device quality needs device evidence.', `Finish with: plan done ${id} --evidence "<commands run and results>"`],
   };
 }

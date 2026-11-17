@@ -1,0 +1,58 @@
+[
+  {
+    "id": "module.navigation", "dir": "navigation", "dependsOn": ["module.error-boundary"], "npm": [], "tests": [],
+    "summary": "Root Expo Router layouts: plain Stack with theme and route error recovery, or auth-guarded (app)/(auth) groups.",
+    "capabilities": ["app.navigation", "auth.route-guard"],
+    "when": [{ "always": true }],
+    "usage": "Copy src/foundations/navigation/RootLayout.tsx to app/_layout.tsx (or ProtectedLayout.tsx when accounts are required). Routes: app/index.tsx, app/<things>/[id].tsx (push), app/<things>/new.tsx (focused editor). Read params with useLocalSearchParams<{ id: string }>().",
+    "constraints": ["One root Stack; add (tabs) only for 3+ persistent peer areas.", "Never hide native back without an in-content back action.", "Import the router Stack in layouts and the UI Stack in screens."]
+  },
+  {
+    "id": "module.error-boundary", "dir": "error-boundary", "dependsOn": [], "npm": [], "tests": [],
+    "summary": "Route-level recovery screen for Expo Router, a subtree ErrorBoundary, and a single error-reporting hook.",
+    "capabilities": ["app.error-recovery"],
+    "when": [{ "always": true }],
+    "usage": "export { RouteErrorBoundary as ErrorBoundary } from '@/src/foundations/error-boundary/RouteErrorBoundary'; (in app/_layout.tsx covers every route). setErrorReporter(fn) at startup to forward errors.",
+    "constraints": ["Do not show raw error messages to users."]
+  },
+  {
+    "id": "module.api-client", "dir": "api-client", "dependsOn": [], "npm": [], "tests": ["tests/api-client.test.ts"],
+    "summary": "Typed HTTP client (timeouts, abort, GET retries, one ApiError with user-safe messages), an in-app mock backend with latency and failure modes, and useResource/useMutation screen state that keeps data visible during refresh.",
+    "capabilities": ["data.api", "data.mock-api", "data.screen-state"],
+    "when": [{ "fact": "data.source", "matches": "api|remote|server|backend|mock" }],
+    "usage": "const api = createApiClient({ transport: createMockTransport(routes).transport }); // later: fetchTransport(env.EXPO_PUBLIC_API_URL)\nconst events = useResource((signal) => api.get('/events', { signal, parse: EventList.parse }), []);\nconst rsvp = useMutation((id: string) => api.post(`/events/${id}/rsvp`));\n<Button loading={rsvp.pending} onPress={() => rsvp.mutate(id)} />",
+    "constraints": ["Put endpoint functions in src/features/<feature>/api.ts; screens call those, not the client.", "Show error.userMessage, never raw bodies.", "Writes are not retried automatically; let the user retry."]
+  },
+  {
+    "id": "module.persistence", "dir": "persistence", "dependsOn": [], "npm": ["expo-sqlite", "expo-secure-store"], "tests": ["tests/persistence.test.ts"],
+    "summary": "Save typed, versioned data on the device so it survives restarts (expo-sqlite key-value) with validation, migrations and serialized writes; secure backend for tokens; useStore hook.",
+    "capabilities": ["data.persistence", "data.secure-storage"],
+    "when": [{ "fact": "data.persistence", "present": true }, { "fact": "identity.required", "equals": true }],
+    "usage": "export const rsvpStore = createStore<Record<string, boolean>>({ key: 'rsvps', version: 1, defaults: {}, backend: deviceBackend, validate: RsvpSchema.parse });\nconst { value, update } = useStore(rsvpStore);",
+    "constraints": ["Bump version and add migrate() when the stored shape changes.", "Tokens and secrets only in secureBackend (values under ~2 KB)."]
+  },
+  {
+    "id": "module.validation", "dir": "validation", "dependsOn": [], "npm": ["zod"], "tests": ["tests/validation-env-auth.test.ts"],
+    "summary": "zod schemas to per-field form errors (fits TextField error and recipe.form-screen validate) plus common text and ISO date rules.",
+    "capabilities": ["form.schema-validation"],
+    "when": [{ "screensUse": "controls.textfield" }, { "screensUse": "recipe.form-screen" }],
+    "usage": "const EventForm = z.object({ title: requiredText('Title', 3, 80), date: isoDateNotPast('Date') });\n<FormScreen validate={validatorFor(EventForm)} … />",
+    "constraints": ["Reuse the same schema to parse API responses (parse: Schema.parse)."]
+  },
+  {
+    "id": "module.env", "dir": "env", "dependsOn": [], "npm": ["zod"], "tests": ["tests/validation-env-auth.test.ts"],
+    "summary": "Fail-fast, typed EXPO_PUBLIC_* configuration with all problems reported at once.",
+    "capabilities": ["app.config"],
+    "when": [{ "fact": "data.source", "matches": "api|remote|server|backend" }],
+    "usage": "export const env = readEnv(z.object({ EXPO_PUBLIC_API_URL: z.url() }), { EXPO_PUBLIC_API_URL: process.env.EXPO_PUBLIC_API_URL });",
+    "constraints": ["Write each process.env.EXPO_PUBLIC_* out literally or Expo will not inline it.", "Never put secrets in EXPO_PUBLIC_*; they ship in the bundle."]
+  },
+  {
+    "id": "module.auth", "dir": "auth", "dependsOn": ["module.persistence", "module.error-boundary"], "npm": [], "tests": ["tests/validation-env-auth.test.ts"],
+    "summary": "Provider-neutral auth contract (AuthAdapter), session state machine, AuthProvider/useAuth, and a mock adapter; pairs with navigation/ProtectedLayout.",
+    "capabilities": ["auth.session", "auth.route-guard"],
+    "when": [{ "fact": "identity.required", "equals": true }],
+    "usage": "Use navigation/ProtectedLayout.tsx as app/_layout.tsx; put signed-in routes in app/(app)/ and sign-in in app/(auth)/. const auth = useAuth(); await auth.signIn({ email, password });",
+    "constraints": ["Implement one AuthAdapter for the chosen provider before release; the mock adapter is for development only.", "Recovery and sign-up flows come from the provider; record them in identity.recovery."]
+  }
+]
