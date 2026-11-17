@@ -438,5 +438,65 @@
     "exportName": "MetricSpotlight",
     "showcase": "MetricSpotlight",
     "test": "tests/MetricSpotlight.test.tsx"
+  },
+  {
+    "id": "composites.peoplestack",
+    "name": "PeopleStack",
+    "category": "composites",
+    "status": "verified",
+    "source": "composites/PeopleStack.tsx",
+    "exportName": "PeopleStack",
+    "showcase": "PeopleStack",
+    "test": "tests/PeopleStack.test.tsx"
+  },
+  {
+    "id": "patterns.storyrail",
+    "name": "StoryRail",
+    "category": "patterns",
+    "status": "verified",
+    "source": "patterns/StoryRail.tsx",
+    "exportName": "StoryRail",
+    "showcase": "StoryRail",
+    "test": "tests/StoryRail.test.tsx"
+  },
+  {
+    "id": "patterns.discoveryfilters",
+    "name": "DiscoveryFilters",
+    "category": "patterns",
+    "status": "verified",
+    "source": "patterns/DiscoveryFilters.tsx",
+    "exportName": "DiscoveryFilters",
+    "showcase": "DiscoveryFilters",
+    "test": "tests/DiscoveryFilters.test.tsx"
+  },
+  {
+    "id": "patterns.identityheader",
+    "name": "IdentityHeader",
+    "category": "patterns",
+    "status": "verified",
+    "source": "patterns/IdentityHeader.tsx",
+    "exportName": "IdentityHeader",
+    "showcase": "IdentityHeader",
+    "test": "tests/IdentityHeader.test.tsx"
+  },
+  {
+    "id": "patterns.progressjourney",
+    "name": "ProgressJourney",
+    "category": "patterns",
+    "status": "verified",
+    "source": "patterns/ProgressJourney.tsx",
+    "exportName": "ProgressJourney",
+    "showcase": "ProgressJourney",
+    "test": "tests/ProgressJourney.test.tsx"
+  },
+  {
+    "id": "patterns.statustracker",
+    "name": "StatusTracker",
+    "category": "patterns",
+    "status": "verified",
+    "source": "patterns/StatusTracker.tsx",
+    "exportName": "StatusTracker",
+    "showcase": "StatusTracker",
+    "test": "tests/StatusTracker.test.tsx"
   }
 ]

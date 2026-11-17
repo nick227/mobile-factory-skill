@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Switch, View } from 'react-native';
-import { Text, Stack, Row, Surface, Divider, Screen, Button, TextField, Badge, ListItem, SettingsGroup, useTheme, Spacer, IconButton, Toggle, Checkbox, RadioGroup, SegmentedControl, ProgressBar, Spinner, Avatar, SectionHeader, EmptyState, FormField, ActionFooter, ScreenHeader, FocusScreen, StepProgress, InputStage, ActionDock, CalmSkeleton, MediaFrame, SwipePager, EditorialMosaic, ImmersiveHero, ChoiceGallery, FocusWizard, Portal, PortalHost, PortalProvider, Select, Tabs, Dialog, AlertDialog, Accordion, SchedulePicker, MetricSpotlight } from '@factory/ui';
+import { Text, Stack, Row, Surface, Divider, Screen, Button, TextField, Badge, ListItem, SettingsGroup, useTheme, Spacer, IconButton, Toggle, Checkbox, RadioGroup, SegmentedControl, ProgressBar, Spinner, Avatar, SectionHeader, EmptyState, FormField, ActionFooter, ScreenHeader, FocusScreen, StepProgress, InputStage, ActionDock, CalmSkeleton, MediaFrame, SwipePager, EditorialMosaic, ImmersiveHero, ChoiceGallery, FocusWizard, Portal, PortalHost, PortalProvider, Select, Tabs, Dialog, AlertDialog, Accordion, SchedulePicker, MetricSpotlight, PeopleStack, StoryRail, DiscoveryFilters, IdentityHeader, ProgressJourney, StatusTracker } from '@factory/ui';
 
 export const showcases: Record<string, () => React.JSX.Element> = {
   Text: () => <Stack><Text variant="title">Title typography</Text><Text variant="heading">Section heading</Text><Text>Body text supports dynamic type.</Text><Text muted variant="small">Secondary caption</Text></Stack>,
@@ -338,6 +338,136 @@ export const showcases: Record<string, () => React.JSX.Element> = {
           sparklineData={[50, 48, 42, 38, 30, 25, 20, 18]}
         />
       </Stack>
+    );
+  },
+  PeopleStack: function PeopleStackDemo() {
+    const people = [
+      { id: '1', name: 'Elena Rostova' },
+      { id: '2', name: 'Kenji Sato' },
+      { id: '3', name: 'Amina Diallo' },
+      { id: '4', name: 'Mateo Silva' },
+      { id: '5', name: 'Chloe Dubois' },
+      { id: '6', name: 'Lars Nygård' },
+    ];
+    return (
+      <Stack gap="md">
+        <Text variant="heading">Design Team (6 members)</Text>
+        <PeopleStack people={people} maxVisible={4} size={40} />
+      </Stack>
+    );
+  },
+  StoryRail: function StoryRailDemo() {
+    const [lastOpened, setLastOpened] = useState<string | null>(null);
+    const stories = [
+      { id: 's1', name: 'Kensho', isLive: true },
+      { id: 's2', name: 'Maya', hasUnread: true },
+      { id: 's3', name: 'Tariq', hasUnread: true },
+      { id: 's4', name: 'Sofia', hasUnread: false },
+      { id: 's5', name: 'Hiroshi', hasUnread: false },
+    ];
+    return (
+      <Stack gap="sm">
+        {lastOpened && <Badge label={`Opened: ${lastOpened}`} tone="accent" />}
+        <StoryRail
+          stories={stories}
+          onPressStory={(id) => setLastOpened(id)}
+          onPressAdd={() => setLastOpened('New Story Draft')}
+        />
+      </Stack>
+    );
+  },
+  DiscoveryFilters: function DiscoveryFiltersDemo() {
+    const [selected, setSelected] = useState<string[]>(['kyoto', 'temples']);
+    const options = [
+      { id: 'kyoto', label: 'Kyoto', count: 42 },
+      { id: 'temples', label: 'Temples & Shrines', count: 18 },
+      { id: 'gardens', label: 'Zen Gardens', count: 12 },
+      { id: 'tea', label: 'Tea Ceremony', count: 7 },
+      { id: 'culinary', label: 'Kaiseki Dining', count: 15 },
+    ];
+    const toggle = (id: string) => {
+      setSelected((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
+    };
+    return (
+      <DiscoveryFilters
+        options={options}
+        selectedIds={selected}
+        onToggle={toggle}
+        onClear={() => setSelected([])}
+      />
+    );
+  },
+  IdentityHeader: function IdentityHeaderDemo() {
+    const [following, setFollowing] = useState(false);
+    return (
+      <IdentityHeader
+        name="Kenzo Tange Studio"
+        handle="@tange_arch"
+        verified
+        bio="Tokyo-based architectural masterworks, modernist pavilion archives, and tactile urbanism monographs."
+        stats={[
+          { label: 'Works', value: '48' },
+          { label: 'Followers', value: '142K' },
+          { label: 'Exhibitions', value: '12' },
+        ]}
+        primaryAction={{
+          label: following ? 'Following' : 'Follow',
+          variant: following ? 'outline' : 'primary',
+          onPress: () => setFollowing(!following),
+        }}
+        secondaryAction={{
+          label: 'Contact',
+          onPress: () => {},
+        }}
+      />
+    );
+  },
+  ProgressJourney: function ProgressJourneyDemo() {
+    const steps = [
+      {
+        id: '1',
+        title: 'Application Submitted',
+        description: 'Document package and credentials verified.',
+        timestamp: 'Nov 12, 10:15 AM',
+        status: 'completed' as const,
+      },
+      {
+        id: '2',
+        title: 'Architectural Review',
+        description: 'Lead reviewer assigned for zoning analysis.',
+        timestamp: 'Nov 14, 2:30 PM',
+        status: 'completed' as const,
+      },
+      {
+        id: '3',
+        title: 'On-site Inspection',
+        description: 'Inspector scheduled for foundation check.',
+        timestamp: 'Today, 9:00 AM',
+        status: 'active' as const,
+      },
+      {
+        id: '4',
+        title: 'Permit Issuance',
+        description: 'Digital seal and printable credential export.',
+        status: 'upcoming' as const,
+      },
+    ];
+    return <ProgressJourney steps={steps} />;
+  },
+  StatusTracker: function StatusTrackerDemo() {
+    return (
+      <StatusTracker
+        title="Artisan Ceramic Kiln Batch #4"
+        statusLabel="Glazing in Progress"
+        tone="info"
+        description="Low-fire biscuit firing complete. Celadon glaze application in kiln chamber 2."
+        progress={68}
+        estimatedTime="Cooling cycle starts in ~3 hours"
+        primaryAction={{
+          label: 'View Kiln Telemetry',
+          onPress: () => {},
+        }}
+      />
     );
   },
 };
