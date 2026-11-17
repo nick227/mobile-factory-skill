@@ -51,7 +51,7 @@ test('page plan rejects unknown, wrong-app, duplicated routes, unreachable and m
     [['catalog.home'],['activity.complete'],/incompatible/],
     [['tracker.dashboard','tracker.home'],['activity.complete'],/duplicate route/],
     [['tracker.detail'],['activity.complete'],/missing root/],
-    [['tracker.dashboard','tracker.create'],['activity.create'],/unreachable|capability/],
+    [['tracker.dashboard','auth.login'],['activity.complete'],/unreachable/],
     [['tracker.dashboard'],['activity.create'],/no selected page/]
   ]) assert.throws(()=>pages.resolve(selected,'tracker',obj,caps),pattern);
   assert.doesNotThrow(()=>pages.resolve(['tracker.dashboard','tracker.create'],'tracker',obj,['activity.create']));
