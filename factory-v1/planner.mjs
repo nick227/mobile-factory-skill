@@ -379,7 +379,7 @@ export function brief(dir, { write = true } = {}) {
     const designFacts = facts.filter(([key]) => key.startsWith('design.'));
     const legacyDesign = Object.entries(p.answers ?? {}).filter(([key]) => key.startsWith('design.') && !p.facts[key]);
     fs.writeFileSync(path.join(docs, 'DESIGN.md'), `# Global design (rev ${p.revision})\n\nCanonical source: .factory/project.json. This file is generated; do not edit.\n\n` +
-      (designFacts.length || legacyDesign.length ? [...designFacts.map(([key, value]) => factLine(key, value)), ...legacyDesign.map(([key, value]) => `- `${key}`: ${JSON.stringify(value)} — recorded`)].join('\n') : 'No global design preferences recorded.') + '\n');
+      (designFacts.length || legacyDesign.length ? [...designFacts.map(([key, value]) => factLine(key, value)), ...legacyDesign.map(([key, value]) => `- ${key}: ${JSON.stringify(value)} — recorded`)].join('\n') : 'No global design preferences recorded.') + '\n');
     fs.writeFileSync(path.join(docs, 'INTERACTIONS.md'), `# Presentation interactions (rev ${p.revision})\n\nCanonical source: .factory/project.json. This file is generated; do not edit.\n\n` +
       (p.screens ?? []).map(s => `## ${s.title ?? s.id} (${s.id})\nRoute: ${s.route ?? '?'}\nPurpose: ${s.purpose ?? ''}\nActions:\n${(s.actions ?? []).length ? s.actions.map(a => `- ${typeof a === 'string' ? a : JSON.stringify(a)}`).join('\n') : '- None'}\nStates: ${(s.states ?? []).join(', ')}\n\n`).join(''));
     if (model) fs.writeFileSync(path.join(docs, 'model.ts'), `// Generated from .factory/project.json rev ${p.revision}. Copy into src/features/*/types.ts.\n${model}\n`);
