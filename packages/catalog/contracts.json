@@ -2,6 +2,20 @@
   "schema": "factory.catalog.contract/1",
   "vocabulary": {
     "capabilities": {
+      "overlay.dialog": "Modal dialog with title, content and actions",
+      "overlay.confirm": "Confirm or cancel a (possibly destructive) action",
+      "overlay.portal": "Render content above the screen from anywhere in the tree",
+      "input.select": "Pick one value from a list in a sheet",
+      "nav.tabs": "Switch between peer sections in place",
+      "layout.disclosure": "Expandable and collapsible sections",
+      "input.schedule": "Pick a date and an available time slot",
+      "data.metric": "Headline number with trend",
+      "social.people": "Overlapping avatars for a group of people",
+      "social.stories": "Horizontal rail of people or story avatars",
+      "filter.chips": "Toggleable filter chips with counts",
+      "profile.header": "Person or organization header with stats and actions",
+      "feedback.timeline": "Ordered steps with completed/active/upcoming state",
+      "feedback.status": "Current status with tone, progress and ETA",
       "layout.screen": "Full-screen container with background and gutter",
       "layout.scroll": "Scrollable content area",
       "layout.stack": "Vertical spacing between children",
@@ -48,7 +62,10 @@
       "media-showcase": "Photo or video-led presentation",
       "onboarding-paging": "Swipeable intro pages",
       "profile": "A person or organization overview",
-      "choice-picking": "Pick themes, plans, categories or options visually"
+      "choice-picking": "Pick themes, plans, categories or options visually",
+      "booking": "Choose a date and time for an appointment or event",
+      "dashboard": "Monitor key numbers and progress",
+      "social": "See people, their activity and stories"
     }
   },
   "items": {
@@ -112,7 +129,7 @@
       "summary": "Labelled button with primary, secondary, outline and ghost variants and a loading state.",
       "capabilities": ["action.primary", "action.secondary", "action.pending"], "experiences": ["form-entry", "item-detail"],
       "props": "label: string; onPress?; variant?: 'primary'|'secondary'|'outline'|'ghost'; loading?: boolean; disabled?: boolean; fullWidth?: boolean",
-      "constraints": ["One primary Button per focused task.", "Caller owns pending/success/failure; pass loading while the action runs.", "No destructive variant yet: confirm destructive actions explicitly (Alert.alert until a Dialog component exists)."],
+      "constraints": ["One primary Button per focused task.", "Caller owns pending/success/failure; pass loading while the action runs.", "No destructive variant: confirm destructive actions with AlertDialog (composites.alertdialog)."],
       "recipe": "<Button label=\"Save\" loading={saving} onPress={save} fullWidth />",
       "compat": { "platforms": ["ios", "android", "web"] }
     },
@@ -343,6 +360,20 @@
       "recipe": "<FocusWizard steps={steps} activeStepIndex={step} onStepChange={setStep} onComplete={submit} onCancel={router.back} />",
       "compat": { "platforms": ["ios", "android", "web"] },
       "requires": ["SafeAreaProvider"]
-    }
+    },
+    "primitives.portal": {"summary": "Custom portal host/provider for rendering overlays above the tree (not used by Dialog, which uses RN Modal).", "capabilities": ["overlay.portal"], "experiences": [], "props": "<PortalProvider> at root; <PortalHost name?> once; <Portal hostName?>{children}</Portal>; usePortal()", "constraints": ["Mount PortalProvider and one PortalHost in app/_layout.tsx before using Portal."], "recipe": "<Portal><View>{overlay}</View></Portal>", "compat": {"platforms": ["ios", "android", "web"]}, "requires": ["PortalProvider", "PortalHost"]},
+    "controls.select": {"summary": "Labelled select field that opens an options sheet (RN Modal) with combobox role.", "capabilities": ["input.select", "input.choice-single", "form.validation-message"], "experiences": ["form-entry"], "props": "options: { label; value; disabled? }[]; value?: string; onValueChange: (v) => void; label?; placeholder?; error?; hint?; disabled?", "constraints": ["Use for 5+ options; RadioGroup or SegmentedControl for fewer."], "recipe": "<Select label=\"Category\" value={category} options={categories} onValueChange={setCategory} />", "compat": {"platforms": ["ios", "android", "web"]}},
+    "controls.tabs": {"summary": "In-place pill or underline tabs for switching peer sections.", "capabilities": ["nav.tabs", "input.segmented"], "experiences": ["browse-collection", "profile"], "props": "tabs: { id; label; badge?; disabled? }[]; value: string; onValueChange: (id) => void; variant?: 'pill'|'underline'", "constraints": ["In-screen sections only; persistent app areas use expo-router (tabs) layout.", "Keep each tab's scroll position in the parent."], "recipe": "<Tabs tabs={[{ id: 'upcoming', label: 'Upcoming' }, { id: 'past', label: 'Past' }]} value={tab} onValueChange={setTab} />", "compat": {"platforms": ["ios", "android", "web"]}},
+    "composites.dialog": {"summary": "Controlled modal dialog (RN Modal) with title, description, content and up to two actions; Android back dismisses.", "capabilities": ["overlay.dialog"], "experiences": ["item-detail", "form-entry"], "props": "open: boolean; onOpenChange: (open) => void; title: string; description?; children?; primaryAction?: { label; onPress; loading?; disabled? }; secondaryAction?: { label; onPress }; dismissible?: boolean", "constraints": ["Short, single-decision content only; multi-field editing gets a full screen.", "Review: uses accessibilityRole=\"dialog\", which is not a React Native AccessibilityRole value (role=\"dialog\" is); screen-reader announcement unverified."], "recipe": "<Dialog open={open} onOpenChange={setOpen} title=\"Share event\" primaryAction={{ label: 'Copy link', onPress: copy }} secondaryAction={{ label: 'Close', onPress: () => setOpen(false) }} />", "compat": {"platforms": ["ios", "android", "web"]}, "requires": ["SafeAreaProvider"]},
+    "composites.alertdialog": {"summary": "Controlled confirm/cancel dialog with destructive styling and loading state; preferred for destructive confirmation.", "capabilities": ["overlay.confirm", "overlay.dialog", "action.pending"], "experiences": ["item-detail", "settings"], "props": "open: boolean; onOpenChange: (open) => void; title: string; description: string; onConfirm: () => void; onCancel?; confirmLabel?; cancelLabel?; destructive?: boolean; loading?: boolean", "constraints": ["Use for every destructive action (standards/design/navigation.md).", "Keep the dialog open with loading until the action settles; close on success."], "recipe": "<AlertDialog open={confirming} onOpenChange={setConfirming} title=\"Cancel RSVP?\" description=\"You can RSVP again later.\" destructive confirmLabel=\"Cancel RSVP\" loading={pending} onConfirm={cancelRsvp} />", "compat": {"platforms": ["ios", "android", "web"]}, "requires": ["SafeAreaProvider"]},
+    "composites.accordion": {"summary": "Controlled expandable sections with titles and subtitles.", "capabilities": ["layout.disclosure"], "experiences": ["item-detail", "settings"], "props": "items: { id; title; subtitle?; content: ReactNode; disabled? }[]; expandedIds: string[]; onToggle: (id) => void", "constraints": ["Do not hide the primary action inside a collapsed section."], "recipe": "<Accordion items={faq} expandedIds={open} onToggle={(id) => setOpen((o) => o.includes(id) ? o.filter((x) => x !== id) : [...o, id])} />", "compat": {"platforms": ["ios", "android", "web"]}},
+    "patterns.schedulepicker": {"summary": "Premium day strip plus time-slot grid grouped by period, with availability, prices and time zone label.", "capabilities": ["input.schedule", "input.choice-single"], "experiences": ["booking"], "props": "days: { date: 'YYYY-MM-DD'; dayName; dayNumber; monthName?; isAvailable? }[]; slots: { id; time; available; period?: 'morning'|'afternoon'|'evening'; price? }[]; selectedDate: string; onSelectDate; selectedSlot: string | null; onSelectSlot; title?; description?; timeZone?", "constraints": ["Caller loads slots for the selected date; show loading in the parent."], "recipe": "<SchedulePicker days={days} slots={slots} selectedDate={date} onSelectDate={setDate} selectedSlot={slot} onSelectSlot={setSlot} timeZone=\"PST\" />", "compat": {"platforms": ["ios", "android", "web"]}},
+    "patterns.metricspotlight": {"summary": "Premium headline metric with unit, delta trend, sparkline, description and optional action; loading state.", "capabilities": ["data.metric", "feedback.loading"], "experiences": ["dashboard"], "props": "label: string; value: string | number; unit?; delta?: { value; direction: 'up'|'down'|'neutral'; tone?; period? }; sparklineData?: number[]; description?; loading?; onPress?; actionLabel?", "constraints": ["Format numbers before passing value."], "recipe": "<MetricSpotlight label=\"RSVPs this week\" value={42} delta={{ value: '+12%', direction: 'up', tone: 'positive', period: 'vs last week' }} />", "compat": {"platforms": ["ios", "android", "web"]}},
+    "composites.peoplestack": {"summary": "Overlapping avatar stack with overflow count.", "capabilities": ["social.people", "media.avatar"], "experiences": ["social", "item-detail"], "props": "people: { id; name; uri? }[]; maxVisible?: number; size?: number; onPress?", "constraints": [], "recipe": "<PeopleStack people={attendees} maxVisible={4} onPress={showAttendees} />", "compat": {"platforms": ["ios", "android", "web"]}},
+    "patterns.storyrail": {"summary": "Premium horizontal rail of avatar stories with unread/live rings and optional add button.", "capabilities": ["social.stories", "media.avatar"], "experiences": ["social"], "props": "stories: { id; name; avatarUri?; hasUnread?; isLive? }[]; onPressStory: (id) => void; onPressAdd?; addLabel?; size?", "constraints": ["Horizontal scroll must not capture vertical page scroll."], "recipe": "<StoryRail stories={stories} onPressStory={openStory} onPressAdd={addStory} />", "compat": {"platforms": ["ios", "android", "web"]}},
+    "patterns.discoveryfilters": {"summary": "Premium toggleable filter chips with counts and a clear action.", "capabilities": ["filter.chips", "input.choice-multiple"], "experiences": ["browse-collection"], "props": "options: { id; label; count?; icon? }[]; selectedIds: string[]; onToggle: (id) => void; onClear?; clearLabel?", "constraints": ["Keep selected filters in route state so they survive back navigation."], "recipe": "<DiscoveryFilters options={filters} selectedIds={selected} onToggle={toggle} onClear={() => setSelected([])} />", "compat": {"platforms": ["ios", "android", "web"]}},
+    "patterns.identityheader": {"summary": "Premium person/organization header: avatar, verified mark, handle, bio, stats and actions.", "capabilities": ["profile.header", "media.avatar", "action.primary"], "experiences": ["profile"], "props": "name: string; avatarUri?; verified?; handle?; bio?; stats?: { label; value }[]; primaryAction?: { label; onPress; variant? }; secondaryAction?: { label; onPress }", "constraints": [], "recipe": "<IdentityHeader name={org.name} handle={org.handle} stats={[{ label: 'Events', value: 12 }]} primaryAction={{ label: 'Follow', onPress: follow }} />", "compat": {"platforms": ["ios", "android", "web"]}},
+    "patterns.progressjourney": {"summary": "Premium vertical timeline of steps with completed/active/upcoming/failed status.", "capabilities": ["feedback.timeline", "feedback.progress"], "experiences": ["dashboard", "guided-setup"], "props": "steps: { id; title; description?; timestamp?; status: 'completed'|'active'|'upcoming'|'failed' }[]; onPressStep?: (id) => void", "constraints": [], "recipe": "<ProgressJourney steps={orderSteps} />", "compat": {"platforms": ["ios", "android", "web"]}},
+    "patterns.statustracker": {"summary": "Premium status card with tone, progress, ETA and one action.", "capabilities": ["feedback.status", "feedback.progress", "action.primary"], "experiences": ["dashboard"], "props": "title: string; statusLabel: string; tone?: 'info'|'success'|'warning'|'danger'; description?; progress?: number (0-1); estimatedTime?; primaryAction?: { label; onPress }", "constraints": [], "recipe": "<StatusTracker title=\"Event setup\" statusLabel=\"In review\" tone=\"info\" progress={0.6} />", "compat": {"platforms": ["ios", "android", "web"]}}
   }
 }
