@@ -2,7 +2,6 @@ import React from 'react';
 import { Pressable, View, type PressableProps } from 'react-native';
 import { Text } from '../primitives/Text';
 import { useTheme } from '../foundation/theme';
-import { tokens } from '../foundation/tokens';
 
 export interface ListItemProps extends Omit<PressableProps, 'children'> {
   title: string;
@@ -21,7 +20,7 @@ export function ListItem({
   style,
   ...props
 }: ListItemProps) {
-  const { colors } = useTheme();
+  const { colors, tokens } = useTheme();
   const isInteractive = Boolean(props.onPress);
   const shouldShowChevron = showChevron ?? (isInteractive && !trailing);
 

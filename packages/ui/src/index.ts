@@ -62,3 +62,8 @@ export * from './composites/BottomSheet';
 export * from './controls/PinInput';
 export * from './controls/RatingBar';
 export * from './patterns/SlideToConfirm';
+export * from './controls/RadialProgress';
+export * from './patterns/GlanceHero';
+export * from './composites/ControlTile';
+export * from './patterns/LiveActivityCard';
+export * from './patterns/HeroPrompt';

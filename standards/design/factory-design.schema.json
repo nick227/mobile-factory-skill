@@ -1,0 +1,64 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "FactoryDesignConfig",
+  "description": "Validated mobile software factory multi-axis design configuration.",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "preset": {
+      "type": "string",
+      "enum": [
+        "minimal-pro",
+        "kyoto-craft",
+        "fintech-midnight",
+        "wellness-botanical",
+        "editorial-luxury",
+        "playful-consumer"
+      ],
+      "description": "Prefabbed archetype preset serving as the design foundation."
+    },
+    "palette": {
+      "type": "string",
+      "enum": ["default", "kyoto", "midnight", "emerald", "crimson", "amber"],
+      "description": "Color palette selection."
+    },
+    "radius": {
+      "type": "string",
+      "enum": ["sharp", "smooth", "curved"],
+      "description": "Corner geometry radius scale."
+    },
+    "density": {
+      "type": "string",
+      "enum": ["compact", "comfortable", "spacious"],
+      "description": "Spacing cadence and tap target density."
+    },
+    "typography": {
+      "type": "string",
+      "enum": ["compact", "default", "editorial"],
+      "description": "Typography scale and hierarchy proportions."
+    },
+    "surface": {
+      "type": "string",
+      "enum": ["flat", "outlined", "elevated"],
+      "description": "Card, modal, and container surface treatment."
+    },
+    "layout": {
+      "type": "string",
+      "enum": ["standard", "editorial", "immersive"],
+      "description": "Screen layout and content arrangement rhythm."
+    },
+    "media": {
+      "type": "string",
+      "enum": ["contained", "edge-to-edge", "mosaic"],
+      "description": "Photography and media frame presentation style."
+    },
+    "mode": {
+      "type": "string",
+      "enum": ["light", "dark", "system"],
+      "description": "Color appearance mode."
+    }
+  },
+  "additionalProperties": false
+}

@@ -9,6 +9,7 @@ import { ProgressDashboardScenario } from './ProgressDashboardScenario';
 import { MarketplaceCommerceScenario } from './MarketplaceCommerceScenario';
 import { ActivityTimelineScenario } from './ActivityTimelineScenario';
 import { ThemeStudioScenario } from './ThemeStudioScenario';
+import { ZenLockscreenScenario } from './ZenLockscreenScenario';
 
 export const scenarios: Record<string, () => React.JSX.Element> = {
   settings: SettingsScenario,
@@ -21,4 +22,5 @@ export const scenarios: Record<string, () => React.JSX.Element> = {
   marketplaceCommerce: MarketplaceCommerceScenario,
   activityTimeline: ActivityTimelineScenario,
   themeStudio: ThemeStudioScenario,
+  zenLockscreen: ZenLockscreenScenario,
 };

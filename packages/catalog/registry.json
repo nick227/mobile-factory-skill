@@ -618,5 +618,55 @@
     "exportName": "SlideToConfirm",
     "showcase": "SlideToConfirm",
     "test": "tests/SlideToConfirm.test.tsx"
+  },
+  {
+    "id": "controls.radialprogress",
+    "name": "RadialProgress",
+    "category": "controls",
+    "status": "preview",
+    "source": "controls/RadialProgress.tsx",
+    "exportName": "RadialProgress",
+    "showcase": "RadialProgress",
+    "test": "tests/RadialProgress.test.tsx"
+  },
+  {
+    "id": "patterns.glancehero",
+    "name": "GlanceHero",
+    "category": "patterns",
+    "status": "preview",
+    "source": "patterns/GlanceHero.tsx",
+    "exportName": "GlanceHero",
+    "showcase": "GlanceHero",
+    "test": "tests/GlanceHero.test.tsx"
+  },
+  {
+    "id": "composites.controltile",
+    "name": "ControlTile",
+    "category": "composites",
+    "status": "preview",
+    "source": "composites/ControlTile.tsx",
+    "exportName": "ControlTile",
+    "showcase": "ControlTile",
+    "test": "tests/ControlTile.test.tsx"
+  },
+  {
+    "id": "patterns.liveactivitycard",
+    "name": "LiveActivityCard",
+    "category": "patterns",
+    "status": "preview",
+    "source": "patterns/LiveActivityCard.tsx",
+    "exportName": "LiveActivityCard",
+    "showcase": "LiveActivityCard",
+    "test": "tests/LiveActivityCard.test.tsx"
+  },
+  {
+    "id": "patterns.heroprompt",
+    "name": "HeroPrompt",
+    "category": "patterns",
+    "status": "preview",
+    "source": "patterns/HeroPrompt.tsx",
+    "exportName": "HeroPrompt",
+    "showcase": "HeroPrompt",
+    "test": "tests/HeroPrompt.test.tsx"
   }
 ]

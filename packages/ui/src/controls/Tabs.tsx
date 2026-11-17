@@ -1,7 +1,6 @@
 import React from 'react';
 import { View, Pressable, ScrollView, type ViewStyle, type StyleProp } from 'react-native';
 import { useTheme } from '../foundation/theme';
-import { tokens } from '../foundation/tokens';
 import { Text } from '../primitives/Text';
 
 export interface TabItem {
@@ -28,7 +27,7 @@ export function Tabs({
   scrollable = false,
   style,
 }: TabsProps) {
-  const { colors, mode } = useTheme();
+  const { colors, mode, tokens } = useTheme();
 
   const tabList = (
     <View

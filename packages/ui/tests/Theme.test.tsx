@@ -126,3 +126,40 @@ test('ThemeProvider updates theme dynamically via setTheme and setPreset', () =>
   assert.equal(themeValues.mode, 'dark');
   assert.equal(themeValues.colors.primary, palettes.emerald.dark.primary);
 });
+
+test('components react dynamically to theme radius and media axes', () => {
+  const { Button } = require('../src/controls/Button');
+  const { MediaFrame } = require('../src/composites/MediaFrame');
+  const { Screen } = require('../src/primitives/Screen');
+
+  let sharpTree: any;
+  act(() => {
+    sharpTree = renderer.create(
+      <ThemeProvider radius="sharp" media="edge-to-edge" layout="immersive">
+        <Screen>
+          <Button label="Sharp Action" />
+          <MediaFrame source="https://example.com/photo.jpg" />
+        </Screen>
+      </ThemeProvider>
+    );
+  });
+
+  const sharpJson = sharpTree.toJSON();
+  // Screen immersive padding should be 0
+  assert.equal(sharpJson.props.style.find((s: any) => s && s.padding !== undefined)?.padding, 0);
+
+  // Button in sharp theme should have radius of 2 (sharp scale)
+  const buttonView = sharpJson.children[0];
+  const buttonStyle = Array.isArray(buttonView.props.style)
+    ? buttonView.props.style.find((s: any) => s && s.borderRadius !== undefined)
+    : buttonView.props.style;
+  assert.equal(buttonStyle.borderRadius, radiusScales.sharp.md);
+
+  // MediaFrame with media="edge-to-edge" should have 0 radius and 0 borderWidth
+  const mediaContainer = sharpJson.children[1];
+  const mediaStyle = Array.isArray(mediaContainer.props.style)
+    ? mediaContainer.props.style.find((s: any) => s && s.borderRadius !== undefined)
+    : mediaContainer.props.style;
+  assert.equal(mediaStyle.borderRadius, 0);
+  assert.equal(mediaStyle.borderWidth, 0);
+});

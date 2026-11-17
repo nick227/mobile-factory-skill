@@ -10,7 +10,6 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../foundation/theme';
-import { tokens } from '../foundation/tokens';
 import { Text } from '../primitives/Text';
 
 export interface BottomSheetProps {
@@ -36,7 +35,7 @@ export function BottomSheet({
   scrollable = false,
   style,
 }: BottomSheetProps) {
-  const { colors } = useTheme();
+  const { colors, tokens } = useTheme();
   const insets = useSafeAreaInsets();
 
   const handleDismiss = () => {
@@ -68,6 +67,8 @@ export function BottomSheet({
             {
               backgroundColor: colors.surface,
               borderColor: colors.border,
+              borderTopLeftRadius: tokens.radius.lg,
+              borderTopRightRadius: tokens.radius.lg,
               paddingBottom: Math.max(insets.bottom, tokens.spacing.md),
             },
             style,
@@ -145,14 +146,14 @@ const styles = StyleSheet.create({
   sheetContainer: {
     width: '100%',
     maxHeight: '85%',
-    borderTopLeftRadius: tokens.radius.lg,
-    borderTopRightRadius: tokens.radius.lg,
+    borderTopLeftRadius: 16,
+    borderTopRightRadius: 16,
     borderTopWidth: StyleSheet.hairlineWidth,
     overflow: 'hidden',
   },
   handleSlot: {
     alignItems: 'center',
-    paddingVertical: tokens.spacing.sm,
+    paddingVertical: 8,
   },
   grabHandle: {
     width: 36,
@@ -163,12 +164,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'flex-start',
     justifyContent: 'space-between',
-    paddingHorizontal: tokens.spacing.lg,
-    paddingBottom: tokens.spacing.sm,
+    paddingHorizontal: 20,
+    paddingBottom: 8,
   },
   headerTitleSlot: {
     flex: 1,
-    paddingRight: tokens.spacing.sm,
+    paddingRight: 8,
     gap: 2,
   },
   titleText: {
@@ -189,15 +190,15 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   content: {
-    paddingHorizontal: tokens.spacing.lg,
-    paddingVertical: tokens.spacing.sm,
+    paddingHorizontal: 20,
+    paddingVertical: 8,
   },
   scrollContent: {
-    paddingHorizontal: tokens.spacing.lg,
-    paddingVertical: tokens.spacing.sm,
+    paddingHorizontal: 20,
+    paddingVertical: 8,
   },
   footer: {
-    paddingHorizontal: tokens.spacing.lg,
-    paddingTop: tokens.spacing.sm,
+    paddingHorizontal: 20,
+    paddingTop: 8,
   },
 });

@@ -1,0 +1,5 @@
+{
+  "$schema": "./standards/design/factory-design.schema.json",
+  "preset": "minimal-pro",
+  "mode": "system"
+}

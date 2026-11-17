@@ -8,7 +8,6 @@ import {
   type AccessibilityActionEvent,
 } from 'react-native';
 import { useTheme } from '../foundation/theme';
-import { tokens } from '../foundation/tokens';
 import { Text } from '../primitives/Text';
 
 export interface StepperProps {
@@ -36,7 +35,7 @@ export function Stepper({
   size = 'md',
   style,
 }: StepperProps) {
-  const { colors } = useTheme();
+  const { colors, tokens } = useTheme();
 
   const canDecrement = !disabled && value > min;
   const canIncrement = !disabled && value < max;
@@ -183,7 +182,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
-    padding: tokens.spacing.xs,
+    padding: 4,
     alignSelf: 'flex-start',
   },
   disabledRoot: {
@@ -201,7 +200,7 @@ const styles = StyleSheet.create({
   valueSlot: {
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: tokens.spacing.sm,
+    paddingHorizontal: 8,
   },
   valueText: {
     fontWeight: '700',

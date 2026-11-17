@@ -8,7 +8,6 @@ import {
   type ViewStyle,
 } from 'react-native';
 import { useTheme } from '../foundation/theme';
-import { tokens } from '../foundation/tokens';
 import { Text } from '../primitives/Text';
 
 export interface PinInputProps {
@@ -38,7 +37,7 @@ export function PinInput({
   onComplete,
   style,
 }: PinInputProps) {
-  const { colors } = useTheme();
+  const { colors, tokens } = useTheme();
   const inputRef = useRef<any>(null);
   const [isFocused, setIsFocused] = useState(false);
 
@@ -78,6 +77,7 @@ export function PinInput({
               ? colors.text
               : colors.border,
             borderWidth: isCurrent ? 2 : 1,
+            borderRadius: tokens.radius.md,
           },
           disabled && styles.disabledCell,
         ]}
@@ -85,7 +85,7 @@ export function PinInput({
         <Text
           style={[
             styles.digitText,
-            { color: colors.text },
+            { color: colors.text, fontSize: tokens.typography.title },
           ]}
         >
           {digit ? (mask ? '•' : digit) : ''}
@@ -95,7 +95,7 @@ export function PinInput({
   });
 
   return (
-    <View style={[styles.root, style]}>
+    <View style={[styles.root, { gap: tokens.spacing.xs }, style]}>
       {label ? (
         <Text variant="small" style={styles.label}>
           {label}
@@ -106,7 +106,7 @@ export function PinInput({
         onPress={handleCellPress}
         accessibilityRole="none"
         accessibilityLabel={`${label}, ${cleanValue.length} of ${length} digits entered`}
-        style={styles.cellsRow}
+        style={[styles.cellsRow, { gap: tokens.spacing.sm }]}
       >
         {cells}
       </Pressable>
@@ -145,7 +145,7 @@ export function PinInput({
 
 const styles = StyleSheet.create({
   root: {
-    gap: tokens.spacing.xs,
+    gap: 4,
     width: '100%',
   },
   label: {
@@ -154,14 +154,14 @@ const styles = StyleSheet.create({
   cellsRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: tokens.spacing.sm,
+    gap: 8,
     justifyContent: 'center',
-    paddingVertical: tokens.spacing.xs,
+    paddingVertical: 4,
   },
   cell: {
     width: 44,
     height: 52,
-    borderRadius: tokens.radius.md,
+    borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -169,7 +169,7 @@ const styles = StyleSheet.create({
     opacity: 0.5,
   },
   digitText: {
-    fontSize: tokens.typography.title,
+    fontSize: 20,
     fontWeight: '700',
     textAlign: 'center',
   },

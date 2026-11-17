@@ -8,7 +8,6 @@ import {
   type AccessibilityActionEvent,
 } from 'react-native';
 import { useTheme } from '../foundation/theme';
-import { tokens } from '../foundation/tokens';
 import { Text } from '../primitives/Text';
 
 export interface RatingBarProps {
@@ -34,7 +33,7 @@ export function RatingBar({
   symbol = 'star',
   style,
 }: RatingBarProps) {
-  const { colors } = useTheme();
+  const { colors, tokens } = useTheme();
 
   const handleSelect = (index: number) => {
     if (disabled || !onValueChange) return;
@@ -96,7 +95,7 @@ export function RatingBar({
 
   return (
     <View
-      style={[styles.root, style]}
+      style={[styles.root, { gap: tokens.spacing.sm }, style]}
       accessibilityRole="adjustable"
       accessibilityLabel={label}
       accessibilityValue={{
@@ -130,7 +129,7 @@ const styles = StyleSheet.create({
   root: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: tokens.spacing.sm,
+    gap: 8,
     alignSelf: 'flex-start',
   },
   starsRow: {

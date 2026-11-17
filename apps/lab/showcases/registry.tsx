@@ -1,6 +1,11 @@
 import React, { useState } from 'react';
 import { Switch, View } from 'react-native';
-import { Text, Stack, Row, Surface, Divider, Screen, Button, TextField, Badge, ListItem, SettingsGroup, useTheme, Spacer, IconButton, Toggle, Checkbox, RadioGroup, SegmentedControl, ProgressBar, Spinner, Avatar, SectionHeader, EmptyState, FormField, ActionFooter, ScreenHeader, FocusScreen, StepProgress, InputStage, ActionDock, CalmSkeleton, MediaFrame, SwipePager, EditorialMosaic, ImmersiveHero, ChoiceGallery, FocusWizard, Portal, PortalHost, PortalProvider, Select, Tabs, Dialog, AlertDialog, Accordion, SchedulePicker, MetricSpotlight, PeopleStack, StoryRail, DiscoveryFilters, IdentityHeader, ProgressJourney, StatusTracker, SelectionDock, SmartChecklist, ActivityCalendar, ProductShowcase, RichActivityTimeline, SearchBar, Stepper, NoticeBanner, BottomSheet, PinInput, RatingBar, SlideToConfirm } from '@factory/ui';
+import { Text, Stack, Row, Surface, Divider, Screen, Button, TextField, Badge, ListItem, SettingsGroup, useTheme, Spacer, IconButton, Toggle, Checkbox, RadioGroup, SegmentedControl, ProgressBar, Spinner, Avatar, SectionHeader, EmptyState, FormField, ActionFooter, ScreenHeader, FocusScreen, StepProgress, InputStage, ActionDock, CalmSkeleton, MediaFrame, SwipePager, EditorialMosaic, ImmersiveHero, ChoiceGallery, FocusWizard, Portal, PortalHost, PortalProvider, Select, Tabs, Dialog, AlertDialog, Accordion, SchedulePicker, MetricSpotlight, PeopleStack, StoryRail, DiscoveryFilters, IdentityHeader, ProgressJourney, StatusTracker, SelectionDock, SmartChecklist, ActivityCalendar, ProductShowcase, RichActivityTimeline, SearchBar, Stepper, NoticeBanner, BottomSheet, PinInput, RatingBar, SlideToConfirm, RadialProgress, GlanceHero, ControlTile, LiveActivityCard } from '@factory/ui';
+import { RadialProgressShowcase } from './RadialProgress.showcase';
+import { GlanceHeroShowcase } from './GlanceHero.showcase';
+import { ControlTileShowcase } from './ControlTile.showcase';
+import { LiveActivityCardShowcase } from './LiveActivityCard.showcase';
+import { HeroPromptShowcase } from './HeroPrompt.showcase';
 
 export const showcases: Record<string, () => React.JSX.Element> = {
   Text: () => <Stack><Text variant="title">Title typography</Text><Text variant="heading">Section heading</Text><Text>Body text supports dynamic type.</Text><Text muted variant="small">Secondary caption</Text></Stack>,
@@ -765,4 +770,9 @@ export const showcases: Record<string, () => React.JSX.Element> = {
       </Stack>
     );
   },
+  RadialProgress: RadialProgressShowcase,
+  GlanceHero: GlanceHeroShowcase,
+  ControlTile: ControlTileShowcase,
+  LiveActivityCard: LiveActivityCardShowcase,
+  HeroPrompt: HeroPromptShowcase,
 };

@@ -2,7 +2,6 @@ import React from 'react';
 import { ActivityIndicator, Pressable, View, type PressableProps, type ViewStyle } from 'react-native';
 import { Text } from '../primitives/Text';
 import { useTheme } from '../foundation/theme';
-import { tokens } from '../foundation/tokens';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost';
 export type ButtonSize = 'sm' | 'md' | 'lg';
@@ -33,7 +32,7 @@ export function Button({
   onPress,
   ...props
 }: ButtonProps) {
-  const { colors } = useTheme();
+  const { colors, tokens } = useTheme();
   const inactive = Boolean(disabled || loading);
   const solid = variant === 'primary';
   const isDanger = tone === 'danger';

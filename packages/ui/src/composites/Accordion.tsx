@@ -1,7 +1,6 @@
 import React from 'react';
 import { View, Pressable, type ViewStyle, type StyleProp } from 'react-native';
 import { useTheme } from '../foundation/theme';
-import { tokens } from '../foundation/tokens';
 import { Text } from '../primitives/Text';
 import { Divider } from '../primitives/Divider';
 
@@ -26,7 +25,7 @@ export function Accordion({
   onToggle,
   style,
 }: AccordionProps) {
-  const { colors } = useTheme();
+  const { colors, tokens } = useTheme();
 
   return (
     <View

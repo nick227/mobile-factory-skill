@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Pressable, Modal, FlatList, type ViewStyle, type StyleProp } from 'react-native';
 import { useTheme } from '../foundation/theme';
-import { tokens, geometry } from '../foundation/tokens';
+import { geometry } from '../foundation/tokens';
 import { Text } from '../primitives/Text';
 
 export interface SelectOption {
@@ -33,7 +33,7 @@ export function Select({
   disabled = false,
   style,
 }: SelectProps) {
-  const { colors } = useTheme();
+  const { colors, tokens } = useTheme();
   const [modalVisible, setModalVisible] = useState(false);
 
   const selectedOption = options.find((o) => o.value === value);

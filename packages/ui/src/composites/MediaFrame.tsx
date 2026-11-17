@@ -3,7 +3,7 @@ import { View, StyleSheet, type ImageStyle, type ViewStyle } from 'react-native'
 import { Image, type ImageSource } from 'expo-image';
 import { Text } from '../primitives/Text';
 import { useTheme } from '../foundation/theme';
-import { geometry, tokens } from '../foundation/tokens';
+import { geometry } from '../foundation/tokens';
 
 export interface MediaFrameProps {
   source?: ImageSource | string | number | null;
@@ -22,16 +22,27 @@ export function MediaFrame({
   fit = 'cover',
   placeholder,
   label,
-  radius = 16,
+  radius,
   style,
   containerStyle,
 }: MediaFrameProps) {
-  const { colors } = useTheme();
+  const { colors, tokens, media } = useTheme();
   const [failed, setFailed] = useState(false);
   const usable = Number.isFinite(ratio) && ratio > 0 ? ratio : geometry.mediaRatios.square;
   const normalizedSource = typeof source === 'string' ? { uri: source } : source;
 
   const hasSource = Boolean(source) && !failed;
+
+  const effectiveRadius =
+    radius !== undefined
+      ? radius
+      : media === 'edge-to-edge'
+      ? 0
+      : media === 'mosaic'
+      ? tokens.radius.sm
+      : tokens.radius.lg;
+
+  const effectiveBorderWidth = media === 'edge-to-edge' ? 0 : 1;
 
   return (
     <View
@@ -41,9 +52,10 @@ export function MediaFrame({
         styles.container,
         {
           aspectRatio: usable,
-          borderRadius: radius,
+          borderRadius: effectiveRadius,
           backgroundColor: colors.surface,
           borderColor: colors.border,
+          borderWidth: effectiveBorderWidth,
         },
         containerStyle,
       ]}
@@ -60,7 +72,7 @@ export function MediaFrame({
           style={[styles.image, style]}
         />
       ) : (
-        <View style={styles.fallbackContainer}>
+        <View style={[styles.fallbackContainer, { padding: tokens.spacing.md }]}>
           <Text style={{ fontSize: 28, color: colors.muted, opacity: 0.6 }}>🖼️</Text>
           {label && (
             <Text muted variant="caption" style={{ marginTop: tokens.spacing.xs, textAlign: 'center' }}>
@@ -89,6 +101,6 @@ const styles = StyleSheet.create({
   fallbackContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    padding: tokens.spacing.md,
+    padding: 16,
   },
 });

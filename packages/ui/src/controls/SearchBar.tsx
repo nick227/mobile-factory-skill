@@ -10,7 +10,6 @@ import {
   type ViewStyle,
 } from 'react-native';
 import { useTheme } from '../foundation/theme';
-import { tokens } from '../foundation/tokens';
 import { Text } from '../primitives/Text';
 
 export interface SearchBarProps extends Omit<TextInputProps, 'style'> {
@@ -48,7 +47,7 @@ export function SearchBar({
   returnKeyType = 'search',
   ...restProps
 }: SearchBarProps) {
-  const { colors } = useTheme();
+  const { colors, tokens } = useTheme();
   const [isFocused, setIsFocused] = useState(false);
 
   const handleClear = () => {
@@ -68,13 +67,15 @@ export function SearchBar({
   const hasValue = value.length > 0;
 
   return (
-    <View style={[styles.root, style]}>
+    <View style={[styles.root, { gap: tokens.spacing.sm }, style]}>
       <View
         style={[
           styles.inputContainer,
           {
             backgroundColor: colors.surface,
             borderColor: isFocused ? colors.primary : colors.border,
+            borderRadius: tokens.radius.full,
+            paddingHorizontal: tokens.spacing.md,
           },
           disabled && styles.disabledContainer,
         ]}
@@ -165,7 +166,7 @@ const styles = StyleSheet.create({
   root: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: tokens.spacing.sm,
+    gap: 8,
     width: '100%',
   },
   inputContainer: {
@@ -173,15 +174,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     minHeight: 44,
-    borderRadius: tokens.radius.full,
+    borderRadius: 9999,
     borderWidth: 1,
-    paddingHorizontal: tokens.spacing.md,
+    paddingHorizontal: 16,
   },
   disabledContainer: {
     opacity: 0.5,
   },
   leadingIconSlot: {
-    marginRight: tokens.spacing.xs,
+    marginRight: 4,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -192,13 +193,13 @@ const styles = StyleSheet.create({
   },
   textInput: {
     flex: 1,
-    paddingVertical: tokens.spacing.xs,
-    paddingHorizontal: tokens.spacing.xs,
-    fontSize: tokens.typography.body,
+    paddingVertical: 4,
+    paddingHorizontal: 4,
+    fontSize: 16,
     minHeight: 40,
   },
   trailingSlot: {
-    marginLeft: tokens.spacing.xs,
+    marginLeft: 4,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -208,7 +209,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
-    marginLeft: tokens.spacing.xs,
+    marginLeft: 4,
   },
   clearIcon: {
     fontSize: 10,
@@ -216,8 +217,8 @@ const styles = StyleSheet.create({
     lineHeight: 12,
   },
   cancelButton: {
-    paddingHorizontal: tokens.spacing.xs,
-    paddingVertical: tokens.spacing.sm,
+    paddingHorizontal: 4,
+    paddingVertical: 8,
     justifyContent: 'center',
   },
 });

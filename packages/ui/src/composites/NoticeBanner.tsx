@@ -7,7 +7,6 @@ import {
   type ViewStyle,
 } from 'react-native';
 import { useTheme } from '../foundation/theme';
-import { tokens } from '../foundation/tokens';
 import { Text } from '../primitives/Text';
 import { Button } from '../controls/Button';
 
@@ -35,7 +34,7 @@ export function NoticeBanner({
   icon,
   style,
 }: NoticeBannerProps) {
-  const { colors, mode } = useTheme();
+  const { colors, mode, tokens } = useTheme();
 
   let toneColor: string = colors.primary;
   let defaultGlyph = 'ℹ';
@@ -65,6 +64,8 @@ export function NoticeBanner({
           backgroundColor,
           borderColor,
           borderRadius: tokens.radius.md,
+          padding: tokens.spacing.md,
+          gap: tokens.spacing.sm,
         },
         style,
       ]}
@@ -145,13 +146,13 @@ export function NoticeBanner({
 const styles = StyleSheet.create({
   root: {
     borderWidth: 1,
-    padding: tokens.spacing.md,
-    gap: tokens.spacing.sm,
+    padding: 16,
+    gap: 8,
   },
   contentRow: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    gap: tokens.spacing.sm,
+    gap: 8,
   },
   iconBadge: {
     width: 24,
@@ -174,14 +175,14 @@ const styles = StyleSheet.create({
   },
   title: {
     fontWeight: '600',
-    fontSize: tokens.typography.body,
+    fontSize: 16,
     lineHeight: 20,
   },
   description: {
     lineHeight: 18,
   },
   dismissButton: {
-    padding: tokens.spacing.xs,
+    padding: 4,
     justifyContent: 'center',
     alignItems: 'center',
   },

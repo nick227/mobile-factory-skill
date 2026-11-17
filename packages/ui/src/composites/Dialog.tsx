@@ -2,7 +2,6 @@ import React from 'react';
 import { View, Modal, Pressable, type ViewStyle, type StyleProp } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../foundation/theme';
-import { tokens } from '../foundation/tokens';
 import { Text } from '../primitives/Text';
 import { Button } from '../controls/Button';
 
@@ -37,7 +36,7 @@ export function Dialog({
   dismissible = true,
   style,
 }: DialogProps) {
-  const { colors } = useTheme();
+  const { colors, tokens } = useTheme();
   const insets = useSafeAreaInsets();
 
   const handleDismiss = () => {

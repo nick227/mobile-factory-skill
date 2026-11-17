@@ -10,7 +10,6 @@ import {
   type GestureResponderEvent,
 } from 'react-native';
 import { useTheme } from '../foundation/theme';
-import { tokens } from '../foundation/tokens';
 import { Text } from '../primitives/Text';
 
 export type SlideTone = 'primary' | 'success' | 'danger';
@@ -38,7 +37,7 @@ export function SlideToConfirm({
   tone = 'primary',
   style,
 }: SlideToConfirmProps) {
-  const { colors } = useTheme();
+  const { colors, tokens } = useTheme();
   const [trackWidth, setTrackWidth] = useState(0);
   const [dragOffset, setDragOffset] = useState(0);
   const startPageX = useRef(0);
@@ -104,6 +103,7 @@ export function SlideToConfirm({
         {
           backgroundColor: colors.surface,
           borderColor: confirmed ? toneColor : colors.border,
+          borderRadius: tokens.radius.full,
         },
         disabled && styles.disabledTrack,
         style,
@@ -119,6 +119,7 @@ export function SlideToConfirm({
           styles.fillTrack,
           {
             backgroundColor: toneColor,
+            borderRadius: tokens.radius.full,
             width: confirmed
               ? '100%'
               : thumbSize + padding * 2 + currentDrag,
@@ -190,7 +191,7 @@ export function SlideToConfirm({
 const styles = StyleSheet.create({
   track: {
     height: 56,
-    borderRadius: tokens.radius.full,
+    borderRadius: 9999,
     borderWidth: 1,
     padding: 4,
     justifyContent: 'center',
@@ -206,7 +207,7 @@ const styles = StyleSheet.create({
     left: 0,
     top: 0,
     bottom: 0,
-    borderRadius: tokens.radius.full,
+    borderRadius: 9999,
   },
   labelContainer: {
     position: 'absolute',
@@ -219,7 +220,7 @@ const styles = StyleSheet.create({
   },
   labelText: {
     fontWeight: '700',
-    fontSize: tokens.typography.body,
+    fontSize: 16,
     letterSpacing: 0.2,
   },
   thumb: {

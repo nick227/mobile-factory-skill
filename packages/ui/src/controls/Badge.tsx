@@ -1,7 +1,6 @@
 import React from 'react';
 import { View, StyleSheet, type ViewStyle } from 'react-native';
 import { Text } from '../primitives/Text';
-import { tokens } from '../foundation/tokens';
 import { useTheme } from '../foundation/theme';
 
 export type BadgeTone = 'neutral' | 'accent' | 'success' | 'warning' | 'danger';
@@ -13,7 +12,7 @@ export interface BadgeProps {
 }
 
 export function Badge({ label, tone = 'neutral', style }: BadgeProps) {
-  const { colors } = useTheme();
+  const { colors, tokens } = useTheme();
 
   let bg: string = colors.surface;
   let fg: string = colors.text;
@@ -36,7 +35,12 @@ export function Badge({ label, tone = 'neutral', style }: BadgeProps) {
     <View
       style={[
         styles.badge,
-        { backgroundColor: bg, borderColor: tone === 'neutral' ? colors.border : 'transparent' },
+        {
+          backgroundColor: bg,
+          borderColor: tone === 'neutral' ? colors.border : 'transparent',
+          paddingHorizontal: tokens.spacing.sm,
+          borderRadius: tokens.radius.full,
+        },
         style,
       ]}
     >
@@ -53,9 +57,7 @@ export function Badge({ label, tone = 'neutral', style }: BadgeProps) {
 const styles = StyleSheet.create({
   badge: {
     alignSelf: 'flex-start',
-    paddingHorizontal: tokens.spacing.sm,
     paddingVertical: 3,
-    borderRadius: tokens.radius.full,
     borderWidth: 1,
     alignItems: 'center',
     justifyContent: 'center',
