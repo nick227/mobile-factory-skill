@@ -5,6 +5,7 @@ import * as e from '../factory-v1/engine.mjs';
 import * as cat from '../factory-v1/catalog-contract.mjs';
 import * as plan from '../factory-v1/planner.mjs';
 import * as mods from '../factory-v1/modules.mjs';
+import { scaffoldWorkspace } from './scaffold-workspace.mjs';
 const [family,verb,...rest]=process.argv.slice(2);
 const flags=new Map();const args=[];
 for(let i=0;i<rest.length;i++){if(rest[i].startsWith('--'))flags.set(rest[i].slice(2),rest[++i]);else args.push(rest[i]);}
@@ -12,9 +13,10 @@ const dir=flags.get('project')||process.cwd();
 const output=data=>process.stdout.write(JSON.stringify(data,null,2)+'\n');
 const help={
  usage:'node scripts/factory.mjs <family> <action> [options]',
- actions:['project init --project PATH --name NAME [--mode lite|standard]','source add --project PATH --file DOC.md [--title T]','interview next --project PATH','interview record --project PATH (--file FINDINGS.json | --key K --value JSON [--status stated|inferred|proposed] [--quote "user words"] [--anchor s1:p3])','interview confirm KEYS|all --project PATH --quote "user words" [--values JSON]','blueprint set --project PATH --file BLUEPRINT.json','blueprint brief --project PATH','module recommend --project PATH','module add ID[,ID] --app APP_DIR [--dry-run true]','wireframe SCREEN_ID|all --project PATH','project status --project PATH','project update --project PATH --file PATCH.json','discovery next --project PATH','catalog search NEED [--capability CAP] [--experience EXP] [--min-maturity LEVEL] [--kind component|recipe] [--limit N]','catalog get ID [--role interview|document|construct]','catalog experiences','catalog check','blueprint audit --project PATH','blueprint approve --project PATH','blueprint export --project PATH','plan build --project PATH','plan next --project PATH','plan list --project PATH','plan task ID --project PATH','plan done ID --project PATH --evidence TEXT']};
+ actions:['app scaffold --project PATH','project init --project PATH --name NAME [--mode lite|standard]','source add --project PATH --file DOC.md [--title T]','interview next --project PATH','interview record --project PATH (--file FINDINGS.json | --key K --value JSON [--status stated|inferred|proposed] [--quote "user words"] [--anchor s1:p3])','interview confirm KEYS|all --project PATH --quote "user words" [--values JSON]','blueprint set --project PATH --file BLUEPRINT.json','blueprint brief --project PATH','module recommend --project PATH','module add ID[,ID] --app APP_DIR [--dry-run true]','wireframe SCREEN_ID|all --project PATH','project status --project PATH','project update --project PATH --file PATCH.json','discovery next --project PATH','catalog search NEED [--capability CAP] [--experience EXP] [--min-maturity LEVEL] [--kind component|recipe] [--limit N]','catalog get ID [--role interview|document|construct]','catalog experiences','catalog check','blueprint audit --project PATH','blueprint approve --project PATH','blueprint export --project PATH','plan build --project PATH','plan next --project PATH','plan list --project PATH','plan task ID --project PATH','plan done ID --project PATH --evidence TEXT']};
 try{
  if(!family||['help','--help','-h'].includes(family))output(help);
+ else if(family==='app'&&verb==='scaffold')output(scaffoldWorkspace(dir));
  else if(family==='project'&&verb==='init')output(plan.initProject(dir,flags.get('name')||path.basename(path.resolve(dir)),flags.get('mode')||'standard'));
  else if(family==='source'&&verb==='add')output(plan.addSource(dir,flags.get('file'),flags.get('title')));
  else if(family==='interview'&&verb==='next')output(plan.next(dir));
