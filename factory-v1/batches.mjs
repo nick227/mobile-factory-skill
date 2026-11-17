@@ -5,6 +5,7 @@ import { invalidate } from './planner.mjs';
 import * as appTypes from './app-archetypes.mjs';
 import * as objects from './object-schema.mjs';
 import * as functionality from './functionality.mjs';
+import * as implementations from './capability-resolution.mjs';
 import * as pages from './pages.mjs';
 import * as composition from './composition.mjs';
 import * as editorial from './editorial.mjs';
@@ -86,7 +87,7 @@ export function next(p, workflowStatus) {
       ...(id === 'classification' ? { catalog: 'catalog apps', choices: appTypes.list().map(a => a.id) } : {}),
       ...(id === 'objects' ? { suggestedDefaults: appTypes.expand(p.batches.selections.classification.type) } : {}),
       ...(id === 'functionality' ? { objectContract: objects.resolve(p.batches.selections.objects), capabilityCatalog: functionality.list(), suggestedCapabilities: appTypes.get(p.batches.selections.classification.type).defaults.capabilities } : {}),
-      ...(id === 'pages' ? { functionalityContract: functionality.resolve(p.batches.selections.functionality,p.batches.selections.objects), pageCatalog: pages.list(p.batches.selections.classification.type), suggestedPages:pages.suggest(p.batches.selections.classification.type,p.batches.selections.objects,p.batches.selections.functionality) } : {}),
+      ...(id === 'pages' ? { implementationResolution: implementations.resolve(p.batches.selections.functionality,p.batches.selections.objects), functionalityContract: functionality.resolve(p.batches.selections.functionality,p.batches.selections.objects), pageCatalog: pages.list(p.batches.selections.classification.type), suggestedPages:pages.suggest(p.batches.selections.classification.type,p.batches.selections.objects,p.batches.selections.functionality) } : {}),
       ...(id === 'composition' ? { pageInventory: pages.resolve(p.batches.selections.pages,p.batches.selections.classification.type,p.batches.selections.objects,p.batches.selections.functionality), contract: 'workflow composition --project <dir> after selecting all page compositions' } : {}),
       ...(id === 'content' ? { preview: 'workflow composition --project <dir>', note: 'Replace all synthetic fixture records and supply page titles; inspect the final spec before review.' } : {}),
       ...(id === 'review' ? { candidate: editorial.materialize(p), next: 'Inspect the materialized spec and save its hash with review evidence.' } : {}),
