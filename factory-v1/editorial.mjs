@@ -3,6 +3,7 @@
 import crypto from 'node:crypto';
 import { compile as draft } from './composition.mjs';
 import { validateSpec } from './assembler.mjs';
+import * as engineering from './engineering-contracts.mjs';
 
 const isObj=v=>v!==null&&typeof v==='object'&&!Array.isArray(v);
 const own=(v,k)=>Object.prototype.hasOwnProperty.call(v,k);
@@ -18,7 +19,8 @@ const context=p=>({name:p.name,type:p.batches.selections.classification.type,obj
 export function materialize(p,selection=p.batches?.selections?.content) {
   const s=p.batches?.selections;
   if(!s?.composition)throw Error('content: complete the composition batch first');
-  keys(selection,['pages','data','design'],'content');
+  keys(selection,['pages','data','design','engineering'],'content');
+  const contracts=engineering.fromProject(p,selection);
   const base=draft(s.composition,context(p)).spec;
   if(!isObj(selection.pages)||!isObj(selection.data))throw Error('content: pages and data objects required');
   const expected=Object.keys(s.composition);
@@ -88,15 +90,19 @@ export function materialize(p,selection=p.batches?.selections?.content) {
   }
   const check=validateSpec(base);
   if(!check.ok)throw Error('content: executable AppSpec failed validation: '+check.errors.join('; '));
-  return {spec:base,hash:sha256(base),warnings:check.warnings,source:'approved-blueprint-candidate'};
+  const hash=sha256(base);
+  const blueprintHash=contracts.length?sha256({appSpec:base,engineering:contracts}):hash;
+  return {spec:base,hash,blueprintHash,engineering:contracts,warnings:check.warnings,source:'approved-blueprint-candidate'};
 }
 export function review(p,selection){
-  keys(selection,['passed','evidence','specHash'],'review');
+  keys(selection,['passed','evidence','specHash','blueprintHash'],'review');
   if(selection.passed!==true)throw Error('review.passed: must be true after inspection');
   text(selection.evidence,'review.evidence');
   const final=materialize(p);
   if(selection.specHash!==final.hash)throw Error('review.specHash: does not match current executable AppSpec');
-  return {hash:final.hash,warnings:final.warnings};
+  if(final.engineering.length&&selection.blueprintHash!==final.blueprintHash)throw Error('review.blueprintHash: does not match approved implementation contracts');
+  if(!final.engineering.length&&selection.blueprintHash!==undefined&&selection.blueprintHash!==final.blueprintHash)throw Error('review.blueprintHash: stale blueprint');
+  return {hash:final.hash,blueprintHash:final.blueprintHash,warnings:final.warnings};
 }
 export function audit(p) {
   const problems=[];
@@ -108,16 +114,19 @@ export function audit(p) {
     candidate=materialize(p);
     review(p,p.batches.selections.review);
   }catch(e){problems.push({scope:'appSpec',message:e.message});}
-  const confirmed=(p.decisions??[]).some(d=>d?.type==='user-confirmation'&&d.revision===p.revision&&typeof d.value==='string'&&d.value.startsWith('USER: '));
+  const confirmed=(p.decisions??[]).some(d=>d?.type==='user-confirmation'&&d.revision===p.revision&&typeof d.value==='string'&&d.value.startsWith('USER: ')&&(!candidate?.engineering.length||d.blueprintHash===candidate.blueprintHash));
   if(!confirmed)problems.push({scope:'approval',message:'Explicit user confirmation for the exact current revision required'});
-  return {ready:problems.length===0,revision:p.revision,screenCount:candidate?Object.keys(candidate.spec.pages).length:0,appSpecHash:candidate?.hash,problems,warnings:candidate?.warnings??[]};
+  return {ready:problems.length===0,revision:p.revision,screenCount:candidate?Object.keys(candidate.spec.pages).length:0,appSpecHash:candidate?.hash,blueprintHash:candidate?.blueprintHash,engineering:candidate?.engineering??[],problems,warnings:candidate?.warnings??[]};
 }
 export function approved(p) {
   if(!p.batches)return false;
   try{
     const a=p.approval;
-    return Boolean(a&&a.revision===p.revision&&a.appSpecHash===materialize(p).hash&&
+    const plan=materialize(p);
+    return Boolean(a&&a.revision===p.revision&&a.appSpecHash===plan.hash&&
+      (!plan.engineering.length||a.blueprintHash===plan.blueprintHash)&&
       p.batches.selections.review?.specHash===a.appSpecHash&&
-      (p.decisions??[]).some(d=>d?.type==='user-confirmation'&&d.revision===p.revision&&typeof d.value==='string'&&d.value.startsWith('USER: ')));
+      (!plan.engineering.length||p.batches.selections.review?.blueprintHash===plan.blueprintHash)&&
+      (p.decisions??[]).some(d=>d?.type==='user-confirmation'&&d.revision===p.revision&&typeof d.value==='string'&&d.value.startsWith('USER: ')&&(!plan.engineering.length||d.blueprintHash===plan.blueprintHash)));
   }catch{return false;}
 }

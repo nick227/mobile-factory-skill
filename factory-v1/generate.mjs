@@ -30,6 +30,7 @@ function approvedSpec(project) {
   const check=engine.audit(state);
   if(!check.ready)throw Error('Generation blocked: blueprint audit failed: '+check.problems.map(p=>p.message).join('; '));
   const finalized=editorial.materialize(state);
+  if(finalized.engineering.length)throw Error('Generation blocked: approved custom engineering contracts require controlled construction; use engineering MR 3 workflow');
   if(finalized.hash!==state.approval.appSpecHash||finalized.hash!==state.batches.selections.review.specHash)
     throw Error('Generation blocked: executable AppSpec hash mismatch');
   const validation=assembler.validateSpec(finalized.spec);
