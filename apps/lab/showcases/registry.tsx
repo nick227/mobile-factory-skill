@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Switch, View } from 'react-native';
-import { Text, Stack, Row, Surface, Divider, Screen, Button, TextField, Badge, ListItem, SettingsGroup, useTheme, Spacer, IconButton, Toggle, Checkbox, RadioGroup, SegmentedControl, ProgressBar, Spinner, Avatar, SectionHeader, EmptyState, FormField, ActionFooter, ScreenHeader, FocusScreen, StepProgress, InputStage, ActionDock, CalmSkeleton, MediaFrame, SwipePager, EditorialMosaic, ImmersiveHero, ChoiceGallery, FocusWizard, Portal, PortalHost, PortalProvider, Select, Tabs, Dialog, AlertDialog, Accordion, SchedulePicker, MetricSpotlight, PeopleStack, StoryRail, DiscoveryFilters, IdentityHeader, ProgressJourney, StatusTracker } from '@factory/ui';
+import { Text, Stack, Row, Surface, Divider, Screen, Button, TextField, Badge, ListItem, SettingsGroup, useTheme, Spacer, IconButton, Toggle, Checkbox, RadioGroup, SegmentedControl, ProgressBar, Spinner, Avatar, SectionHeader, EmptyState, FormField, ActionFooter, ScreenHeader, FocusScreen, StepProgress, InputStage, ActionDock, CalmSkeleton, MediaFrame, SwipePager, EditorialMosaic, ImmersiveHero, ChoiceGallery, FocusWizard, Portal, PortalHost, PortalProvider, Select, Tabs, Dialog, AlertDialog, Accordion, SchedulePicker, MetricSpotlight, PeopleStack, StoryRail, DiscoveryFilters, IdentityHeader, ProgressJourney, StatusTracker, SelectionDock, SmartChecklist, ActivityCalendar, ProductShowcase, RichActivityTimeline } from '@factory/ui';
 
 export const showcases: Record<string, () => React.JSX.Element> = {
   Text: () => <Stack><Text variant="title">Title typography</Text><Text variant="heading">Section heading</Text><Text>Body text supports dynamic type.</Text><Text muted variant="small">Secondary caption</Text></Stack>,
@@ -469,5 +469,100 @@ export const showcases: Record<string, () => React.JSX.Element> = {
         }}
       />
     );
+  },
+  SelectionDock: function SelectionDockDemo() {
+    const [count, setCount] = useState(3);
+    return (
+      <Stack gap="md" style={{ minHeight: 180 }}>
+        <Row gap="sm">
+          <Button label="Select +1" size="sm" variant="outline" onPress={() => setCount((c) => c + 1)} />
+          <Button label="Clear All" size="sm" variant="ghost" onPress={() => setCount(0)} />
+        </Row>
+        <SelectionDock
+          selectedCount={count}
+          primaryAction={{ label: 'Export Selected', onPress: () => setCount(0) }}
+          secondaryAction={{ label: 'Delete', tone: 'danger', onPress: () => setCount(0) }}
+          onClear={() => setCount(0)}
+        />
+      </Stack>
+    );
+  },
+  SmartChecklist: function SmartChecklistDemo() {
+    const [items, setItems] = useState([
+      { id: '1', title: 'Submit architectural drawings', description: 'CAD or Vectorworks exports in PDF format', completed: true, required: true },
+      { id: '2', title: 'Zoning & height variance verification', description: 'Ensure compliance with Kyoto historic district bylaws', completed: true, required: true },
+      { id: '3', title: 'Acoustic & fire containment certificate', description: 'Signed inspection report from certified engineer', completed: false, required: true, badge: 'In Review', badgeTone: 'warning' as const },
+      { id: '4', title: 'Optional night photography permit', description: 'Allows tripod use in Gion preservation alleys', completed: false, badge: 'Optional' },
+    ]);
+    const toggle = (id: string, completed: boolean) => {
+      setItems((prev) => prev.map((item) => (item.id === id ? { ...item, completed } : item)));
+    };
+    return (
+      <SmartChecklist
+        title="Residency Readiness Checklist"
+        description="Complete all required items before moving into Studio 4."
+        items={items}
+        onToggle={toggle}
+        action={{
+          label: 'Finalize Application',
+          onPress: () => {},
+          disabled: !items.filter((i) => i.required).every((i) => i.completed),
+        }}
+      />
+    );
+  },
+  ActivityCalendar: function ActivityCalendarDemo() {
+    const [selected, setSelected] = useState('2026-11-18');
+    const marks = {
+      '2026-11-18': { hasEvents: true },
+      '2026-11-20': { hasEvents: true },
+      '2026-11-25': { hasEvents: true },
+    };
+    return (
+      <ActivityCalendar
+        selectedDate={selected}
+        onSelectDate={setSelected}
+        markedDates={marks}
+      />
+    );
+  },
+  ProductShowcase: function ProductShowcaseDemo() {
+    return (
+      <ProductShowcase
+        id="prod-1"
+        brand="Kihara Porcelain"
+        title="Arita Ware Hand-Glazed Matcha Bowl"
+        price="$120.00"
+        originalPrice="$145.00"
+        rating={4.9}
+        reviewCount={64}
+        stockStatus="in_stock"
+        onAddToCart={() => {}}
+      />
+    );
+  },
+  RichActivityTimeline: function RichActivityTimelineDemo() {
+    const events = [
+      {
+        id: 'ev-1',
+        user: { name: 'Kenzo Tange' },
+        title: 'Uploaded Timber Pavilion Frame CAD Revision 4',
+        timestamp: '15m ago',
+        badge: 'Blueprint',
+        badgeTone: 'accent' as const,
+        description: 'Updated interlocking beam mortise and tenon dimensions per workshop feedback.',
+        attachment: { title: 'pavilion_frame_v4.dwg', subtitle: '4.2 MB · 3D Model' },
+        actions: [{ label: 'Review CAD', onPress: () => {} }],
+      },
+      {
+        id: 'ev-2',
+        user: { name: 'Amina Diallo' },
+        title: 'Approved Safety Induction for Woodworking Shop',
+        timestamp: '2h ago',
+        badge: 'Verified',
+        badgeTone: 'success' as const,
+      },
+    ];
+    return <RichActivityTimeline events={events} />;
   },
 };

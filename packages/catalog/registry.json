@@ -498,5 +498,55 @@
     "exportName": "StatusTracker",
     "showcase": "StatusTracker",
     "test": "tests/StatusTracker.test.tsx"
+  },
+  {
+    "id": "patterns.selectiondock",
+    "name": "SelectionDock",
+    "category": "patterns",
+    "status": "verified",
+    "source": "patterns/SelectionDock.tsx",
+    "exportName": "SelectionDock",
+    "showcase": "SelectionDock",
+    "test": "tests/SelectionDock.test.tsx"
+  },
+  {
+    "id": "patterns.smartchecklist",
+    "name": "SmartChecklist",
+    "category": "patterns",
+    "status": "verified",
+    "source": "patterns/SmartChecklist.tsx",
+    "exportName": "SmartChecklist",
+    "showcase": "SmartChecklist",
+    "test": "tests/SmartChecklist.test.tsx"
+  },
+  {
+    "id": "patterns.activitycalendar",
+    "name": "ActivityCalendar",
+    "category": "patterns",
+    "status": "verified",
+    "source": "patterns/ActivityCalendar.tsx",
+    "exportName": "ActivityCalendar",
+    "showcase": "ActivityCalendar",
+    "test": "tests/ActivityCalendar.test.tsx"
+  },
+  {
+    "id": "patterns.productshowcase",
+    "name": "ProductShowcase",
+    "category": "patterns",
+    "status": "verified",
+    "source": "patterns/ProductShowcase.tsx",
+    "exportName": "ProductShowcase",
+    "showcase": "ProductShowcase",
+    "test": "tests/ProductShowcase.test.tsx"
+  },
+  {
+    "id": "patterns.richactivitytimeline",
+    "name": "RichActivityTimeline",
+    "category": "patterns",
+    "status": "verified",
+    "source": "patterns/RichActivityTimeline.tsx",
+    "exportName": "RichActivityTimeline",
+    "showcase": "RichActivityTimeline",
+    "test": "tests/RichActivityTimeline.test.tsx"
   }
 ]

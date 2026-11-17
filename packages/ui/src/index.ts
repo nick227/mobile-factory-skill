@@ -50,3 +50,8 @@ export * from './patterns/DiscoveryFilters';
 export * from './patterns/IdentityHeader';
 export * from './patterns/ProgressJourney';
 export * from './patterns/StatusTracker';
+export * from './patterns/SelectionDock';
+export * from './patterns/SmartChecklist';
+export * from './patterns/ActivityCalendar';
+export * from './patterns/ProductShowcase';
+export * from './patterns/RichActivityTimeline';
