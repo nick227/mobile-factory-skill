@@ -7,6 +7,7 @@ import * as plan from '../factory-v1/planner.mjs';
 import * as mods from '../factory-v1/modules.mjs';
 import * as orch from '../factory-v1/orchestrator.mjs';
 import * as batches from '../factory-v1/batches.mjs';
+import * as appTypes from '../factory-v1/app-archetypes.mjs';
 import * as asm from '../factory-v1/assembler.mjs';
 import { scaffoldWorkspace } from './scaffold-workspace.mjs';
 const [family,verb,...rest]=process.argv.slice(2);
@@ -16,7 +17,7 @@ const dir=flags.get('project')||process.cwd();
 const output=data=>process.stdout.write(JSON.stringify(data,null,2)+'\n');
 const help={
  usage:'node scripts/factory.mjs <family> <action> [options]',
- actions:['app scaffold --project PATH','workflow status --project PATH','workflow next --project PATH','workflow batch init --project PATH','workflow batch set ID --project PATH --file SELECTION.json','assemble check --spec APP.spec.json','assemble build --spec APP.spec.json --app APP_DIR [--dry-run true]','project init --project PATH --name NAME [--mode lite|standard]','source add --project PATH --file DOC.md [--title T]','interview next --project PATH','interview record --project PATH (--file FINDINGS.json | --key K --value JSON [--status stated|inferred|proposed] [--quote "user words"] [--anchor s1:p3])','interview confirm KEYS|all --project PATH --quote "user words" [--values JSON]','blueprint set --project PATH --file BLUEPRINT.json','blueprint brief --project PATH','module recommend --project PATH','module add ID[,ID] --app APP_DIR [--dry-run true]','wireframe SCREEN_ID|all --project PATH','project status --project PATH','project update --project PATH --file PATCH.json','discovery next --project PATH','catalog search NEED [--capability CAP] [--experience EXP] [--min-maturity LEVEL] [--kind component|recipe] [--limit N]','catalog get ID [--role interview|document|construct]','catalog experiences','catalog archetypes','catalog check','blueprint audit --project PATH','blueprint approve --project PATH','blueprint export --project PATH','plan build --project PATH','plan next --project PATH','plan list --project PATH','plan task ID --project PATH','plan done ID --project PATH --evidence TEXT']};
+ actions:['app scaffold --project PATH','workflow status --project PATH','workflow next --project PATH','workflow batch init --project PATH','workflow batch set ID --project PATH --file SELECTION.json','assemble check --spec APP.spec.json','assemble build --spec APP.spec.json --app APP_DIR [--dry-run true]','project init --project PATH --name NAME [--mode lite|standard]','source add --project PATH --file DOC.md [--title T]','interview next --project PATH','interview record --project PATH (--file FINDINGS.json | --key K --value JSON [--status stated|inferred|proposed] [--quote "user words"] [--anchor s1:p3])','interview confirm KEYS|all --project PATH --quote "user words" [--values JSON]','blueprint set --project PATH --file BLUEPRINT.json','blueprint brief --project PATH','module recommend --project PATH','module add ID[,ID] --app APP_DIR [--dry-run true]','wireframe SCREEN_ID|all --project PATH','project status --project PATH','project update --project PATH --file PATCH.json','discovery next --project PATH','catalog search NEED [--capability CAP] [--experience EXP] [--min-maturity LEVEL] [--kind component|recipe] [--limit N]','catalog get ID [--role interview|document|construct]','catalog experiences','catalog archetypes','catalog apps','catalog app ID','catalog check','blueprint audit --project PATH','blueprint approve --project PATH','blueprint export --project PATH','plan build --project PATH','plan next --project PATH','plan list --project PATH','plan task ID --project PATH','plan done ID --project PATH --evidence TEXT']};
 try{
  if(!family||['help','--help','-h'].includes(family))output(help);
  else if(family==='app'&&verb==='scaffold')output(scaffoldWorkspace(dir));
@@ -41,8 +42,10 @@ try{
  else if(family==='catalog'&&verb==='search')output(cat.find(cat.load(),{text:flags.get('query')||args.join(' '),capability:flags.get('capability'),experience:flags.get('experience'),minMaturity:flags.get('min-maturity'),kind:flags.get('kind'),limit:Number(flags.get('limit')||8)}));
  else if(family==='catalog'&&verb==='get')output(cat.view(cat.load(),args[0],flags.get('role')||'construct'));
  else if(family==='catalog'&&verb==='experiences')output(cat.experiences(cat.load()));
+ else if(family==='catalog'&&verb==='apps')output(appTypes.list());
+ else if(family==='catalog'&&verb==='app')output(appTypes.get(args[0]));
  else if((family==='catalog'&&verb==='archetypes')||family==='archetypes')output(cat.archetypes(dir));
- else if(family==='catalog'&&verb==='check'){const c=cat.load();output({errors:c.problems,warnings:c.warnings,items:c.items.length});if(c.problems.length)process.exitCode=1;}
+ else if(family==='catalog'&&verb==='check'){const c=cat.load();const errors=[...c.problems,...appTypes.validate(appTypes.load())];output({errors,warnings:c.warnings,items:c.items.length,applicationArchetypes:appTypes.list().length});if(errors.length)process.exitCode=1;}
  else if(family==='blueprint'&&verb==='audit')output(e.audit(e.load(dir)));
  else if(family==='blueprint'&&verb==='approve')output(e.approve(dir));
  else if(family==='blueprint'&&verb==='export')output(e.exportDocs(dir));

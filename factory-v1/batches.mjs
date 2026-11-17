@@ -2,6 +2,7 @@
 // Selections are canonical project state; future resolvers will validate catalog semantics.
 import * as engine from './engine.mjs';
 import { invalidate } from './planner.mjs';
+import * as appTypes from './app-archetypes.mjs';
 
 export const STAGES = Object.freeze([
   { id: 'classification', shape: '{ "type": "catalog-id" }' },
@@ -24,6 +25,7 @@ function validate(id, selection) {
   if (id === 'classification') {
     if (!isObj(selection) || Object.keys(selection).join(',') !== 'type' || typeof selection.type !== 'string' || !IDENTIFIER.test(selection.type))
       throw Error('classification: expected { "type": "catalog-id" }');
+    appTypes.get(selection.type);
   } else if (id === 'objects' || id === 'functionality' || id === 'pages') {
     ids(selection, id, id !== 'functionality');
   } else if (id === 'composition') {
@@ -73,7 +75,10 @@ export function next(p, workflowStatus) {
   const id = nextId(p);
   if (id) {
     const stage = STAGES.find(s => s.id === id);
-    return { kind: 'batch', id, shape: stage.shape, completed: STAGES.indexOf(stage), total: STAGES.length, command: `workflow batch set ${id} --project <dir> --file SELECTION.json` };
+    return { kind: 'batch', id, shape: stage.shape, completed: STAGES.indexOf(stage), total: STAGES.length,
+      ...(id === 'classification' ? { catalog: 'catalog apps', choices: appTypes.list().map(a => a.id) } : {}),
+      ...(id === 'objects' ? { suggestedDefaults: appTypes.expand(p.batches.selections.classification.type) } : {}),
+      command: `workflow batch set ${id} --project <dir> --file SELECTION.json` };
   }
   return { kind: 'segment', segment: workflowStatus.segment, next: workflowStatus.next, batchesComplete: true };
 }
