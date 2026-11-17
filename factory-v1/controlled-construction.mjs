@@ -108,11 +108,25 @@ export function inspect(projectDir,{runChecks=false}={}){
   const allowed=contracts.flatMap(c=>[...c.scope,taskDir(c.id)+'**']);
   const outside=changed.filter(k=>!allowed.some(scope=>fileMatch(k,scope)));
   const checks=contracts.map(c=>{
-    const source=changed.filter(k=>c.scope.some(s=>fileMatch(k,s))&&current[k]);
+    const source=changed.filter(k=>c.scope.some(s=>fileMatch(k,s))&&current[k]&&/\.(tsx?|m?js)$/.test(k));
     const tests=changed.filter(k=>fileMatch(k,taskDir(c.id)+'**')&&/\.test\.mjs$/.test(k)&&current[k]);
     const missing=[];
     if(!source.length)missing.push('No changed implementation source within approved scope');
     if(!tests.length)missing.push('No new or modified Node test within tests/engineering/'+c.id);
+    if(c.strategy!=='ejection'){
+      const entry=source.find(k=>k===c.scope[0].replace('/**','/index.ts')||k===c.scope[0].replace('/**','/index.tsx'));
+      if(!entry)missing.push('Missing index.ts or index.tsx entry point');
+      // The current Monad runtime does not have dynamic custom slots. A custom module
+      // must be imported by an explicitly approved/ejected route, not merely exist.
+      const ejections=contracts.filter(x=>x.strategy==='ejection');
+      const imported=ejections.some(x=>{
+        const route=x.scope[0];
+        if(!changed.includes(route)||!current[route])return false;
+        const code=fs.readFileSync(path.join(project,route),'utf8');
+        return code.includes('/src/'+(c.strategy==='adapter'?'adapters':'extensions')+'/'+c.id);
+      });
+      if(!imported)missing.push('No approved ejected page imports and consumes this module; integration unfinished');
+    }
     if(source.some(k=>fs.readFileSync(path.join(project,k),'utf8').includes('Unrolled ejected content')))
       missing.push('Ejected screen still contains placeholder content');
     // AEP output must remain registered so regenerate cannot silently overwrite an ejected route.

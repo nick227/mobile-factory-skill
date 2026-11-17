@@ -17,7 +17,7 @@ const contract=(strategy='extension')=>({
  acceptance:['Supports selecting audio ranges on device'],
  ...(strategy==='ejection'?{page:'tracker.home'}:{})
 });
-function project(strategy='extension'){
+function project(strategy='extension',extra=[]){
  const root=fs.mkdtempSync(path.join(os.tmpdir(),'engineering-construction-'));
  const dir=path.join(root,'approved-app');
  fs.mkdirSync(dir,{recursive:true});F.design(dir);batches.init(dir);
@@ -26,7 +26,7 @@ function project(strategy='extension'){
  batches.set(dir,'functionality',['activity.complete']);
  batches.set(dir,'pages',['tracker.home']);
  batches.set(dir,'composition',{'tracker.home':{kind:'detail',archetype:'glance-dashboard',bindings:{heading:'name',hero:'count'},actions:[{id:'activity.complete',placement:'primary',field:'done'}]}});
- batches.set(dir,'content',{pages:{'tracker.home':{title:'Today',primary:'Complete'}},data:{activity:[{id:'act-1',name:'Walk',count:'12',done:false}]},engineering:[contract(strategy)]});
+ batches.set(dir,'content',{pages:{'tracker.home':{title:'Today',primary:'Complete'}},data:{activity:[{id:'act-1',name:'Walk',count:'12',done:false}]},engineering:[contract(strategy),...extra]});
  const m=editorial.materialize(e.load(dir));
  batches.set(dir,'review',{passed:true,evidence:'Inspected specification and extension',specHash:m.hash,blueprintHash:m.blueprintHash});
  const p=e.load(dir);p.decisions=[{type:'user-confirmation',value:'USER: Approve scoped implementation',revision:p.revision,blueprintHash:m.blueprintHash}];e.save(dir,p);e.approve(dir);
@@ -58,11 +58,31 @@ test('only authorized code plus owned tests pass static diff validation',()=>{
  add(dir,'src/extensions/waveform/index.ts','export function range(audioUri: string) { return audioUri; }\n');
  add(dir,'tests/engineering/waveform/waveform.test.mjs',"import test from 'node:test'; test('range selection',()=>{});\n");
  const result=controlled.inspect(dir);
- assert.equal(result.scopeValid,true);
+ assert.equal(result.scopeValid,false);
  assert.deepEqual(result.outside,[]);
  assert.equal(result.ok,false);
+ assert.ok(result.errors.some(e=>e.includes('No approved ejected page')));
  assert.equal(result.contracts[0].source.length,1);
  assert.equal(result.contracts[0].tests.length,1);
+});
+test('extension is only accepted when imported by a separately approved ejected page',()=>{
+ const dir=project('extension',[{...contract('ejection'),id:'custom-home'}]);
+ controlled.prepare(dir);
+ add(dir,'src/extensions/waveform/index.ts','export const range=(uri: string)=>uri;\n');
+ add(dir,'tests/engineering/waveform/waveform.test.mjs',"import test from 'node:test'; test('waveform',()=>{});\n");
+ add(dir,'tests/engineering/custom-home/ejection.test.mjs',"import test from 'node:test'; test('custom page',()=>{});\n");
+ const target=path.join(dir,'app/index.tsx');
+ let code=fs.readFileSync(target,'utf8').replace('Unrolled ejected content for tracker-home. Customize this screen directly.','Waveform-enabled screen');
+ fs.writeFileSync(target,code);
+ const missing=controlled.inspect(dir);
+ assert.equal(missing.scopeValid,false);
+ assert.ok(missing.errors.some(x=>x.includes('No approved ejected page imports')));
+ code="import { range } from '@/src/extensions/waveform';\n"+code;
+ fs.writeFileSync(target,code);
+ const integrated=controlled.inspect(dir);
+ assert.equal(integrated.scopeValid,true,integrated.errors.join('; '));
+ assert.deepEqual(integrated.outside,[]);
+ assert.equal(integrated.ok,false); // must still run tests and typecheck
 });
 test('no arbitrary edits to runtime, generated routes, config or UI, including deletions',()=>{
  for(const rel of ['src/factory/app.ts','app/index.tsx','src/ui/index.ts','package.json']){
