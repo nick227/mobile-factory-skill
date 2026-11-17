@@ -5,8 +5,10 @@ import registry from '@factory/catalog/registry.json';
 import { Text, Badge, useTheme, tokens, SegmentedControl } from '@factory/ui';
 const scenarios = [
   { id: 'eventDiscovery', name: 'Event Discovery & Booking', description: 'Curated editorial feed, story rail, filters, calendar booking, dialog confirmation', category: 'editorial' },
+  { id: 'marketplaceCommerce', name: 'Artisan Marketplace & Cart', description: 'Product showcase cards, category filters, selection dock, and checkout modal', category: 'commerce' },
   { id: 'onboardingCheckout', name: 'Creator Onboarding & Checkout', description: 'Multi-step wizard, discipline gallery, tier selection, and live provisioning', category: 'onboarding' },
   { id: 'progressDashboard', name: 'Residency Progress Dashboard', description: 'Studio KPI spotlight, residency milestone roadmap, and workshop protocol tabs', category: 'dashboard' },
+  { id: 'activityTimeline', name: 'Pavilion Construction Hub', description: 'Live architectural audit logs, on-site quality punch lists, and site visit calendar', category: 'collaboration' },
   { id: 'focus', name: 'Focus-First Journey', description: 'Minimalist single-task focus sequence with calm loading and error recovery', category: 'focus' },
   { id: 'settings', name: 'Settings & Preferences', description: 'Grouped configuration options, toggles, and account profiles', category: 'settings' },
   { id: 'search', name: 'Search & Results Feed', description: 'Instant search filtering, result count badges, and empty states', category: 'search' },

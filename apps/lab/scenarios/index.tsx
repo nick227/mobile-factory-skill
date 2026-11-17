@@ -6,6 +6,8 @@ import { FocusJourneyScenario } from './FocusJourneyScenario';
 import { EventDiscoveryScenario } from './EventDiscoveryScenario';
 import { OnboardingCheckoutScenario } from './OnboardingCheckoutScenario';
 import { ProgressDashboardScenario } from './ProgressDashboardScenario';
+import { MarketplaceCommerceScenario } from './MarketplaceCommerceScenario';
+import { ActivityTimelineScenario } from './ActivityTimelineScenario';
 
 export const scenarios: Record<string, () => React.JSX.Element> = {
   settings: SettingsScenario,
@@ -15,4 +17,6 @@ export const scenarios: Record<string, () => React.JSX.Element> = {
   eventDiscovery: EventDiscoveryScenario,
   onboardingCheckout: OnboardingCheckoutScenario,
   progressDashboard: ProgressDashboardScenario,
+  marketplaceCommerce: MarketplaceCommerceScenario,
+  activityTimeline: ActivityTimelineScenario,
 };
