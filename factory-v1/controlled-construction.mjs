@@ -126,7 +126,8 @@ export function inspect(projectDir,{runChecks=false}={}){
   const errors=outside.map(k=>'Out-of-scope code change: '+k)
     .concat(checks.flatMap(c=>c.errors.map(msg=>c.id+': '+msg)));
   const result={ok:false,scopeValid:errors.length===0,changed,outside,contracts:checks,
-    testsRan:false,testsPassed:false,typecheckPassed:false,errors};
+    testsRan:false,testsPassed:false,typecheckPassed:false,errors,
+    manualAcceptanceRequired:contracts.map(c=>({id:c.id,platforms:c.platforms,criteria:c.acceptance}))};
   if(!runChecks||errors.length)return result;
   const testFiles=checks.flatMap(c=>c.tests);
   const tests=spawnSync(process.execPath,['--test',...testFiles],{cwd:project,encoding:'utf8',timeout:120000});
@@ -138,6 +139,5 @@ export function inspect(projectDir,{runChecks=false}={}){
   if(!result.typecheckPassed)result.errors.push('Typecheck failed: '+(typecheck.stderr||typecheck.error?.message||typecheck.stdout||'unknown').slice(0,700));
   result.ok=result.errors.length===0;
   // Passing automated checks is not equivalent to manual iOS/Android acceptance or deployment readiness.
-  result.manualAcceptanceRequired=contracts.map(c=>({id:c.id,platforms:c.platforms,criteria:c.acceptance}));
   return result;
 }
