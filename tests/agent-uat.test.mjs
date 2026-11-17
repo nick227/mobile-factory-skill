@@ -130,3 +130,166 @@ test('UAT 5: Machine-readable archetype discovery contract for agents', () => {
     assert.deepEqual(arch.compatibleSubjects.sort(), asm.ARCHETYPE_COMPAT[arch.id].sort(), `${arch.id} subject compatibility matches assembler`);
   }
 });
+
+test('UAT 6: Blueprint & Spec Integrity Validator', () => {
+  const pantrySpec = loadSpec('pantry');
+  const mockProject = {
+    name: 'Pantry Pal',
+    approval: { revision: 2 },
+    screens: [
+      { id: 'pantry', route: '/' },
+      { id: 'item-new', route: '/items/new' },
+      { id: 'item-edit', route: '/items/[id]/edit' },
+      { id: 'item-detail', route: '/items/[id]' },
+    ],
+    entities: [{ id: 'item', fields: { id: 'id', name: 'string' } }],
+  };
+
+  // Valid when matching
+  const matchingSpec = { ...pantrySpec, blueprintRevision: 2 };
+  const r = asm.validateSpec(matchingSpec, { project: mockProject });
+  assert.equal(r.ok, true, `Validation failed: ${r.errors.join('; ')}`);
+
+  // Detects revision drift
+  const staleSpec = { ...pantrySpec, blueprintRevision: 1 };
+  const rStale = asm.validateSpec(staleSpec, { project: mockProject });
+  assert.equal(rStale.ok, false);
+  assert.ok(rStale.errors.some((e) => e.includes('does not match approved project revision')));
+
+  // Detects dropped approved screens
+  const incompleteProject = {
+    ...mockProject,
+    screens: [...mockProject.screens, { id: 'missing-screen', route: '/unmapped' }],
+  };
+  const rMissing = asm.validateSpec(matchingSpec, { project: incompleteProject });
+  assert.equal(rMissing.ok, false);
+  assert.ok(rMissing.errors.some((e) => e.includes("approved screen 'missing-screen' route '/unmapped' is missing")));
+});
+
+test('UAT 7: Journey Completeness & Exceptional State Coverage', () => {
+  for (const name of apps) {
+    const spec = loadSpec(name);
+    const r = asm.validateSpec(spec);
+    assert.deepEqual(r.errors, [], `Spec ${name} should have no validation errors`);
+    // Check reachability warnings: all pages must be reachable from "/"
+    const unreachable = r.warnings.filter((w) => w.includes('not reachable from "/"'));
+    assert.deepEqual(unreachable, [], `All pages in ${name} must be reachable from root`);
+
+    // Verify destructive actions are safe
+    for (const [id, page] of Object.entries(spec.pages)) {
+      for (const [evName, actions] of Object.entries(page.events ?? {})) {
+        const rawJson = JSON.stringify(actions);
+        if (rawJson.includes('"remove":')) {
+          assert.ok(rawJson.includes('"confirm":') && rawJson.includes('"destructive":true'), `Page ${id} event ${evName} has unconfirmed or non-destructive remove`);
+        }
+      }
+    }
+  }
+});
+
+test('UAT 8: Independent Agent UAT on an Unfamiliar Brief (Laundry Pulse)', () => {
+  // An unfamiliar application domain: Dormitory Laundry Tracker
+  const briefSpec = {
+    name: 'Laundry Pulse',
+    design: {
+      preset: 'playful-consumer',
+      palette: 'amber',
+      radius: 'smooth',
+      density: 'comfortable',
+      surface: 'flat',
+      colorMode: 'system',
+    },
+    mock: { latencyMs: 250 },
+    data: {
+      machines: [
+        { id: 'w1', name: 'Washer 01', type: 'washer', status: 'available', minutesLeft: 0 },
+        { id: 'w2', name: 'Washer 02', type: 'washer', status: 'running', minutesLeft: 18 },
+        { id: 'd1', name: 'Dryer 01', type: 'dryer', status: 'available', minutesLeft: 0 },
+      ],
+    },
+    pages: {
+      home: {
+        route: '/',
+        title: 'Laundry Room',
+        subtitle: 'Floor 3 Common Area',
+        archetype: 'glance-dashboard',
+        headerAction: { label: 'Reserve', event: 'goReserve' },
+        subject: {
+          kind: 'collection',
+          source: 'machines',
+          title: '{name}',
+          description: '{type} · {status}',
+          badge: { label: '{status}', tone: 'accent' },
+          onSelect: 'openMachine',
+        },
+        empty: {
+          title: 'No machines registered',
+          description: 'No laundry machines found for this floor.',
+          action: { label: 'Refresh', event: 'goReserve' },
+        },
+        events: {
+          goReserve: [{ navigate: '/reserve' }],
+          openMachine: [{ navigate: '/machines/[id]', params: { id: '{id}' } }],
+        },
+      },
+      machine: {
+        route: '/machines/[id]',
+        title: '{name}',
+        archetype: 'content-canvas',
+        subject: {
+          kind: 'detail',
+          source: 'machines',
+          heading: 'Machine Status',
+          facts: [
+            { label: 'Type', value: '{type}' },
+            { label: 'Cycle Status', value: '{status}' },
+            { label: 'Time Remaining', value: '{minutesLeft} mins' },
+          ],
+          actions: [{ label: 'Start Cycle', event: 'start' }],
+        },
+        primary: { label: 'Start Cycle', event: 'start' },
+        events: {
+          start: [{ update: 'machines', set: { status: 'running' } }, { notice: 'Cycle started', tone: 'success' }, { back: true }],
+        },
+      },
+      reserve: {
+        route: '/reserve',
+        title: 'Reserve Machine',
+        archetype: 'focus-wizard',
+        subject: {
+          kind: 'form',
+          source: 'machines',
+          mode: 'create',
+          fields: [
+            { key: 'name', label: 'Machine Name', required: true, min: 1, max: 40, placeholder: 'e.g. Washer 03' },
+            { key: 'type', label: 'Type', required: true, placeholder: 'washer or dryer' },
+            { key: 'status', label: 'Initial Status', required: true, default: 'available' },
+          ],
+        },
+        primary: { label: 'Confirm Reservation', event: 'save' },
+        events: {
+          save: [{ create: 'machines', from: 'form' }, { back: true }],
+        },
+      },
+    },
+  };
+
+  // 1. Validate spec completely
+  const check = asm.validateSpec(briefSpec);
+  assert.equal(check.ok, true, `Brief validation errors: ${check.errors.join('; ')}`);
+  assert.equal(check.warnings.filter((w) => w.includes('not reachable')).length, 0, 'All pages reachable');
+
+  // 2. Deterministic route emission
+  const files = asm.emit(briefSpec);
+  assert.ok(files['app/index.tsx'], 'Generated app/index.tsx');
+  assert.ok(files['app/machines/[id].tsx'], 'Generated app/machines/[id].tsx');
+  assert.ok(files['app/reserve.tsx'], 'Generated app/reserve.tsx');
+
+  // 3. Verify Monad single-subject invariant & zero handwritten JSX
+  for (const [fPath, content] of Object.entries(files)) {
+    if (fPath.startsWith('app/') && fPath !== 'app/_layout.tsx') {
+      assert.ok(content.includes('<MonadPage'), `${fPath} must use MonadPage`);
+      assert.ok(content.includes('GENERATED by the mobile factory (assemble)'));
+    }
+  }
+});

@@ -20,7 +20,7 @@ const KIND_KEYS = {
   message: ['kind', 'heading', 'body'],
 };
 const PAGE_KEYS = ['route', 'title', 'subtitle', 'archetype', 'back', 'headerAction', 'subject', 'primary', 'events', 'empty'];
-const APP_KEYS = ['$schema', 'name', 'design', 'mock', 'data', 'settings', 'pages'];
+const APP_KEYS = ['$schema', 'name', 'blueprintRevision', 'blueprintHash', 'design', 'mock', 'data', 'settings', 'pages'];
 const FIELD_KEYS = ['key', 'label', 'type', 'required', 'min', 'max', 'placeholder', 'hint', 'default'];
 const FIELD_TYPES = ['text', 'multiline', 'number', 'date', 'email', 'toggle'];
 const FORMATS = ['date', 'relative', 'upper', 'yesno'];
@@ -62,7 +62,7 @@ const dynamicParams = (route) => segs(route).filter((s) => /^\[[^\]]+\]$/.test(s
 const isObj = (v) => v && typeof v === 'object' && !Array.isArray(v);
 
 /** Validate an app spec. Returns { ok, errors, warnings }; every message starts with a JSON path. */
-export function validateSpec(spec) {
+export function validateSpec(spec, { project = null } = {}) {
   const errors = [], warnings = [];
   const err = (p, m) => errors.push(`${p}: ${m}`);
   const unknownKeys = (obj, allowed, p) => { for (const k of Object.keys(obj ?? {})) if (!allowed.includes(k)) err(`${p}.${k}`, `unknown key (allowed: ${allowed.join(', ')})`); };
@@ -99,6 +99,34 @@ export function validateSpec(spec) {
     else routes.set(page.route, id);
   }
   if (![...routes.keys()].includes('/')) err('$.pages', 'one page must have route "/"');
+
+  // Blueprint / Project Integrity: Ensure spec accurately reflects project state when provided
+  if (project && typeof project === 'object') {
+    if (project.name && spec.name !== project.name) {
+      warnings.push(`$.name: spec name '${spec.name}' differs from project name '${project.name}'`);
+    }
+    if (project.approval?.revision !== undefined && spec.blueprintRevision !== undefined) {
+      if (spec.blueprintRevision !== project.approval.revision) {
+        err('$.blueprintRevision', `spec blueprintRevision (${spec.blueprintRevision}) does not match approved project revision (${project.approval.revision})`);
+      }
+    }
+    if (Array.isArray(project.screens) && project.screens.length > 0) {
+      const specRoutes = new Set(routes.keys());
+      for (const s of project.screens) {
+        if (s.route && !specRoutes.has(s.route)) {
+          err('$.pages', `approved screen '${s.id}' route '${s.route}' is missing from spec pages`);
+        }
+      }
+    }
+    if (Array.isArray(project.entities) && project.entities.length > 0) {
+      const collections = new Set(Object.keys(spec.data ?? {}));
+      for (const e of project.entities) {
+        if (!collections.has(e.id) && !collections.has(`${e.id}s`)) {
+          warnings.push(`$.data: entity '${e.id}' declared in project blueprint has no matching collection in spec.data`);
+        }
+      }
+    }
+  }
 
   for (const [id, page] of Object.entries(spec.pages)) {
     if (!isObj(page)) continue;
@@ -146,9 +174,9 @@ export function validateSpec(spec) {
 
     const refs = [];
     const ref = (ev, where) => { if (ev !== undefined) refs.push([ev, where]); };
-    if (page.headerAction) { unknownKeys(page.headerAction, ['label', 'event'], `${p}.headerAction`); ref(page.headerAction.event, `${p}.headerAction.event`); }
-    if (page.primary) { unknownKeys(page.primary, ['label', 'event', 'tone'], `${p}.primary`); if (!page.primary.label) err(`${p}.primary.label`, 'required'); ref(page.primary.event, `${p}.primary.event`); }
-    if (page.empty) { unknownKeys(page.empty, ['title', 'description', 'action'], `${p}.empty`); if (page.empty.action) ref(page.empty.action.event, `${p}.empty.action.event`); }
+    if (page.headerAction) { unknownKeys(page.headerAction, ['label', 'event'], `${p}.headerAction`); ref(page.headerAction.event, `${p}.headerAction.event`); if (page.headerAction.label && page.headerAction.label.length > 20) warnings.push(`${p}.headerAction.label: '${page.headerAction.label}' exceeds 20 characters and may truncate on mobile`); }
+    if (page.primary) { unknownKeys(page.primary, ['label', 'event', 'tone'], `${p}.primary`); if (!page.primary.label) err(`${p}.primary.label`, 'required'); ref(page.primary.event, `${p}.primary.event`); if (page.primary.label && page.primary.label.length > 28) warnings.push(`${p}.primary.label: '${page.primary.label}' exceeds 28 characters and may truncate on mobile`); }
+    if (page.empty) { unknownKeys(page.empty, ['title', 'description', 'action'], `${p}.empty`); if (page.empty.action) ref(page.empty.action.event, `${p}.empty.action.event`); if (page.empty.title && page.empty.title.length > 36) warnings.push(`${p}.empty.title: exceeds 36 characters; mobile empty state titles should be concise`); }
     if (s.kind === 'collection') {
       checkTemplate(s.title, `${p}.subject.title`);
       if (!s.title) err(`${p}.subject.title`, 'required row title template, e.g. "{name}"');
