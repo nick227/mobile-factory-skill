@@ -126,6 +126,8 @@ test('revising one decision invalidates approval but only stales dependent work'
   assert.equal(p.tasks.find((t) => t.id === 'setup-design').status, 'done', 'unrelated work survives');
   assert.equal(p.facts['data.persistence'].history[0].value, 'device storage', 'history keeps the old decision');
   plan.record(dir, { key: 'product.audience', value: 'Neighbors', source: { id: 'chat', quote: 'for my neighbors' } });
+  assert.throws(() => engine.approve(dir), /blocked/, 'the earlier user confirmation does not cover the revised blueprint');
+  plan.setBlueprint(dir, { decisions: [{ type: 'user-confirmation', value: 'USER: SQLite is fine, go ahead' }] });
   engine.approve(dir);
   const re = plan.planBuild(dir);
   assert.ok(re.keptDone >= 2, 'replanning keeps finished work');

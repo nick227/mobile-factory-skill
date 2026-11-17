@@ -1,0 +1,96 @@
+{
+  "name": "Pantry Pal",
+  "design": { "colorMode": "system" },
+  "mock": { "latencyMs": 400 },
+  "data": {
+    "items": [
+      { "id": "milk", "name": "Milk", "quantity": 1, "expires": "2026-11-19", "usedUp": false, "notes": "Whole milk, opened Sunday" },
+      { "id": "spinach", "name": "Spinach", "quantity": 2, "expires": "2026-11-18", "usedUp": false, "notes": "" },
+      { "id": "rice", "name": "Basmati rice", "quantity": 1, "expires": "2027-06-01", "usedUp": false, "notes": "Top shelf" },
+      { "id": "yogurt", "name": "Greek yogurt", "quantity": 4, "expires": "2026-11-16", "usedUp": true, "notes": "" }
+    ]
+  },
+  "pages": {
+    "pantry": {
+      "route": "/",
+      "title": "Pantry",
+      "subtitle": "Soonest expiry first",
+      "headerAction": { "label": "Add", "event": "add" },
+      "subject": {
+        "kind": "collection",
+        "source": "items",
+        "title": "{name}",
+        "description": "{quantity} · expires {expires|relative}",
+        "badge": { "label": "Used up", "tone": "neutral", "when": "usedUp" },
+        "search": { "fields": ["name", "notes"], "placeholder": "Search items" },
+        "segments": [{ "label": "In stock", "where": { "usedUp": false } }, { "label": "Used up", "where": { "usedUp": true } }],
+        "sort": { "by": "expires", "dir": "asc" },
+        "onSelect": "open"
+      },
+      "empty": { "title": "Your pantry is empty", "description": "Add what you bought this week.", "action": { "label": "Add item", "event": "add" } },
+      "events": {
+        "add": [{ "navigate": "/items/new" }],
+        "open": [{ "navigate": "/items/[id]", "params": { "id": "{id}" } }]
+      }
+    },
+    "item": {
+      "route": "/items/[id]",
+      "title": "{name}",
+      "subject": {
+        "kind": "detail",
+        "source": "items",
+        "badge": { "label": "Used up", "tone": "neutral", "when": "usedUp" },
+        "facts": [
+          { "label": "Quantity", "value": "{quantity}" },
+          { "label": "Expires", "value": "{expires|date} ({expires|relative})" }
+        ],
+        "body": "{notes}",
+        "actions": [
+          { "label": "Edit", "event": "edit" },
+          { "label": "Delete", "event": "delete", "tone": "danger" }
+        ]
+      },
+      "primary": { "label": "Mark used up", "event": "use" },
+      "events": {
+        "use": [{ "update": "items", "set": { "usedUp": true } }, { "notice": "{name} marked as used up", "tone": "success" }],
+        "edit": [{ "navigate": "/items/[id]/edit", "params": { "id": "{id}" } }],
+        "delete": [{ "confirm": { "title": "Delete {name}?", "description": "This removes it from your pantry.", "confirmLabel": "Delete", "destructive": true }, "then": [{ "remove": "items" }, { "back": true }] }]
+      }
+    },
+    "item-new": {
+      "route": "/items/new",
+      "title": "Add item",
+      "subject": {
+        "kind": "form",
+        "source": "items",
+        "mode": "create",
+        "fields": [
+          { "key": "name", "label": "Name", "required": true, "min": 1, "max": 60 },
+          { "key": "quantity", "label": "Quantity", "type": "number", "required": true, "min": 1, "default": 1 },
+          { "key": "expires", "label": "Expires", "type": "date", "required": true },
+          { "key": "notes", "label": "Notes", "type": "multiline" }
+        ]
+      },
+      "primary": { "label": "Save", "event": "save" },
+      "events": { "save": [{ "create": "items", "from": "form" }, { "back": true }] }
+    },
+    "item-edit": {
+      "route": "/items/[id]/edit",
+      "title": "Edit {name}",
+      "subject": {
+        "kind": "form",
+        "source": "items",
+        "mode": "edit",
+        "fields": [
+          { "key": "name", "label": "Name", "required": true, "min": 1, "max": 60 },
+          { "key": "quantity", "label": "Quantity", "type": "number", "required": true, "min": 1 },
+          { "key": "expires", "label": "Expires", "type": "date", "required": true },
+          { "key": "notes", "label": "Notes", "type": "multiline" },
+          { "key": "usedUp", "label": "Used up", "type": "toggle" }
+        ]
+      },
+      "primary": { "label": "Save changes", "event": "save" },
+      "events": { "save": [{ "update": "items", "from": "form" }, { "back": true }] }
+    }
+  }
+}

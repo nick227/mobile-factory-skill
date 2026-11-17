@@ -1,0 +1,16 @@
+{
+  "extends": "../../apps/lab/tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "baseUrl": ".",
+    "typeRoots": ["../../apps/lab/node_modules/@types"],
+    "paths": {
+      "@/src/ui": ["../ui/src/index.ts"],
+      "react": ["../../apps/lab/node_modules/@types/react"],
+      "react/*": ["../../apps/lab/node_modules/@types/react/*"],
+      "react-native": ["../../apps/lab/node_modules/react-native/types_generated/index.d.ts"],
+      "*": ["../../apps/lab/node_modules/*"]
+    }
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx"]
+}
