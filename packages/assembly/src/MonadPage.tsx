@@ -237,11 +237,11 @@ function GlanceDashboardComposition({
     if (status !== 'ready') return <Loading rows={3} height={48} />;
     if (!record) return <EmptyState title="Not found" description="This item no longer exists." />;
 
-    const heroVal = (record.metric as string | number) ?? (record.value as string | number) ?? (subject.facts?.[0] ? fill(subject.facts[0].value, record) : fill(page.title, record));
-    const heroLabel = subject.heading ? fill(subject.heading, record) : (subject.facts?.[0] ? subject.facts[0].label : fill(page.title, record));
-    const remainingFacts = subject.facts?.[0] && heroVal === fill(subject.facts[0].value, record) ? subject.facts.slice(1) : subject.facts;
+    const heroVal = subject.glance ? fill(subject.glance.value, record) : (record.metric as string | number) ?? (record.value as string | number) ?? (subject.facts?.[0] ? fill(subject.facts[0].value, record) : fill(page.title, record));
+    const heroLabel = subject.glance?.label ? fill(subject.glance.label, record) : subject.heading ? fill(subject.heading, record) : (subject.facts?.[0] ? subject.facts[0].label : fill(page.title, record));
+    const remainingFacts = subject.glance ? subject.facts : subject.facts?.[0] && heroVal === fill(subject.facts[0].value, record) ? subject.facts.slice(1) : subject.facts;
 
-    const ringVal = typeof record.progress === 'number' ? record.progress : typeof record.percent === 'number' ? record.percent : undefined;
+    const ringVal = subject.glance?.progressField ? Number(record[subject.glance.progressField]) : typeof record.progress === 'number' ? record.progress : typeof record.percent === 'number' ? record.percent : undefined;
     const glanceStatus = (record.status as GlanceStatus) || 'calm';
 
     return (
@@ -249,10 +249,10 @@ function GlanceDashboardComposition({
         <GlanceHero
           value={heroVal}
           label={heroLabel}
-          unit={typeof record.unit === 'string' ? record.unit : undefined}
+          unit={subject.glance?.unit ? fill(subject.glance.unit, record) : typeof record.unit === 'string' ? record.unit : undefined}
           status={glanceStatus}
           statusText={subject.body ? fill(subject.body, record) : undefined}
-          radialRing={ringVal !== undefined ? { value: ringVal, max: 100 } : undefined}
+          radialRing={ringVal !== undefined && Number.isFinite(ringVal) ? { value: ringVal, max: 100 } : undefined}
         />
         {subject.media ? <MediaFrame ratio={subject.media.ratio} source={record[subject.media.field] as string} radius={12} /> : null}
         {remainingFacts && remainingFacts.length > 0 ? (
