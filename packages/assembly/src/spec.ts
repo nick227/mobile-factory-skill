@@ -75,7 +75,14 @@ export interface MessageSubject {
   body?: Template;
 }
 
-export type Subject = ListSubject | DetailSubject | FormSubject | SettingsSubject | MessageSubject;
+export interface CustomSubject {
+  kind: 'custom';
+  source?: string;
+  component: string;
+  props?: Record<string, unknown>;
+}
+
+export type Subject = ListSubject | DetailSubject | FormSubject | SettingsSubject | MessageSubject | CustomSubject;
 
 /** Factory-owned compositional archetypes that determine how the page subject is visually arranged. */
 export type PageArchetype =

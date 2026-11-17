@@ -53,3 +53,20 @@ export function validate(base=root){
  // Validate production source has no duplicate module-level names in catalog
  return issues;
 }
+
+export function validateEjectedScreen(filePath, content) {
+ const issues = [];
+ if (!content.includes('useSafeAreaInsets') && !content.includes('SafeAreaView') && !content.includes('<Screen')) {
+   issues.push(`${filePath}: missing safe-area inset protection (useSafeAreaInsets or Screen primitive)`);
+ }
+ if (!content.includes('ScreenHeader')) {
+   issues.push(`${filePath}: missing standard ScreenHeader component`);
+ }
+ if (/from\s+['"][^'"]*packages\/ui\/src/.test(content)) {
+   issues.push(`${filePath}: illegal deep import into packages/ui/src; use '@/src/ui'`);
+ }
+ if (/(?:color|backgroundColor|borderColor)\s*:\s*['"]#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})\b/i.test(content)) {
+   issues.push(`${filePath}: hardcoded hex color detected; use theme tokens from useTheme()`);
+ }
+ return issues;
+}

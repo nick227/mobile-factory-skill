@@ -87,6 +87,50 @@ test('removing a page removes its generated route', () => {
   assert.ok(!fs.existsSync(path.join(app, 'app/items/[id]/edit.tsx')));
 });
 
+test('custom subject kind is supported in spec and validated', () => {
+  const s = spec();
+  s.pages['custom-view'] = {
+    route: '/custom',
+    title: 'Custom View',
+    subject: {
+      kind: 'custom',
+      component: 'MyCustomWidget',
+      source: 'items',
+    },
+  };
+  const r = asm.validateSpec(s);
+  assert.equal(r.ok, true, r.errors.join('\n'));
+});
+
+test('Assembly Ejection Protocol: ejectPage unrolls JSX, protects file, and avoids assembly conflict', () => {
+  const app = newApp();
+  const init = asm.assemble(example, app);
+  assert.ok(init.ok);
+
+  const ejectRes = asm.ejectPage(example, app, 'item-new');
+  assert.ok(ejectRes.ok);
+  assert.equal(ejectRes.ejected, 'app/items/new.tsx');
+
+  const content = fs.readFileSync(path.join(app, 'app/items/new.tsx'), 'utf8');
+  assert.match(content, /EJECTED Monad Page/);
+  assert.match(content, /ScreenHeader/);
+  assert.match(content, /useSafeAreaInsets/);
+
+  fs.appendFileSync(path.join(app, 'app/items/new.tsx'), '\n// bespoke custom modification\n');
+
+  const s = spec();
+  s.pages.pantry.title = 'Updated Pantry Title';
+  fs.writeFileSync(path.join(app, 'spec.json'), JSON.stringify(s));
+
+  const second = asm.assemble(path.join(app, 'spec.json'), app);
+  assert.ok(second.ok, JSON.stringify(second.errors));
+  assert.ok(second.ejected.includes('app/items/new.tsx'), 'ejected file is tracked and reported');
+  assert.deepEqual(second.conflicts, [], 'no conflicts raised on ejected file');
+
+  const updatedContent = fs.readFileSync(path.join(app, 'app/items/new.tsx'), 'utf8');
+  assert.match(updatedContent, /\/\/ bespoke custom modification/);
+});
+
 const lab = path.join(root, 'apps/lab/node_modules');
 test('the assembled app typechecks against the real UI, Expo Router and React Native types', { skip: !fs.existsSync(path.join(lab, 'expo-router')) && 'apps/lab dependencies not installed' }, () => {
   const app = newApp();

@@ -13,7 +13,7 @@ import {
   type GlanceStatus,
 } from '@/src/ui';
 import type {
-  AppSpec, PageSpec, ListSubject, DetailSubject, FormSubject, SettingsSubject, MessageSubject,
+  AppSpec, PageSpec, ListSubject, DetailSubject, FormSubject, SettingsSubject, MessageSubject, CustomSubject,
   EventRef, PageArchetype,
 } from './spec';
 import { useStore, type Store, type Rec } from './store';
@@ -534,9 +534,26 @@ function ContentCanvasComposition({
   return null;
 }
 
-// ---------------- Monad Page Shell ----------------
+// ---------------- Monad Page Shell & Custom Registry ----------------
 
-export function MonadPage({ app, page: pageId, store: rawStore }: { app: AppSpec; page: string; store: Store }) {
+const customRegistry: Record<string, React.ComponentType<any>> = {};
+
+export function registerCustomComponent(name: string, component: React.ComponentType<any>) {
+  customRegistry[name] = component;
+}
+
+export function getCustomComponent(name: string): React.ComponentType<any> | undefined {
+  return customRegistry[name];
+}
+
+export interface MonadPageProps {
+  app: AppSpec;
+  page: string;
+  store: Store;
+  customComponents?: Record<string, React.ComponentType<any>>;
+}
+
+export function MonadPage({ app, page: pageId, store: rawStore, customComponents }: MonadPageProps) {
   const page = app.pages[pageId];
   const store = useStore(rawStore);
   const router = useRouter();
@@ -607,6 +624,19 @@ export function MonadPage({ app, page: pageId, store: rawStore }: { app: AppSpec
     body = <ContentCanvasComposition page={page} record={record} store={store} fire={fire} />;
   } else if (archetype === 'system-settings' || subject.kind === 'settings') {
     body = <SettingsView subject={subject as SettingsSubject} store={store} fire={fire} />;
+  } else if (subject.kind === 'custom') {
+    const customSubject = subject as CustomSubject;
+    const Component = customComponents?.[customSubject.component] || getCustomComponent(customSubject.component);
+    if (Component) {
+      body = <Component page={page} record={record} store={store} fire={fire} deps={deps} insets={insets} {...(customSubject.props ?? {})} />;
+    } else {
+      body = (
+        <EmptyState
+          title={`Custom: ${customSubject.component}`}
+          description="Component is not registered. Pass customComponents or register it via registerCustomComponent."
+        />
+      );
+    }
   } else if (subject.kind === 'collection') {
     body = <CollectionList subject={subject} page={page} store={store} fire={fire} />;
   } else if (subject.kind === 'detail') {

@@ -18,6 +18,7 @@ const KIND_KEYS = {
   form: ['kind', 'source', 'mode', 'param', 'fields'],
   settings: ['kind', 'groups'],
   message: ['kind', 'heading', 'body'],
+  custom: ['kind', 'source', 'component', 'props'],
 };
 const PAGE_KEYS = ['route', 'title', 'subtitle', 'archetype', 'back', 'headerAction', 'subject', 'primary', 'events', 'empty'];
 const APP_KEYS = ['$schema', 'name', 'blueprintRevision', 'blueprintHash', 'design', 'mock', 'data', 'settings', 'pages'];
@@ -140,7 +141,7 @@ export function validateSpec(spec, { project = null } = {}) {
     if (page.archetype !== undefined) {
       if (!ARCHETYPES.includes(page.archetype)) {
         err(`${p}.archetype`, `one of ${ARCHETYPES.join(' | ')}`);
-      } else {
+      } else if (s.kind !== 'custom') {
         const compat = ARCHETYPE_COMPAT[page.archetype];
         if (!compat.includes(s.kind)) {
           err(`${p}.archetype`, `archetype '${page.archetype}' is incompatible with subject kind '${s.kind}' (compatible: ${compat.join(', ')})`);
@@ -220,6 +221,9 @@ export function validateSpec(spec, { project = null } = {}) {
     }
     if (s.kind === 'settings') (s.groups ?? []).forEach((g, i) => (g.links ?? []).forEach((l, j) => ref(l.event, `${p}.subject.groups[${i}].links[${j}].event`)));
     if (s.kind === 'message') { checkTemplate(s.heading, `${p}.subject.heading`, new Set()); checkTemplate(s.body, `${p}.subject.body`, new Set()); }
+    if (s.kind === 'custom') {
+      if (!s.component || typeof s.component !== 'string') err(`${p}.subject.component`, 'required component name or path');
+    }
 
     for (const [ev, where] of refs) if (!page.events?.[ev]) err(where, `event '${ev}' is not defined in ${p}.events`);
     const checkActions = (list, where) => {
@@ -286,13 +290,19 @@ export function assemble(specFile, appDir, { dryRun = false, root } = {}) {
   if (!fs.existsSync(path.join(app, 'package.json'))) throw Error(`${app} is not an app (no package.json); copy templates/expo-app first`);
   if (!fs.existsSync(path.join(app, 'src/ui/index.ts'))) throw Error(`${app}/src/ui is missing; run install-source first`);
   const manifestFile = path.join(app, 'factory-assembly.json');
-  const manifest = fs.existsSync(manifestFile) ? JSON.parse(fs.readFileSync(manifestFile, 'utf8')) : { files: {} };
+  const manifest = fs.existsSync(manifestFile) ? JSON.parse(fs.readFileSync(manifestFile, 'utf8')) : { files: {}, ejected: {} };
+  manifest.files = manifest.files || {};
+  manifest.ejected = manifest.ejected || {};
   const files = emit(spec);
   const rt = runtimeDir(root);
   for (const f of fs.readdirSync(rt).filter((x) => /\.tsx?$/.test(x)).sort()) files[`src/assembly/${f}`] = fs.readFileSync(path.join(rt, f), 'utf8');
-  const result = { ok: true, written: [], unchanged: [], conflicts: [], removed: [], warnings: check.warnings };
+  const result = { ok: true, written: [], unchanged: [], conflicts: [], removed: [], ejected: [], warnings: check.warnings };
   const plan = [];
   for (const [rel, content] of Object.entries(files)) {
+    if (manifest.ejected && manifest.ejected[rel]) {
+      result.ejected.push(rel);
+      continue;
+    }
     const dest = path.join(app, rel);
     if (fs.existsSync(dest)) {
       const current = fs.readFileSync(dest, 'utf8');
@@ -303,8 +313,8 @@ export function assemble(specFile, appDir, { dryRun = false, root } = {}) {
     }
     plan.push([rel, dest, content]);
   }
-  // Routes generated earlier for pages that no longer exist.
-  const stale = Object.keys(manifest.files).filter((rel) => rel.startsWith('app/') && !(rel in files));
+  // Routes generated earlier for pages that no longer exist and are not ejected.
+  const stale = Object.keys(manifest.files).filter((rel) => rel.startsWith('app/') && !(rel in files) && !manifest.ejected?.[rel]);
   if (result.conflicts.length) return { ...result, ok: false, error: 'Hand-edited files would be overwritten; nothing was changed. Move the edits into the spec or remove the files.' };
   if (!dryRun) {
     for (const [rel, dest, content] of plan) { fs.mkdirSync(path.dirname(dest), { recursive: true }); fs.writeFileSync(dest, content); manifest.files[rel] = sha(content); result.written.push(rel); }
@@ -314,6 +324,99 @@ export function assemble(specFile, appDir, { dryRun = false, root } = {}) {
   } else result.written = plan.map(([rel]) => rel);
   result.pages = Object.fromEntries(Object.entries(spec.pages).map(([id, p]) => [id, routeFile(p.route)]));
   return result;
+}
+
+/** Unroll a page spec into concrete @/src/ui catalog JSX. */
+export function unrollPage(pageId, page, spec = {}) {
+  const comp = component(pageId);
+  const title = page.title || pageId;
+  const subtitle = page.subtitle ? ` subtitle="${page.subtitle}"` : '';
+  const source = page.subject?.source;
+  const hasPrimary = Boolean(page.primary);
+  const primaryLabel = page.primary?.label || 'Action';
+  const primaryEvent = page.primary?.event;
+
+  return `// EJECTED Monad Page: "${pageId}" from app.spec.json
+// This file is unrolled and owned by the developer/agent.
+// The assembler will preserve this file across runs.
+// Factory quality invariants (ScreenHeader, insets, 44pt tap targets, @/src/ui) apply.
+import React, { useState, useEffect } from 'react';
+import { View, ScrollView } from 'react-native';
+import { useRouter, useLocalSearchParams } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import {
+  ScreenHeader,
+  ActionDock,
+  Button,
+  Text,
+  Surface,
+  Stack,
+  useTheme,
+} from '@/src/ui';
+import { app, store } from '@/src/factory/app';
+
+export default function ${comp}() {
+  const router = useRouter();
+  const insets = useSafeAreaInsets();
+  const { colors } = useTheme();
+  const params = useLocalSearchParams<Record<string, string>>();
+  ${source ? `const [record, setRecord] = useState(() => store.get('${source}', String(params.id || '')) || store.list('${source}')[0]);
+  useEffect(() => {
+    store.load('${source}');
+  }, []);` : ''}
+
+  return (
+    <View style={{ flex: 1, backgroundColor: colors.background, paddingTop: insets.top }}>
+      <ScreenHeader
+        title="${title}"${subtitle}
+        onBack={() => (router.canGoBack() ? router.back() : router.replace('/'))}
+      />
+      <View style={{ flex: 1 }}>
+        <ScrollView contentContainerStyle={{ padding: 20 }}>
+          <Stack gap="md">
+            <Text variant="title">${title}</Text>
+            <Surface style={{ padding: 16 }}>
+              <Text variant="body" tone="muted">
+                Unrolled ejected content for ${pageId}. Customize this screen directly.
+              </Text>
+            </Surface>
+          </Stack>
+        </ScrollView>
+      </View>
+      ${hasPrimary ? `<ActionDock>
+        <Button
+          label="${primaryLabel}"
+          fullWidth
+          onPress={() => {
+            ${page.events?.[primaryEvent]?.some((a) => a.back) ? 'router.back();' : ''}
+          }}
+        />
+      </ActionDock>` : ''}
+    </View>
+  );
+}
+`;
+}
+
+/** Unroll a single page into standalone JSX, registering it in manifest.ejected to prevent overwrite. */
+export function ejectPage(specFile, appDir, pageId, { root } = {}) {
+  const spec = JSON.parse(fs.readFileSync(specFile, 'utf8'));
+  const page = spec.pages?.[pageId];
+  if (!page) return { ok: false, error: `Page '${pageId}' not found in spec` };
+  const app = path.resolve(appDir);
+  const manifestFile = path.join(app, 'factory-assembly.json');
+  const manifest = fs.existsSync(manifestFile) ? JSON.parse(fs.readFileSync(manifestFile, 'utf8')) : { files: {}, ejected: {} };
+  manifest.files = manifest.files || {};
+  manifest.ejected = manifest.ejected || {};
+  const rel = routeFile(page.route);
+  const dest = path.join(app, rel);
+  const unrolled = unrollPage(pageId, page, spec);
+  fs.mkdirSync(path.dirname(dest), { recursive: true });
+  fs.writeFileSync(dest, unrolled);
+  manifest.ejected[rel] = { pageId, sha: sha(unrolled), ejectedAt: new Date().toISOString() };
+  delete manifest.files[rel];
+  fs.writeFileSync(manifestFile, JSON.stringify(manifest, null, 2) + '\n');
+  return { ok: true, ejected: rel, pageId };
 }
 function isTemplate(rel, content, root = path.resolve(here, '..')) {
   const f = path.join(root, 'templates/expo-app', rel);
