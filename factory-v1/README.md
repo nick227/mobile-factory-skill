@@ -16,6 +16,7 @@ Run at factory root: `pnpm factory help` or `node scripts/factory.mjs help`.
 
 ```bash
 pnpm factory project init --project /tmp/neighborhood-app --name "Neighborhood Events"
+pnpm factory workflow status --project /tmp/neighborhood-app   # active segment + unmet conditions (orchestrator.mjs)
 pnpm factory discovery next --project /tmp/neighborhood-app
 pnpm factory catalog search --query media
 pnpm factory catalog get composites.mediaframe

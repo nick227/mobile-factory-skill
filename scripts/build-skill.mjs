@@ -14,6 +14,7 @@ fs.mkdirSync(path.join(skill,'scripts'),{recursive:true});
 fs.copyFileSync(path.join(root,'scripts/install-source.mjs'),path.join(skill,'scripts/install-source.mjs'));
 // factory-v1: embedded project workflow API
 copyDir(path.join(root,'factory-v1'),path.join(skill,'factory-v1'));
+copyDir(path.join(root,'packages/assembly/src'),path.join(skill,'assembly/src'));
 fs.copyFileSync(path.join(root,'scripts/factory.mjs'),path.join(skill,'scripts/factory.mjs'));
 fs.copyFileSync(path.join(root,'scripts/scaffold-workspace.mjs'),path.join(skill,'scripts/scaffold-workspace.mjs'));
 const version=JSON.parse(fs.readFileSync(path.join(root,'package.json'),'utf8')).version;
