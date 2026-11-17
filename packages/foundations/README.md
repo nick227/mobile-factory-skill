@@ -40,7 +40,7 @@ src/features/<feature>/
 - **Loading and refresh:** show skeletons only on the first load, keep data visible while refreshing, and show `error.userMessage` with a Retry action.
 - **Writes are not retried automatically.** `useMutation` ignores repeated taps while one is pending.
 - **Reach the real backend** by switching `createMockTransport(routes).transport` to `fetchTransport(env.EXPO_PUBLIC_API_URL)`. Nothing else changes.
-- **Destructive actions** need explicit confirmation (`Alert.alert` with a `destructive` button until a Dialog component exists).
+- **Destructive actions** need explicit confirmation with the factory `AlertDialog`.
 
 ## Verification status
 

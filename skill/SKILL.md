@@ -23,7 +23,7 @@ A frozen release of the Mobile Software Factory. All commands are `node scripts/
 
 ## Rules
 - Use the installed `src/ui` components and recipes. Don't write replacements.
-- Every screen has loading, error and empty states. Media has a fixed aspect ratio. There's one primary action per screen. Destructive actions are confirmed (`Alert.alert` with a `destructive` button).
+- Every screen has loading, error and empty states. Media has a fixed aspect ratio. There's one primary action per screen. Destructive actions are confirmed with `AlertDialog`.
 - Import Expo Router's `Stack` in `app/_layout.tsx`. Import the UI `Stack` in screens.
 - Catalog maturity is computed from evidence. Nothing is `verified` without recorded iOS and Android device evidence.
 - Apps own copied source. The installers never overwrite local edits.
