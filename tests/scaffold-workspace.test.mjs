@@ -68,7 +68,7 @@ test('scaffold adds Expo files alongside approved documents without overwriting 
     assert.equal(fs.readFileSync(path.join(dir, '.factory/project.json')).equals(originalState), true);
     assert.equal(fs.readFileSync(path.join(dir, '.factory/docs/BRIEF.md')).equals(originalDocs), true);
     assert.equal(fs.readFileSync(path.join(dir, 'notes.txt'), 'utf8'), 'Keep user notes');
-    assert.equal(JSON.parse(fs.readFileSync(path.join(dir, 'package.json'), 'utf8')).name, path.basename(dir));
+    assert.equal(JSON.parse(fs.readFileSync(path.join(dir, 'package.json'), 'utf8')).name, path.basename(dir).toLowerCase());
     assert.equal(JSON.parse(fs.readFileSync(path.join(dir, 'app.json'), 'utf8')).expo.name, 'Neighborhood Events');
     assert.ok(fs.existsSync(path.join(dir, 'src/ui/index.ts')));
     assert.ok(fs.existsSync(path.join(dir, 'factory-install.json')));
