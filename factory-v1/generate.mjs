@@ -76,7 +76,7 @@ export function generate(projectDir,{dryRun=false,root=ROOT}={}){
     const installManifest=path.join(stage,'factory-install.json');
     const installed=JSON.parse(fs.readFileSync(installManifest,'utf8'));
     delete installed.installedAt;
-    fs.writeFileSync(installManifest,JSON.stringify(installed,null,2)+'\\n');
+    fs.writeFileSync(installManifest,JSON.stringify(installed,null,2)+'\n');
     const result=assembler.assemble(specFile,stage,{root});
     if(!result.ok)throw Error('Assembly preflight failed: '+(result.error??result.errors?.join('; ')));
     const staged=walk(stage).map(file=>path.relative(stage,file)).sort();
