@@ -4,6 +4,7 @@ import * as engine from './engine.mjs';
 import { invalidate } from './planner.mjs';
 import * as appTypes from './app-archetypes.mjs';
 import * as objects from './object-schema.mjs';
+import * as functionality from './functionality.mjs';
 
 export const STAGES = Object.freeze([
   { id: 'classification', shape: '{ "type": "catalog-id" }' },
@@ -22,15 +23,17 @@ const ids = (v, label, nonempty = false) => {
     v.some(x => typeof x !== 'string' || !IDENTIFIER.test(x)) ||
     new Set(v).size !== v.length) throw Error(`${label}: expected ${nonempty ? 'nonempty ' : ''}unique catalog ID array`);
 };
-function validate(id, selection) {
+function validate(id, selection, p) {
   if (id === 'classification') {
     if (!isObj(selection) || Object.keys(selection).join(',') !== 'type' || typeof selection.type !== 'string' || !IDENTIFIER.test(selection.type))
       throw Error('classification: expected { "type": "catalog-id" }');
     appTypes.get(selection.type);
   } else if (id === 'objects') {
     objects.validate(selection);
-  } else if (id === 'functionality' || id === 'pages') {
-    ids(selection, id, id === 'pages');
+  } else if (id === 'functionality') {
+    functionality.resolve(selection, p.batches.selections.objects);
+  } else if (id === 'pages') {
+    ids(selection, id, true);
   } else if (id === 'composition') {
     if (!isObj(selection) || !Object.keys(selection).length || Object.entries(selection).some(([k, v]) => !IDENTIFIER.test(k) || !isObj(v)))
       throw Error('composition: expected nonempty map of page IDs to configuration objects');
@@ -61,7 +64,7 @@ export function set(dir, id, selection) {
   if (index < 0) throw Error(`Unknown batch "${id}"`);
   const prerequisite = STAGES.slice(0, index).find(s => !own(p.batches.selections, s.id));
   if (prerequisite) throw Error(`Complete ${prerequisite.id} before ${id}`);
-  validate(id, selection);
+  validate(id, selection, p);
   if (own(p.batches.selections, id) && JSON.stringify(p.batches.selections[id]) === JSON.stringify(selection))
     return { id, changed: false, revision: p.revision, next: nextId(p), invalidated: [] };
   const invalidated = STAGES.slice(index + 1).filter(s => own(p.batches.selections, s.id)).map(s => s.id);
@@ -81,7 +84,8 @@ export function next(p, workflowStatus) {
     return { kind: 'batch', id, shape: stage.shape, completed: STAGES.indexOf(stage), total: STAGES.length,
       ...(id === 'classification' ? { catalog: 'catalog apps', choices: appTypes.list().map(a => a.id) } : {}),
       ...(id === 'objects' ? { suggestedDefaults: appTypes.expand(p.batches.selections.classification.type) } : {}),
-      ...(id === 'functionality' ? { objectContract: objects.resolve(p.batches.selections.objects) } : {}),
+      ...(id === 'functionality' ? { objectContract: objects.resolve(p.batches.selections.objects), capabilityCatalog: functionality.list(), suggestedCapabilities: appTypes.get(p.batches.selections.classification.type).defaults.capabilities } : {}),
+      ...(id === 'pages' ? { functionalityContract: functionality.resolve(p.batches.selections.functionality,p.batches.selections.objects) } : {}),
       command: `workflow batch set ${id} --project <dir> --file SELECTION.json` };
   }
   return { kind: 'segment', segment: workflowStatus.segment, next: workflowStatus.next, batchesComplete: true };
