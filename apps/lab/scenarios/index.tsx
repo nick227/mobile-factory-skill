@@ -8,6 +8,7 @@ import { OnboardingCheckoutScenario } from './OnboardingCheckoutScenario';
 import { ProgressDashboardScenario } from './ProgressDashboardScenario';
 import { MarketplaceCommerceScenario } from './MarketplaceCommerceScenario';
 import { ActivityTimelineScenario } from './ActivityTimelineScenario';
+import { ThemeStudioScenario } from './ThemeStudioScenario';
 
 export const scenarios: Record<string, () => React.JSX.Element> = {
   settings: SettingsScenario,
@@ -19,4 +20,5 @@ export const scenarios: Record<string, () => React.JSX.Element> = {
   progressDashboard: ProgressDashboardScenario,
   marketplaceCommerce: MarketplaceCommerceScenario,
   activityTimeline: ActivityTimelineScenario,
+  themeStudio: ThemeStudioScenario,
 };

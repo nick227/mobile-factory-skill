@@ -588,5 +588,35 @@
     "exportName": "BottomSheet",
     "showcase": "BottomSheet",
     "test": "tests/BottomSheet.test.tsx"
+  },
+  {
+    "id": "controls.pininput",
+    "name": "PinInput",
+    "category": "controls",
+    "status": "preview",
+    "source": "controls/PinInput.tsx",
+    "exportName": "PinInput",
+    "showcase": "PinInput",
+    "test": "tests/PinInput.test.tsx"
+  },
+  {
+    "id": "controls.ratingbar",
+    "name": "RatingBar",
+    "category": "controls",
+    "status": "preview",
+    "source": "controls/RatingBar.tsx",
+    "exportName": "RatingBar",
+    "showcase": "RatingBar",
+    "test": "tests/RatingBar.test.tsx"
+  },
+  {
+    "id": "patterns.slidetoconfirm",
+    "name": "SlideToConfirm",
+    "category": "patterns",
+    "status": "preview",
+    "source": "patterns/SlideToConfirm.tsx",
+    "exportName": "SlideToConfirm",
+    "showcase": "SlideToConfirm",
+    "test": "tests/SlideToConfirm.test.tsx"
   }
 ]

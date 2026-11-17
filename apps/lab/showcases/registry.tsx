@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Switch, View } from 'react-native';
-import { Text, Stack, Row, Surface, Divider, Screen, Button, TextField, Badge, ListItem, SettingsGroup, useTheme, Spacer, IconButton, Toggle, Checkbox, RadioGroup, SegmentedControl, ProgressBar, Spinner, Avatar, SectionHeader, EmptyState, FormField, ActionFooter, ScreenHeader, FocusScreen, StepProgress, InputStage, ActionDock, CalmSkeleton, MediaFrame, SwipePager, EditorialMosaic, ImmersiveHero, ChoiceGallery, FocusWizard, Portal, PortalHost, PortalProvider, Select, Tabs, Dialog, AlertDialog, Accordion, SchedulePicker, MetricSpotlight, PeopleStack, StoryRail, DiscoveryFilters, IdentityHeader, ProgressJourney, StatusTracker, SelectionDock, SmartChecklist, ActivityCalendar, ProductShowcase, RichActivityTimeline, SearchBar, Stepper, NoticeBanner, BottomSheet } from '@factory/ui';
+import { Text, Stack, Row, Surface, Divider, Screen, Button, TextField, Badge, ListItem, SettingsGroup, useTheme, Spacer, IconButton, Toggle, Checkbox, RadioGroup, SegmentedControl, ProgressBar, Spinner, Avatar, SectionHeader, EmptyState, FormField, ActionFooter, ScreenHeader, FocusScreen, StepProgress, InputStage, ActionDock, CalmSkeleton, MediaFrame, SwipePager, EditorialMosaic, ImmersiveHero, ChoiceGallery, FocusWizard, Portal, PortalHost, PortalProvider, Select, Tabs, Dialog, AlertDialog, Accordion, SchedulePicker, MetricSpotlight, PeopleStack, StoryRail, DiscoveryFilters, IdentityHeader, ProgressJourney, StatusTracker, SelectionDock, SmartChecklist, ActivityCalendar, ProductShowcase, RichActivityTimeline, SearchBar, Stepper, NoticeBanner, BottomSheet, PinInput, RatingBar, SlideToConfirm } from '@factory/ui';
 
 export const showcases: Record<string, () => React.JSX.Element> = {
   Text: () => <Stack><Text variant="title">Title typography</Text><Text variant="heading">Section heading</Text><Text>Body text supports dynamic type.</Text><Text muted variant="small">Secondary caption</Text></Stack>,
@@ -685,6 +685,83 @@ export const showcases: Record<string, () => React.JSX.Element> = {
             />
           </Stack>
         </BottomSheet>
+      </Stack>
+    );
+  },
+  PinInput: function PinInputDemo() {
+    const [code, setCode] = useState('');
+    const [completed, setCompleted] = useState<string | null>(null);
+    return (
+      <Stack gap="md">
+        <PinInput
+          label="Enter 6-Digit Auth Code"
+          value={code}
+          onChange={(v) => {
+            setCode(v);
+            if (v.length < 6) setCompleted(null);
+          }}
+          onComplete={(c) => setCompleted(c)}
+          hint="Check SMS or Authenticator app"
+        />
+        {completed ? (
+          <NoticeBanner
+            tone="success"
+            title="Code Verified"
+            description={`Code ${completed} successfully verified.`}
+          />
+        ) : null}
+      </Stack>
+    );
+  },
+  RatingBar: function RatingBarDemo() {
+    const [rating, setRating] = useState(4);
+    const [heartRating, setHeartRating] = useState(3);
+    return (
+      <Stack gap="md">
+        <Surface outlined>
+          <Stack gap="sm">
+            <Text style={{ fontWeight: '700' }}>Masterclass Experience</Text>
+            <RatingBar
+              label="Experience rating"
+              value={rating}
+              onValueChange={setRating}
+              showValue
+            />
+          </Stack>
+        </Surface>
+        <Surface outlined>
+          <Stack gap="sm">
+            <Text style={{ fontWeight: '700' }}>Add to Favorites</Text>
+            <RatingBar
+              label="Favorite score"
+              symbol="heart"
+              value={heartRating}
+              onValueChange={setHeartRating}
+              showValue
+            />
+          </Stack>
+        </Surface>
+      </Stack>
+    );
+  },
+  SlideToConfirm: function SlideToConfirmDemo() {
+    const [confirmed, setConfirmed] = useState(false);
+    return (
+      <Stack gap="md">
+        <SlideToConfirm
+          label="Slide to Authorize Payment"
+          completedLabel="Payment Authorized"
+          confirmed={confirmed}
+          onConfirm={() => setConfirmed(true)}
+          onReset={() => setConfirmed(false)}
+        />
+        {confirmed ? (
+          <Button
+            label="Reset Slide Demo"
+            variant="outline"
+            onPress={() => setConfirmed(false)}
+          />
+        ) : null}
       </Stack>
     );
   },

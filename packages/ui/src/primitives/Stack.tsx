@@ -1,8 +1,21 @@
 import React from 'react';
 import { View, type ViewProps, type ViewStyle } from 'react-native';
-import { tokens } from '../foundation/tokens';
-export type Space = keyof typeof tokens.spacing;
-export interface StackProps extends ViewProps { gap?: Space; align?: ViewStyle['alignItems']; justify?: ViewStyle['justifyContent']; }
+import { tokens as staticTokens } from '../foundation/tokens';
+import { useTheme } from '../foundation/theme';
+
+export type Space = keyof typeof staticTokens.spacing;
+export interface StackProps extends ViewProps {
+  gap?: Space;
+  align?: ViewStyle['alignItems'];
+  justify?: ViewStyle['justifyContent'];
+}
+
 export function Stack({ gap = 'md', align, justify, style, ...props }: StackProps) {
-  return <View {...props} style={[{ gap: tokens.spacing[gap], alignItems: align, justifyContent: justify }, style]} />;
+  const { tokens } = useTheme();
+  return (
+    <View
+      {...props}
+      style={[{ gap: tokens.spacing[gap], alignItems: align, justifyContent: justify }, style]}
+    />
+  );
 }

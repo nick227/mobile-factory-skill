@@ -1,13 +1,13 @@
 import React from 'react';
 import { View, Platform, type ViewProps, type ViewStyle } from 'react-native';
-import { tokens } from '../foundation/tokens';
+import { tokens as staticTokens } from '../foundation/tokens';
 import { useTheme } from '../foundation/theme';
 
 export interface SurfaceProps extends ViewProps {
   padded?: boolean;
   outlined?: boolean;
   elevated?: boolean;
-  radius?: keyof typeof tokens.radius;
+  radius?: keyof typeof staticTokens.radius;
 }
 
 export function Surface({
@@ -18,9 +18,12 @@ export function Surface({
   style,
   ...props
 }: SurfaceProps) {
-  const { colors, mode } = useTheme();
+  const { colors, mode, tokens, surface: themeSurface } = useTheme();
 
-  const elevationStyle: ViewStyle = elevated
+  const isElevated = elevated || themeSurface === 'elevated';
+  const isOutlined = outlined || themeSurface === 'outlined';
+
+  const elevationStyle: ViewStyle = isElevated
     ? Platform.select({
         ios: {
           shadowColor: '#000000',
@@ -46,7 +49,7 @@ export function Surface({
           backgroundColor: colors.surface,
           borderRadius: tokens.radius[radius],
           padding: padded ? tokens.spacing.lg : 0,
-          borderWidth: outlined ? 1 : 0,
+          borderWidth: isOutlined ? 1 : 0,
           borderColor: colors.border,
         },
         elevationStyle,

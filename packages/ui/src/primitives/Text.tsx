@@ -18,7 +18,7 @@ export function Text({
   style,
   ...props
 }: TextProps) {
-  const { colors } = useTheme();
+  const { colors, tokens } = useTheme();
 
   const fontSize =
     variant === 'display'

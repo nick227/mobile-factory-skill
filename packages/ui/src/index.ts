@@ -59,3 +59,6 @@ export * from './controls/SearchBar';
 export * from './controls/Stepper';
 export * from './composites/NoticeBanner';
 export * from './composites/BottomSheet';
+export * from './controls/PinInput';
+export * from './controls/RatingBar';
+export * from './patterns/SlideToConfirm';
