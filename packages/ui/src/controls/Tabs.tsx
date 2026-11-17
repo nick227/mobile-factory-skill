@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Pressable, type ViewStyle, type StyleProp } from 'react-native';
+import { View, Pressable, ScrollView, type ViewStyle, type StyleProp } from 'react-native';
 import { useTheme } from '../foundation/theme';
 import { tokens } from '../foundation/tokens';
 import { Text } from '../primitives/Text';
@@ -16,6 +16,7 @@ export interface TabsProps {
   value: string;
   onValueChange: (value: string) => void;
   variant?: 'pill' | 'underline';
+  scrollable?: boolean;
   style?: StyleProp<ViewStyle>;
 }
 
@@ -24,11 +25,12 @@ export function Tabs({
   value,
   onValueChange,
   variant = 'pill',
+  scrollable = false,
   style,
 }: TabsProps) {
-  const { colors } = useTheme();
+  const { colors, mode } = useTheme();
 
-  return (
+  const tabList = (
     <View
       accessibilityRole="tablist"
       style={[
@@ -57,7 +59,7 @@ export function Tabs({
             accessibilityLabel={tab.badge ? `${tab.label}, ${tab.badge}` : tab.label}
             accessibilityState={{ selected: active, disabled: Boolean(tab.disabled) }}
             style={({ pressed }) => ({
-              flex: 1,
+              flex: scrollable ? undefined : 1,
               minHeight: 44,
               flexDirection: 'row',
               alignItems: 'center',
@@ -71,10 +73,19 @@ export function Tabs({
                   : 'transparent',
               borderBottomWidth: variant === 'underline' ? (active ? 2 : 0) : 0,
               borderColor: colors.primary,
-              paddingHorizontal: 8,
+              paddingHorizontal: scrollable ? 14 : 8,
               paddingVertical: 6,
               opacity: tab.disabled ? 0.4 : pressed ? 0.8 : 1,
               gap: 6,
+              ...(variant === 'pill' && active
+                ? {
+                    shadowColor: '#000000',
+                    shadowOffset: { width: 0, height: 1 },
+                    shadowOpacity: mode === 'dark' ? 0.3 : 0.06,
+                    shadowRadius: 3,
+                    elevation: 1,
+                  }
+                : {}),
             })}
           >
             <Text
@@ -112,4 +123,19 @@ export function Tabs({
       })}
     </View>
   );
+
+  if (scrollable) {
+    return (
+      <View style={{ width: '100%', maxWidth: '100%', overflow: 'hidden' }}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+        >
+          {tabList}
+        </ScrollView>
+      </View>
+    );
+  }
+
+  return tabList;
 }

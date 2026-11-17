@@ -22,11 +22,11 @@ export function ActivityTimelineScenario() {
   const [selectedDate, setSelectedDate] = useState('2026-11-18');
 
   const teamMembers = [
-    { id: '1', name: 'Kengo Kuma' },
-    { id: '2', name: 'Elena Rostova' },
-    { id: '3', name: 'Kenji Sato' },
-    { id: '4', name: 'Amina Diallo' },
-    { id: '5', name: 'Mateo Silva' },
+    { id: '1', name: 'Kengo Kuma', uri: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80' },
+    { id: '2', name: 'Elena Rostova', uri: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80' },
+    { id: '3', name: 'Kenji Sato', uri: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80' },
+    { id: '4', name: 'Amina Diallo', uri: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=200&q=80' },
+    { id: '5', name: 'Mateo Silva', uri: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=200&q=80' },
   ];
 
   const tabs = [
@@ -38,7 +38,10 @@ export function ActivityTimelineScenario() {
   const timelineEvents = [
     {
       id: 'e1',
-      user: { name: 'Kengo Kuma' },
+      user: {
+        name: 'Kengo Kuma',
+        avatarUri: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80',
+      },
       title: 'Approved Pavilion Lattice Framing',
       timestamp: '25m ago',
       badge: 'Sign-off',
@@ -48,7 +51,10 @@ export function ActivityTimelineScenario() {
     },
     {
       id: 'e2',
-      user: { name: 'Elena Rostova' },
+      user: {
+        name: 'Elena Rostova',
+        avatarUri: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80',
+      },
       title: 'Submitted Japanese Garden Acoustic Study',
       timestamp: '2h ago',
       badge: 'Report',
@@ -59,7 +65,10 @@ export function ActivityTimelineScenario() {
     },
     {
       id: 'e3',
-      user: { name: 'Kenji Sato' },
+      user: {
+        name: 'Kenji Sato',
+        avatarUri: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80',
+      },
       title: 'Dispatched Hand-Split Hinoki Shingles',
       timestamp: 'Yesterday',
       badge: 'Logistics',
@@ -131,7 +140,7 @@ export function ActivityTimelineScenario() {
       </Surface>
 
       {/* Tab navigation */}
-      <Tabs tabs={tabs} value={activeTab} onValueChange={(t) => setActiveTab(t as any)} />
+      <Tabs tabs={tabs} value={activeTab} onValueChange={(t) => setActiveTab(t as any)} scrollable />
 
       {/* Tab 1: Live Feed */}
       {activeTab === 'feed' && (

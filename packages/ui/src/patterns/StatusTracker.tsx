@@ -122,12 +122,19 @@ const styles = StyleSheet.create({
     padding: tokens.spacing.md,
     borderRadius: tokens.radius.md,
     borderWidth: 1,
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 6,
+    elevation: 1,
   },
   topRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: tokens.spacing.sm,
+    flexWrap: 'wrap',
+    gap: tokens.spacing.xs,
   },
   statusPill: {
     flexDirection: 'row',
@@ -149,8 +156,9 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
   },
   estimatedTime: {
-    fontSize: tokens.typography.small,
+    fontSize: tokens.typography.caption,
     fontWeight: '500',
+    flexShrink: 1,
   },
   bodyBlock: {
     marginBottom: tokens.spacing.sm,

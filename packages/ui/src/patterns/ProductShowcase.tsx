@@ -44,7 +44,7 @@ export function ProductShowcase({
   addToCartLabel = 'Add to Bag',
   style,
 }: ProductShowcaseProps) {
-  const { colors } = useTheme();
+  const { colors, mode } = useTheme();
 
   let stockTone: BadgeTone = 'success';
   let defaultStockLabel = 'In Stock';
@@ -64,7 +64,15 @@ export function ProductShowcase({
     <View
       style={[
         styles.cardContainer,
-        { backgroundColor: colors.surface, borderColor: colors.border },
+        {
+          backgroundColor: colors.surface,
+          borderColor: colors.border,
+          shadowColor: '#000000',
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: mode === 'dark' ? 0.35 : 0.06,
+          shadowRadius: 8,
+          elevation: 2,
+        },
         style,
       ]}
       accessible
@@ -162,6 +170,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     padding: tokens.spacing.md,
     gap: tokens.spacing.sm,
+    maxWidth: '100%',
   },
   metaRow: {
     flexDirection: 'row',
@@ -182,9 +191,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginTop: tokens.spacing.xs,
+    gap: tokens.spacing.sm,
   },
   priceCol: {
-    flex: 1,
+    flexShrink: 1,
+    marginRight: tokens.spacing.xs,
   },
   priceGroup: {
     flexDirection: 'row',

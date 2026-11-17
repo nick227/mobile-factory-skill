@@ -39,11 +39,12 @@ export function StoryRail({
   const { colors } = useTheme();
 
   return (
-    <ScrollView
-      horizontal
-      showsHorizontalScrollIndicator={false}
-      contentContainerStyle={[styles.scrollContent, style]}
-    >
+    <View style={{ width: '100%', maxWidth: '100%', overflow: 'hidden' }}>
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={[styles.scrollContent, style]}
+      >
       {onPressAdd && (
         <TouchableOpacity
           accessibilityRole="button"
@@ -134,7 +135,8 @@ export function StoryRail({
           </TouchableOpacity>
         );
       })}
-    </ScrollView>
+      </ScrollView>
+    </View>
   );
 }
 

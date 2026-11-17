@@ -29,6 +29,7 @@ export function MediaFrame({
   const { colors } = useTheme();
   const [failed, setFailed] = useState(false);
   const usable = Number.isFinite(ratio) && ratio > 0 ? ratio : geometry.mediaRatios.square;
+  const normalizedSource = typeof source === 'string' ? { uri: source } : source;
 
   const hasSource = Boolean(source) && !failed;
 
@@ -49,7 +50,7 @@ export function MediaFrame({
     >
       {hasSource ? (
         <Image
-          source={source!}
+          source={normalizedSource!}
           placeholder={placeholder}
           contentFit={fit}
           transition={200}
@@ -75,6 +76,7 @@ export function MediaFrame({
 const styles = StyleSheet.create({
   container: {
     width: '100%',
+    maxWidth: '100%',
     overflow: 'hidden',
     borderWidth: 1,
     alignItems: 'center',

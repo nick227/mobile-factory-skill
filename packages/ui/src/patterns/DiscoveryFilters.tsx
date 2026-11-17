@@ -35,14 +35,17 @@ export function DiscoveryFilters({
   style,
 }: DiscoveryFiltersProps) {
   const { colors } = useTheme();
-  const hasActiveFilters = selectedIds.length > 0;
+  const hasActiveFilters =
+    selectedIds.length > 0 &&
+    !(selectedIds.length === 1 && selectedIds[0] === 'all');
 
   return (
-    <ScrollView
-      horizontal
-      showsHorizontalScrollIndicator={false}
-      contentContainerStyle={[styles.container, style]}
-    >
+    <View style={{ width: '100%', maxWidth: '100%', overflow: 'hidden' }}>
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={[styles.container, style]}
+      >
       {hasActiveFilters && onClear && (
         <TouchableOpacity
           accessibilityRole="button"
@@ -130,7 +133,8 @@ export function DiscoveryFilters({
           </TouchableOpacity>
         );
       })}
-    </ScrollView>
+      </ScrollView>
+    </View>
   );
 }
 

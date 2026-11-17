@@ -38,12 +38,16 @@ export function OnboardingCheckoutScenario() {
       id: 'ceramics',
       title: 'Ceramic Arts',
       subtitle: 'Wheel-thrown stoneware and glazing',
+      badge: 'Kiln Access',
+      badgeTone: 'neutral' as const,
       description: 'Kiln scheduling and glaze formula database.',
     },
     {
       id: 'printmaking',
       title: 'Woodblock & Intaglio',
       subtitle: 'Relief and lithographic printing',
+      badge: 'Studio Press',
+      badgeTone: 'neutral' as const,
       description: 'Studio press bookings and archival paper supplies.',
     },
   ];
@@ -58,7 +62,7 @@ export function OnboardingCheckoutScenario() {
     {
       id: 'step-identity',
       title: 'Studio Identity',
-      subtitle: 'Enter your studio display name and personal handle.',
+      subtitle: 'Residency Application · Set your profile name and handle',
       isValid: name.trim().length > 0 && handle.trim().length > 0,
       content: (
         <Stack gap="md">
@@ -79,8 +83,8 @@ export function OnboardingCheckoutScenario() {
     },
     {
       id: 'step-discipline',
-      title: 'Primary Craft Discipline',
-      subtitle: 'Select the focus area for your studio facilities access.',
+      title: 'Craft Discipline',
+      subtitle: 'Residency Application · Select facilities focus area',
       isValid: Boolean(selectedDiscipline),
       content: (
         <ChoiceGallery
@@ -93,8 +97,8 @@ export function OnboardingCheckoutScenario() {
     },
     {
       id: 'step-plan',
-      title: 'Select Membership Plan',
-      subtitle: 'Choose the access tier that fits your residency cadence.',
+      title: 'Membership Tier',
+      subtitle: 'Residency Application · Select access plan',
       isValid: Boolean(selectedTier),
       content: (
         <Stack gap="md">
@@ -171,18 +175,13 @@ export function OnboardingCheckoutScenario() {
   }
 
   return (
-    <Stack gap="md">
-      <ScreenHeader
-        title="Creator Residency"
-        subtitle="Join our community of artists, designers, and architects"
-      />
-      <FocusWizard
-        steps={wizardSteps}
-        activeStepIndex={currentStep}
-        onStepChange={(idx) => setCurrentStep(idx)}
-        onComplete={handleFinish}
-        completeLabel="Activate Residency"
-      />
-    </Stack>
+    <FocusWizard
+      steps={wizardSteps}
+      activeStepIndex={currentStep}
+      onStepChange={(idx) => setCurrentStep(idx)}
+      onComplete={handleFinish}
+      completeLabel="Activate Residency"
+      style={{ minHeight: 520 }}
+    />
   );
 }

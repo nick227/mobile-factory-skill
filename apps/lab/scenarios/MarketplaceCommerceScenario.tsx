@@ -44,6 +44,7 @@ export function MarketplaceCommerceScenario() {
       price: '$120.00',
       priceNum: 120,
       originalPrice: '$145.00',
+      imageUri: 'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=800&q=80',
       rating: 4.9,
       reviewCount: 48,
       stockStatus: 'in_stock' as const,
@@ -55,6 +56,7 @@ export function MarketplaceCommerceScenario() {
       title: 'Precision Curved Sawara Wood Champagne Cooler',
       price: '$380.00',
       priceNum: 380,
+      imageUri: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=800&q=80',
       rating: 5.0,
       reviewCount: 16,
       stockStatus: 'low_stock' as const,
@@ -68,6 +70,7 @@ export function MarketplaceCommerceScenario() {
       price: '$175.00',
       priceNum: 175,
       originalPrice: '$195.00',
+      imageUri: 'https://images.unsplash.com/photo-1544787219-7f47ccb76574?auto=format&fit=crop&w=800&q=80',
       rating: 4.8,
       reviewCount: 82,
       stockStatus: 'in_stock' as const,
@@ -79,6 +82,7 @@ export function MarketplaceCommerceScenario() {
       title: 'Kinran Gold Leaf Silk Tapestry Cushion',
       price: '$210.00',
       priceNum: 210,
+      imageUri: 'https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=800&q=80',
       rating: 4.7,
       reviewCount: 24,
       stockStatus: 'in_stock' as const,
@@ -124,7 +128,7 @@ export function MarketplaceCommerceScenario() {
   }
 
   return (
-    <View style={{ flex: 1, paddingBottom: cart.length > 0 ? 80 : 0 }}>
+    <View style={{ paddingBottom: cart.length > 0 ? 80 : 0 }}>
       <Stack gap="md">
         <ScreenHeader
           title="Artisan Marketplace"
@@ -157,6 +161,7 @@ export function MarketplaceCommerceScenario() {
               title={prod.title}
               price={prod.price}
               originalPrice={prod.originalPrice}
+              imageUri={prod.imageUri}
               rating={prod.rating}
               reviewCount={prod.reviewCount}
               stockStatus={prod.stockStatus}

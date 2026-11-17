@@ -32,11 +32,11 @@ export function EventDiscoveryScenario() {
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const stories = [
-    { id: 's1', name: 'Kyoto Tea', isLive: true },
-    { id: 's2', name: 'Bamboo Path', hasUnread: true },
-    { id: 's3', name: 'Zen Garden', hasUnread: true },
-    { id: 's4', name: 'Kinkaku-ji', hasUnread: false },
-    { id: 's5', name: 'Gion Walk', hasUnread: false },
+    { id: 's1', name: 'Kyoto Tea', avatarUri: 'https://images.unsplash.com/photo-1576092768241-dec231879fc3?auto=format&fit=crop&w=300&q=80', isLive: true },
+    { id: 's2', name: 'Bamboo Path', avatarUri: 'https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&w=300&q=80', hasUnread: true },
+    { id: 's3', name: 'Zen Garden', avatarUri: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=300&q=80', hasUnread: true },
+    { id: 's4', name: 'Kinkaku-ji', avatarUri: 'https://images.unsplash.com/photo-1578637387939-43c525550085?auto=format&fit=crop&w=300&q=80', hasUnread: false },
+    { id: 's5', name: 'Gion Walk', avatarUri: 'https://images.unsplash.com/photo-1528164344705-475426879c0d?auto=format&fit=crop&w=300&q=80', hasUnread: false },
   ];
 
   const filterOptions = [
@@ -51,6 +51,7 @@ export function EventDiscoveryScenario() {
       id: 'e1',
       title: 'Urasenke Tea Ceremony & Zen Garden',
       subtitle: 'Central Kyoto',
+      image: 'https://images.unsplash.com/photo-1576092768241-dec231879fc3?auto=format&fit=crop&w=800&q=80',
       badge: 'Heritage',
       badgeTone: 'accent' as const,
       aspectRatio: 3 / 4,
@@ -60,6 +61,7 @@ export function EventDiscoveryScenario() {
       id: 'e2',
       title: 'Bamboo Forest Dawn Walking Tour',
       subtitle: 'Arashiyama',
+      image: 'https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&w=800&q=80',
       badge: 'Popular',
       badgeTone: 'neutral' as const,
       aspectRatio: 1,
@@ -69,6 +71,7 @@ export function EventDiscoveryScenario() {
       id: 'e3',
       title: 'Traditional Woodblock Printing Workshop',
       subtitle: 'Higashiyama',
+      image: 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=800&q=80',
       aspectRatio: 4 / 3,
       metadata: 'Take home hand-pressed print',
     },
@@ -76,17 +79,18 @@ export function EventDiscoveryScenario() {
       id: 'e4',
       title: 'Fushimi Sake Brewery & Tasting',
       subtitle: 'Fushimi Ward',
+      image: 'https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&w=800&q=80',
       aspectRatio: 3 / 4,
       metadata: 'Historic cellar tour',
     },
   ];
 
   const attendees = [
-    { id: 'a1', name: 'Yuki Tanaka' },
-    { id: 'a2', name: 'Clara Oswald' },
-    { id: 'a3', name: 'Liam Davies' },
-    { id: 'a4', name: 'Sora Park' },
-    { id: 'a5', name: 'Marc Dupont' },
+    { id: 'a1', name: 'Yuki Tanaka', uri: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80' },
+    { id: 'a2', name: 'Clara Oswald', uri: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=200&q=80' },
+    { id: 'a3', name: 'Liam Davies', uri: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80' },
+    { id: 'a4', name: 'Sora Park', uri: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=200&q=80' },
+    { id: 'a5', name: 'Marc Dupont', uri: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80' },
   ];
 
   const bookingDays = [
@@ -148,6 +152,7 @@ export function EventDiscoveryScenario() {
         <ImmersiveHero
           title="Urasenke Private Tea Masterclass"
           subtitle="Historic 16th century sukiya tea pavilion"
+          image="https://images.unsplash.com/photo-1576092768241-dec231879fc3?auto=format&fit=crop&w=1200&q=80"
           tag="Limited to 6 guests"
           primaryAction={{
             label: 'Reserve Session ($75)',

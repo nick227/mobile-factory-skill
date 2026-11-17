@@ -157,19 +157,24 @@ const styles = StyleSheet.create({
   statsContainer: {
     flex: 1,
     flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginLeft: tokens.spacing.lg,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginLeft: tokens.spacing.md,
+    gap: tokens.spacing.xs,
   },
   statItem: {
     alignItems: 'center',
+    flex: 1,
   },
   statValue: {
     fontSize: tokens.typography.heading,
     fontWeight: '700',
+    textAlign: 'center',
   },
   statLabel: {
     fontSize: tokens.typography.caption,
     marginTop: 2,
+    textAlign: 'center',
   },
   infoBlock: {
     marginBottom: tokens.spacing.md,

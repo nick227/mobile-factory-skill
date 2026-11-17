@@ -97,6 +97,7 @@ export function ProgressDashboardScenario() {
       <IdentityHeader
         name="Kengo Kuma Studio"
         handle="@kkaa_fellows"
+        avatarUri="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=300&q=80"
         verified
         bio="Architecture, sustainable cedar structures, and ambient tea pavilion prototypes."
         stats={[
@@ -107,7 +108,7 @@ export function ProgressDashboardScenario() {
       />
 
       {/* Tabs navigation */}
-      <Tabs tabs={tabs} value={activeTab} onValueChange={(t) => setActiveTab(t as any)} />
+      <Tabs tabs={tabs} value={activeTab} onValueChange={(t) => setActiveTab(t as any)} scrollable />
 
       {/* Tab 1: Overview & Metrics */}
       {activeTab === 'overview' && (
