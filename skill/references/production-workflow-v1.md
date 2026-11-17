@@ -1,41 +1,52 @@
-# Factory v1.0: Blueprint-first production workflow
+# Blueprint-first workflow
 
-The **factory owns reusable source, catalogs, workflow state, and checks**. The **AI owns conversation, design decisions, and JSX composition**; the user owns approvals. This reference accompanies the normal v0.6 native UI skill. Do not bypass its component and design standards.
+The factory owns source, catalog, workflow state and checks. You own conversation, design judgement and JSX composition. The user owns approval. All commands run as `node scripts/factory.mjs …` from the factory root or the unpacked skill, with `--project <app dir>`.
 
-## First interaction: planning, not coding
-1. Identify whether this is a new app or an existing app. Obtain the user's goal and inspect only relevant existing project context.
-2. Run the embedded `node scripts/factory.mjs` from the skill release folder, or use the same command from the factory repository. Start with `node scripts/factory.mjs project status --project <project>`, or initialize the project. The user can remain in discovery/design indefinitely.
-3. Use `discovery next`, then ask targeted questions, listening for corrections. Record structured answers with `project update --file ...`. Questions about UX, visual direction and screen composition can cycle freely.
-4. Query `catalog search`, then `catalog get <id>` **on demand**. Prefer curated components, snippets and standards. Preview components are not certified.
-5. Write a proposed screen inventory with route, purpose, curated components, actions, states and acceptance outcomes. Capture data entities, auth provider, permissions, fixture scenarios, integrations and genuine unsupported gaps. Avoid guessing missing decisions.
-6. Run `blueprint audit` and `blueprint export`. Review the human-readable plan with the user. **Do not approve on the user's behalf.** After explicit confirmation, record a `user-confirmation` decision with evidence, then invoke `blueprint approve`.
-7. Invoke `plan build`; execute only one eligible task at a time using `plan task <id>`. Use the actual `@factory/ui` component contracts and compose JSX rather than recreating curated components. Generator coverage in v1.0 foundation is limited: do not claim full JSX or auth generation exists.
-8. Run real checks and ask for visual review when relevant. `plan done` requires a summary of actual verification evidence; do not invent success. The task graph is a planning aid, not a substitute for technical assessment.
-9. At release, preserve user authorization, check platform-dependent workflows, and record what was actually tested. In maintenance, revise the blueprint; revisions invalidate approval and the old task list.
+## 1. Discover (as short as the app allows)
+- **One-sentence idea:** `project init --name N --mode lite`. Lite mode proposes defaults (no accounts, no persistence, single stack, factory design) and the user confirms them in one message.
+- **Bigger apps:** `--mode standard`.
+- **Documents:** `source add --file spec.md`. Each paragraph becomes a citable anchor (`s1:p4`). Mine the anchors before asking the user anything.
+- **Loop on `interview next`.** It returns only open work, highest value first:
+  1. `resolve-conflict`
+  2. `confirm-assumptions`
+  3. `mine-source` (batches of anchors)
+  4. `ask` (questions not yet answered)
+  5. `catalog-suggestions`
+- **Record findings** with `interview record --file findings.json`: `[{key, value, source:{anchor, quote}}]`, or `{skip:[anchors]}` for anchors with no requirement. For quick answers use `--key K --value JSON --quote "user's words"`. Use `status: inferred|proposed` when the user didn't say it.
+  - Quotes are checked against the archived text, so copy them exactly.
+  - A batch is all-or-nothing.
+- **Confirm with the user's words:** `interview confirm all|k1,k2 --quote "…"`. To resolve a conflict, add `--values '{"k":v}'`.
+- **Changing an answer later** keeps the old one in its history. It invalidates approval and marks only the dependent *finished* tasks as stale.
 
-## Token/context policy
-- Read project status and **only the current task package** by default; avoid rereading whole chat histories or repositories.
-- Load catalog entries relevant to the current task; do not paste full catalog or code into every context.
-- Keep decisions in the canonical `.factory/project.json`. Human-readable `.factory/docs/` is a projection, not a competing authority.
-- Use conditional workflows for authentication, persistence and platform requirements.
-- A fresh agent should resume from project state, approved revision, and next task without the original chat.
+## 2. Design the blueprint
+- **Find parts:** `catalog search "<need>"`, `catalog experiences`, `catalog get <id> --role document`. Prefer `recipe.*` compositions.
+- **Write the blueprint** with `blueprint set --file blueprint.json`. It merges by id:
+  - `screens[]`: `{id, title, purpose, route, components[], recipe?, states[] (incl. loading, error), actions[], acceptance[], sources[] (anchors), basis[] (fact keys it depends on), entities[], layout?}`
+  - `entities[]`: `{id, fields:{name:"string(3..80)|text?|int|bool|date|datetime|url|email|id|enum(a|b)|ref(entity)|type[]"}}`
+- **Discuss layout:** `wireframe all` renders terminal wireframes.
+- **Review the plan with the user:** `blueprint audit`, then `blueprint brief` (writes `.factory/docs/BRIEF.md`, `SCREENS.md`, `DECISIONS.md`, `model.ts`).
 
-## API quick reference (in factory repository or unpacked skill release)
+## 3. Approve (never on the user's behalf)
+After the user explicitly approves, add `{"decisions":[{"type":"user-confirmation","value":"USER: <their words>"}]}` with `blueprint set`, then run `blueprint approve`. No application code is written before this.
 
-```bash
-node scripts/factory.mjs help
-node scripts/factory.mjs catalog search --query focus
-node scripts/factory.mjs project init --project /path/to/app --name 'My App'
-node scripts/factory.mjs discovery next --project /path/to/app
-node scripts/factory.mjs project update --project /path/to/app --file app-decisions.json
-node scripts/factory.mjs blueprint audit --project /path/to/app
-node scripts/factory.mjs blueprint export --project /path/to/app
-# Explicit user approval first:
-node scripts/factory.mjs blueprint approve --project /path/to/app
-node scripts/factory.mjs plan build --project /path/to/app
-node scripts/factory.mjs plan next --project /path/to/app
-node scripts/factory.mjs plan task screen-home --project /path/to/app
-```
+## 4. Build one task at a time
+- `plan build` creates tasks. Re-running it after re-approval keeps finished work.
+- `plan next` lists ready tasks. `plan task <id>` returns everything the task needs:
+  - import lines, props and constraints
+  - the recipe code
+  - the screen wireframe
+  - the relevant decisions and TypeScript model
 
-## Important boundaries
-The v1.0 foundation contains blueprint and workflow tools; it **does not** yet implement fully deterministic screen generation, authenticated provider modules, fixture executors, visual regression or shipping to stores. Those are upcoming capabilities. Do not imply they exist. No application source should be created during discovery or design.
+  Don't re-read the conversation or the whole catalog.
+- Use `catalog get <id> --role construct` only for parts not in the package.
+- `plan done <id> --evidence "<checks you ran and results>"` rejects evidence that names no executed check, and rejects device claims without a platform and OS version.
+
+## Quality gate
+Catalog maturity is computed from evidence:
+- **`tested`:** automated (including mocked) tests.
+- **`verified`:** recorded iOS **and** Android device or simulator evidence.
+
+TypeScript passing, a bundle building or mocked tests passing never make anything verified. Report only what you actually ran.
+
+## Fresh agent resume
+Read `.factory/docs/BRIEF.md` (or run `blueprint brief`), then `plan next` and `plan task <id>`. Canonical state is `.factory/project.json`; everything in `docs/` is a projection.
