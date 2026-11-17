@@ -1,0 +1,68 @@
+{
+  "app": "/home/administrator/web/cmf-bench/runs/factory30-1/app",
+  "verification": {
+    "tsc": {
+      "exit": 0,
+      "seconds": 2,
+      "tail": ""
+    },
+    "androidExport": {
+      "exit": 0,
+      "seconds": 6,
+      "tail": "metadata.json (1.8KB) |  | Exported: /home/administrator/web/cmf-bench/runs/factory30-1/score-export"
+    },
+    "note": "Re-run independently by the scorer. Types and bundles only; no device, simulator or screen reader."
+  },
+  "volume": {
+    "customFiles": 10,
+    "customLoc": 250,
+    "customTsxLoc": 157,
+    "recipeLocCopiedAndAdapted": 96,
+    "factoryFilesInstalled": 65,
+    "factoryLocInstalled": 3933,
+    "factoryUiComponentsUsed": [
+      "ActionDock",
+      "AlertDialog",
+      "Badge",
+      "Button",
+      "CalmSkeleton",
+      "EmptyState",
+      "ListItem",
+      "MediaFrame",
+      "Row",
+      "Screen",
+      "Stack",
+      "Text",
+      "TextField",
+      "TextFieldProps",
+      "ThemeProvider",
+      "Toggle",
+      "useTheme"
+    ],
+    "factoryModulesUsed": [
+      "api-client",
+      "error-boundary",
+      "navigation",
+      "persistence",
+      "validation"
+    ]
+  },
+  "staticSpecChecks": {
+    "_note": "Source-pattern heuristics only; a pass means the pattern exists, not that it behaves correctly.",
+    "routeList": true,
+    "routeDetail": true,
+    "routeCreate": true,
+    "persistence": true,
+    "destructiveConfirm": true,
+    "errorBoundary": true,
+    "validationLength": true,
+    "validationIsoDate": true,
+    "validationNotPast": true,
+    "descriptionMax500": true,
+    "simulatedLatency": true,
+    "forcedErrors": true,
+    "darkMode": true,
+    "accessibilityLabels": 7,
+    "fixedAspectRatio": true
+  }
+}

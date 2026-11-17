@@ -1,0 +1,1350 @@
+[
+  {
+    "id": "primitives.text",
+    "scheme": "light",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio"
+    ]
+  },
+  {
+    "id": "primitives.stack",
+    "scheme": "light",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio"
+    ]
+  },
+  {
+    "id": "primitives.row",
+    "scheme": "light",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio"
+    ]
+  },
+  {
+    "id": "primitives.surface",
+    "scheme": "light",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio"
+    ]
+  },
+  {
+    "id": "primitives.divider",
+    "scheme": "light",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio"
+    ]
+  },
+  {
+    "id": "primitives.screen",
+    "scheme": "light",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio"
+    ]
+  },
+  {
+    "id": "controls.button",
+    "scheme": "light",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio",
+      "button"
+    ]
+  },
+  {
+    "id": "controls.textfield",
+    "scheme": "light",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio",
+      "alert"
+    ]
+  },
+  {
+    "id": "controls.badge",
+    "scheme": "light",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio"
+    ]
+  },
+  {
+    "id": "composites.listitem",
+    "scheme": "light",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio",
+      "button"
+    ]
+  },
+  {
+    "id": "patterns.settingsgroup",
+    "scheme": "light",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio"
+    ]
+  },
+  {
+    "id": "primitives.spacer",
+    "scheme": "light",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio"
+    ]
+  },
+  {
+    "id": "controls.iconbutton",
+    "scheme": "light",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio",
+      "button"
+    ]
+  },
+  {
+    "id": "controls.toggle",
+    "scheme": "light",
+    "errors": [],
+    "small": [
+      {
+        "role": "switch",
+        "label": "Notifications",
+        "w": 40,
+        "h": 20
+      }
+    ],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio",
+      "switch"
+    ]
+  },
+  {
+    "id": "controls.checkbox",
+    "scheme": "light",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio",
+      "checkbox"
+    ]
+  },
+  {
+    "id": "controls.radiogroup",
+    "scheme": "light",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio"
+    ]
+  },
+  {
+    "id": "controls.segmentedcontrol",
+    "scheme": "light",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio"
+    ]
+  },
+  {
+    "id": "controls.progressbar",
+    "scheme": "light",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio",
+      "progressbar"
+    ]
+  },
+  {
+    "id": "controls.spinner",
+    "scheme": "light",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio",
+      "progressbar"
+    ]
+  },
+  {
+    "id": "composites.avatar",
+    "scheme": "light",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio"
+    ]
+  },
+  {
+    "id": "composites.sectionheader",
+    "scheme": "light",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio"
+    ]
+  },
+  {
+    "id": "composites.emptystate",
+    "scheme": "light",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio",
+      "button"
+    ]
+  },
+  {
+    "id": "composites.formfield",
+    "scheme": "light",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio"
+    ]
+  },
+  {
+    "id": "patterns.actionfooter",
+    "scheme": "light",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio",
+      "button"
+    ]
+  },
+  {
+    "id": "composites.screenheader",
+    "scheme": "light",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio",
+      "button"
+    ]
+  },
+  {
+    "id": "patterns.focusscreen",
+    "scheme": "light",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio",
+      "button"
+    ]
+  },
+  {
+    "id": "controls.stepprogress",
+    "scheme": "light",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio",
+      "progressbar"
+    ]
+  },
+  {
+    "id": "composites.inputstage",
+    "scheme": "light",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio"
+    ]
+  },
+  {
+    "id": "patterns.actiondock",
+    "scheme": "light",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio",
+      "button"
+    ]
+  },
+  {
+    "id": "controls.calmskeleton",
+    "scheme": "light",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio"
+    ]
+  },
+  {
+    "id": "composites.mediaframe",
+    "scheme": "light",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio"
+    ]
+  },
+  {
+    "id": "patterns.swipepager",
+    "scheme": "light",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio",
+      "button"
+    ]
+  },
+  {
+    "id": "patterns.editorialmosaic",
+    "scheme": "light",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio",
+      "button"
+    ]
+  },
+  {
+    "id": "patterns.immersivehero",
+    "scheme": "light",
+    "errors": [],
+    "small": [
+      {
+        "role": "button",
+        "label": "Guides",
+        "w": 89,
+        "h": 28
+      }
+    ],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio",
+      "button"
+    ]
+  },
+  {
+    "id": "patterns.choicegallery",
+    "scheme": "light",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio"
+    ]
+  },
+  {
+    "id": "patterns.focuswizard",
+    "scheme": "light",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio",
+      "button",
+      "progressbar"
+    ]
+  },
+  {
+    "id": "primitives.portal",
+    "scheme": "light",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio",
+      "button"
+    ]
+  },
+  {
+    "id": "controls.select",
+    "scheme": "light",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio",
+      "combobox"
+    ]
+  },
+  {
+    "id": "controls.tabs",
+    "scheme": "light",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio",
+      "tablist",
+      "tab"
+    ]
+  },
+  {
+    "id": "composites.dialog",
+    "scheme": "light",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio",
+      "button"
+    ]
+  },
+  {
+    "id": "composites.alertdialog",
+    "scheme": "light",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio",
+      "button"
+    ]
+  },
+  {
+    "id": "composites.accordion",
+    "scheme": "light",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio",
+      "button"
+    ]
+  },
+  {
+    "id": "patterns.schedulepicker",
+    "scheme": "light",
+    "errors": [],
+    "small": [
+      {
+        "role": "button",
+        "label": "Filter all slots",
+        "w": 35,
+        "h": 29
+      },
+      {
+        "role": "button",
+        "label": "Filter morning slots",
+        "w": 65,
+        "h": 29
+      },
+      {
+        "role": "button",
+        "label": "Filter afternoon slots",
+        "w": 74,
+        "h": 29
+      },
+      {
+        "role": "button",
+        "label": "Filter evening slots",
+        "w": 65,
+        "h": 29
+      }
+    ],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio",
+      "button"
+    ]
+  },
+  {
+    "id": "patterns.metricspotlight",
+    "scheme": "light",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio",
+      "button",
+      "region"
+    ]
+  },
+  {
+    "id": "composites.peoplestack",
+    "scheme": "light",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio"
+    ]
+  },
+  {
+    "id": "patterns.storyrail",
+    "scheme": "light",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio",
+      "button"
+    ]
+  },
+  {
+    "id": "patterns.discoveryfilters",
+    "scheme": "light",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio",
+      "button"
+    ]
+  },
+  {
+    "id": "patterns.identityheader",
+    "scheme": "light",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio",
+      "button"
+    ]
+  },
+  {
+    "id": "patterns.progressjourney",
+    "scheme": "light",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio"
+    ]
+  },
+  {
+    "id": "patterns.statustracker",
+    "scheme": "light",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio",
+      "region",
+      "progressbar",
+      "button"
+    ]
+  },
+  {
+    "id": "primitives.text",
+    "scheme": "dark",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio"
+    ]
+  },
+  {
+    "id": "primitives.stack",
+    "scheme": "dark",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio"
+    ]
+  },
+  {
+    "id": "primitives.row",
+    "scheme": "dark",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio"
+    ]
+  },
+  {
+    "id": "primitives.surface",
+    "scheme": "dark",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio"
+    ]
+  },
+  {
+    "id": "primitives.divider",
+    "scheme": "dark",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio"
+    ]
+  },
+  {
+    "id": "primitives.screen",
+    "scheme": "dark",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio"
+    ]
+  },
+  {
+    "id": "controls.button",
+    "scheme": "dark",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio",
+      "button"
+    ]
+  },
+  {
+    "id": "controls.textfield",
+    "scheme": "dark",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio",
+      "alert"
+    ]
+  },
+  {
+    "id": "controls.badge",
+    "scheme": "dark",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio"
+    ]
+  },
+  {
+    "id": "composites.listitem",
+    "scheme": "dark",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio",
+      "button"
+    ]
+  },
+  {
+    "id": "patterns.settingsgroup",
+    "scheme": "dark",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio"
+    ]
+  },
+  {
+    "id": "primitives.spacer",
+    "scheme": "dark",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio"
+    ]
+  },
+  {
+    "id": "controls.iconbutton",
+    "scheme": "dark",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio",
+      "button"
+    ]
+  },
+  {
+    "id": "controls.toggle",
+    "scheme": "dark",
+    "errors": [],
+    "small": [
+      {
+        "role": "switch",
+        "label": "Notifications",
+        "w": 40,
+        "h": 20
+      }
+    ],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio",
+      "switch"
+    ]
+  },
+  {
+    "id": "controls.checkbox",
+    "scheme": "dark",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio",
+      "checkbox"
+    ]
+  },
+  {
+    "id": "controls.radiogroup",
+    "scheme": "dark",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio"
+    ]
+  },
+  {
+    "id": "controls.segmentedcontrol",
+    "scheme": "dark",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio"
+    ]
+  },
+  {
+    "id": "controls.progressbar",
+    "scheme": "dark",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio",
+      "progressbar"
+    ]
+  },
+  {
+    "id": "controls.spinner",
+    "scheme": "dark",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio",
+      "progressbar"
+    ]
+  },
+  {
+    "id": "composites.avatar",
+    "scheme": "dark",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio"
+    ]
+  },
+  {
+    "id": "composites.sectionheader",
+    "scheme": "dark",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio"
+    ]
+  },
+  {
+    "id": "composites.emptystate",
+    "scheme": "dark",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio",
+      "button"
+    ]
+  },
+  {
+    "id": "composites.formfield",
+    "scheme": "dark",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio"
+    ]
+  },
+  {
+    "id": "patterns.actionfooter",
+    "scheme": "dark",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio",
+      "button"
+    ]
+  },
+  {
+    "id": "composites.screenheader",
+    "scheme": "dark",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio",
+      "button"
+    ]
+  },
+  {
+    "id": "patterns.focusscreen",
+    "scheme": "dark",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio",
+      "button"
+    ]
+  },
+  {
+    "id": "controls.stepprogress",
+    "scheme": "dark",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio",
+      "progressbar"
+    ]
+  },
+  {
+    "id": "composites.inputstage",
+    "scheme": "dark",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio"
+    ]
+  },
+  {
+    "id": "patterns.actiondock",
+    "scheme": "dark",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio",
+      "button"
+    ]
+  },
+  {
+    "id": "controls.calmskeleton",
+    "scheme": "dark",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio"
+    ]
+  },
+  {
+    "id": "composites.mediaframe",
+    "scheme": "dark",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio"
+    ]
+  },
+  {
+    "id": "patterns.swipepager",
+    "scheme": "dark",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio",
+      "button"
+    ]
+  },
+  {
+    "id": "patterns.editorialmosaic",
+    "scheme": "dark",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio",
+      "button"
+    ]
+  },
+  {
+    "id": "patterns.immersivehero",
+    "scheme": "dark",
+    "errors": [],
+    "small": [
+      {
+        "role": "button",
+        "label": "Guides",
+        "w": 89,
+        "h": 28
+      }
+    ],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio",
+      "button"
+    ]
+  },
+  {
+    "id": "patterns.choicegallery",
+    "scheme": "dark",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio"
+    ]
+  },
+  {
+    "id": "patterns.focuswizard",
+    "scheme": "dark",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio",
+      "button",
+      "progressbar"
+    ]
+  },
+  {
+    "id": "primitives.portal",
+    "scheme": "dark",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio",
+      "button"
+    ]
+  },
+  {
+    "id": "controls.select",
+    "scheme": "dark",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio",
+      "combobox"
+    ]
+  },
+  {
+    "id": "controls.tabs",
+    "scheme": "dark",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio",
+      "tablist",
+      "tab"
+    ]
+  },
+  {
+    "id": "composites.dialog",
+    "scheme": "dark",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio",
+      "button"
+    ]
+  },
+  {
+    "id": "composites.alertdialog",
+    "scheme": "dark",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio",
+      "button"
+    ]
+  },
+  {
+    "id": "composites.accordion",
+    "scheme": "dark",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio",
+      "button"
+    ]
+  },
+  {
+    "id": "patterns.schedulepicker",
+    "scheme": "dark",
+    "errors": [],
+    "small": [
+      {
+        "role": "button",
+        "label": "Filter all slots",
+        "w": 35,
+        "h": 29
+      },
+      {
+        "role": "button",
+        "label": "Filter morning slots",
+        "w": 65,
+        "h": 29
+      },
+      {
+        "role": "button",
+        "label": "Filter afternoon slots",
+        "w": 74,
+        "h": 29
+      },
+      {
+        "role": "button",
+        "label": "Filter evening slots",
+        "w": 65,
+        "h": 29
+      }
+    ],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio",
+      "button"
+    ]
+  },
+  {
+    "id": "patterns.metricspotlight",
+    "scheme": "dark",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio",
+      "button",
+      "region"
+    ]
+  },
+  {
+    "id": "composites.peoplestack",
+    "scheme": "dark",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio"
+    ]
+  },
+  {
+    "id": "patterns.storyrail",
+    "scheme": "dark",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio",
+      "button"
+    ]
+  },
+  {
+    "id": "patterns.discoveryfilters",
+    "scheme": "dark",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio",
+      "button"
+    ]
+  },
+  {
+    "id": "patterns.identityheader",
+    "scheme": "dark",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio",
+      "button"
+    ]
+  },
+  {
+    "id": "patterns.progressjourney",
+    "scheme": "dark",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio"
+    ]
+  },
+  {
+    "id": "patterns.statustracker",
+    "scheme": "dark",
+    "errors": [],
+    "small": [],
+    "unavailable": false,
+    "roles": [
+      "heading",
+      "radiogroup",
+      "radio",
+      "region",
+      "progressbar",
+      "button"
+    ]
+  }
+]
