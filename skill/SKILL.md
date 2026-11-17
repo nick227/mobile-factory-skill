@@ -15,8 +15,8 @@ A frozen release of the Mobile Software Factory. All commands are `node scripts/
 1. **Plan (blueprint path only):** follow `references/production-workflow-v1.md`. Use `--mode lite` for small apps. If the user has already approved a written spec, ingest it with `source add` and record that approval; otherwise get explicit approval before writing code.
 2. **Find parts:** `catalog search "<need>"` (e.g. "searchable list", "save data on device", "confirm destructive"), then `catalog get <id> --role construct`. That returns the import line, props, constraints and warnings, and for `recipe.*` the full screen code. Don't read library source to learn APIs.
 3. **Create the app:**
-   - Copy `templates/expo-app/` to the app folder.
-   - Install the UI with `node scripts/install-source.mjs library catalog.json <app> --all`.
+   - **Blueprint path:** after approval, run `blueprint brief --project <app>` to write current design and interaction docs, then `app scaffold --project <app>`. This adds Expo files into the existing documented workspace; it rejects missing/stale documents, unapproved revisions and conflicting files.
+   - **Fast path only (preapproved spec, no factory state):** copy `templates/expo-app/` to a new app folder, then install UI with `node scripts/install-source.mjs library catalog.json <app> --all`.
    - Pick modules: on the blueprint path run `module recommend --project <app>`; on the fast path run `module recommend` with no project to print each module's selection rule. Then install with `module add <ids> --app <app>`.
    - Run the printed `npx expo install …`.
 4. **Compose screens:**
