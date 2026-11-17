@@ -1,3 +1,18 @@
 {
-  "extends": "./tsconfig.base.json"
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "react-native": [
+        "./tests/mocks/react-native.js"
+      ],
+      "react-native-safe-area-context": [
+        "./tests/mocks/react-native-safe-area-context.js"
+      ],
+      "expo-image": [
+        "./tests/mocks/expo-image.js"
+      ]
+    }
+  },
+  "//": "Test-only: tsx runs packages/ui/tests against hand-written react-native mocks. Library typechecks (packages/ui, apps/lab) use real types."
 }

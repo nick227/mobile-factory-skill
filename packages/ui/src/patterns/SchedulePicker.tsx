@@ -302,6 +302,10 @@ const styles = StyleSheet.create({
     marginBottom: tokens.spacing.md,
   },
   periodTab: {
+    minHeight: 44,
+    minWidth: 44,
+    alignItems: 'center',
+    justifyContent: 'center',
     paddingVertical: 6,
     paddingHorizontal: tokens.spacing.sm,
     borderRadius: tokens.radius.sm,

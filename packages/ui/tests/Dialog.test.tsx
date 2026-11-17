@@ -33,7 +33,7 @@ test('Dialog renders accessible dialog with title, description, and action butto
     );
   });
 
-  const dialog = root.root.findByProps({ accessibilityRole: 'dialog' });
+  const dialog = root.root.findByProps({ role: 'dialog' });
   assert.equal(dialog.props.accessibilityLabel, 'Confirm Reservation');
   assert.ok(root.root.findByProps({ testID: 'dialog-child' }));
 

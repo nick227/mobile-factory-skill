@@ -79,7 +79,7 @@ export function SelectionDock({
               variant="ghost"
               size="sm"
               onPress={onClear}
-              style={{ paddingHorizontal: 0, minHeight: 28 }}
+              style={{ paddingHorizontal: 0 }}
             />
           )}
         </View>

@@ -1,7 +1,6 @@
 // Regression checks from the independent quality review (docs/reviews/).
-// Tests marked `todo` encode a defect in files owned by the UI foundation
-// workstream: they report on every run without failing the suite. When the
-// owner fixes the defect, remove `todo` so the check becomes a guard.
+// Q1-Q3 started as `todo` checks for UI-foundation defects; all three are fixed
+// and now guard against regressions.
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -12,7 +11,7 @@ import * as cat from '../factory-v1/catalog-contract.mjs';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const walk = (d) => fs.readdirSync(d, { withFileTypes: true }).flatMap((e) => (e.isDirectory() ? walk(path.join(d, e.name)) : [path.join(d, e.name)]));
 
-test('Q1: no registry status claims more maturity than recorded evidence supports', { todo: 'owner: UI foundation — 18 components are "verified" with no device evidence' }, () => {
+test('Q1: no registry status claims more maturity than recorded evidence supports', () => {
   const unsupported = cat.load().items.filter((i) => i.maturity.claimUnsupported).map((i) => `${i.id} (claims ${i.maturity.claimed}, supports ${i.maturity.effective})`);
   assert.deepEqual(unsupported, []);
 });
@@ -24,7 +23,7 @@ const rnRoles = (() => {
   return new Set([...line.matchAll(/"([a-z]+)"/g)].map((m) => m[1]));
 })();
 
-test('Q2: every accessibilityRole literal is a real React Native AccessibilityRole', { skip: !rnRoles && 'run pnpm install first', todo: 'owner: UI foundation — Dialog uses accessibilityRole="dialog" (use role="dialog")' }, () => {
+test('Q2: every accessibilityRole literal is a real React Native AccessibilityRole', { skip: !rnRoles && 'run pnpm install first' }, () => {
   // React Native's types accept any string here, so only this check catches it.
   const bad = [];
   for (const file of walk(path.join(root, 'packages/ui/src')).filter((f) => f.endsWith('.tsx'))) {
@@ -33,7 +32,7 @@ test('Q2: every accessibilityRole literal is a real React Native AccessibilityRo
   assert.deepEqual(bad, []);
 });
 
-test('Q3: the UI library is typechecked against real react-native types, not test mocks', { todo: 'owner: UI foundation — tsconfig.base.json paths map react-native/expo-image/safe-area to tests/mocks' }, () => {
+test('Q3: the UI library is typechecked against real react-native types, not test mocks', () => {
   const base = JSON.parse(fs.readFileSync(path.join(root, 'tsconfig.base.json'), 'utf8'));
   const mapped = Object.entries(base.compilerOptions?.paths ?? {}).filter(([, targets]) => targets.some((t) => t.includes('mocks'))).map(([k]) => k);
   assert.deepEqual(mapped, [], 'move mock mappings into a tests-only tsconfig');
