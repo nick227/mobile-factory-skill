@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Switch, View } from 'react-native';
-import { Text, Stack, Row, Surface, Divider, Screen, Button, TextField, Badge, ListItem, SettingsGroup, useTheme, Spacer, IconButton, Toggle, Checkbox, RadioGroup, SegmentedControl, ProgressBar, Spinner, Avatar, SectionHeader, EmptyState, FormField, ActionFooter, ScreenHeader, FocusScreen, StepProgress, InputStage, ActionDock, CalmSkeleton, MediaFrame, SwipePager } from '@factory/ui';
+import { Text, Stack, Row, Surface, Divider, Screen, Button, TextField, Badge, ListItem, SettingsGroup, useTheme, Spacer, IconButton, Toggle, Checkbox, RadioGroup, SegmentedControl, ProgressBar, Spinner, Avatar, SectionHeader, EmptyState, FormField, ActionFooter, ScreenHeader, FocusScreen, StepProgress, InputStage, ActionDock, CalmSkeleton, MediaFrame, SwipePager, EditorialMosaic, ImmersiveHero, ChoiceGallery, FocusWizard, Portal, PortalHost, PortalProvider, Select, Tabs, Dialog, AlertDialog, Accordion } from '@factory/ui';
 
 export const showcases: Record<string, () => React.JSX.Element> = {
   Text: () => <Stack><Text variant="title">Title typography</Text><Text variant="heading">Section heading</Text><Text>Body text supports dynamic type.</Text><Text muted variant="small">Secondary caption</Text></Stack>,
@@ -35,4 +35,245 @@ export const showcases: Record<string, () => React.JSX.Element> = {
   CalmSkeleton: () => <Stack><CalmSkeleton height={120}/><CalmSkeleton height={20} width="65%"/></Stack>,
   MediaFrame: () => <MediaFrame ratio={16/9} label="Reserved media frame" />,
   SwipePager: () => <SwipePager items={[{id:'a',content:<Surface><Text variant="heading">Page one</Text></Surface>},{id:'b',content:<Surface><Text variant="heading">Page two</Text></Surface>}]}/>,
+  EditorialMosaic: function EditorialMosaicDemo() {
+    const [selected, setSelected] = useState<string | null>(null);
+    const items = [
+      { id: '1', title: 'Fushimi Inari Shrine', subtitle: 'Kyoto, Japan', badge: 'Must See', badgeTone: 'accent' as const, aspectRatio: 3 / 4, metadata: '10,000 torii gates' },
+      { id: '2', title: 'Arashiyama Bamboo Grove', subtitle: 'Sagano', aspectRatio: 1, metadata: 'Morning visits recommended' },
+      { id: '3', title: 'Kinkaku-ji Golden Pavilion', subtitle: 'Northern Kyoto', badge: 'UNESCO', aspectRatio: 4 / 3, metadata: 'Zen Buddhist temple' },
+      { id: '4', title: 'Gion District', subtitle: 'Higashiyama', aspectRatio: 3 / 4, metadata: 'Traditional machiya houses' },
+    ];
+    return (
+      <Stack gap="md">
+        {selected ? <Badge label={`Selected: ${selected}`} tone="accent" /> : null}
+        <EditorialMosaic
+          items={items}
+          density="comfortable"
+          onItemPress={(item) => setSelected(item.title)}
+        />
+      </Stack>
+    );
+  },
+  ImmersiveHero: function ImmersiveHeroDemo() {
+    const [saved, setSaved] = useState(false);
+    return (
+      <ImmersiveHero
+        title="Kyoto Photography Guide"
+        subtitle="Master the hidden alleys, golden hour temples, and ancient bamboo forests."
+        tag="Featured Guide"
+        tagTone="accent"
+        metadata="By Pat Kay • 12 min read"
+        aspectRatio={16 / 9}
+        onBack={() => {}}
+        backLabel="Guides"
+        primaryAction={{
+          label: saved ? 'Saved in Library' : 'Explore Guide',
+          onPress: () => setSaved(!saved),
+        }}
+        secondaryAction={{
+          label: 'Share',
+          onPress: () => {},
+        }}
+      />
+    );
+  },
+  ChoiceGallery: function ChoiceGalleryDemo() {
+    const [selected, setSelected] = useState<string>('minimal');
+    const options = [
+      { id: 'minimal', title: 'Minimalist', description: 'Clean typography, neutral colors', badge: 'Default' },
+      { id: 'editorial', title: 'Editorial', description: 'Serif headings, expressive imagery', badge: 'Popular', badgeTone: 'accent' as const },
+      { id: 'compact', title: 'Dense Data', description: 'Maximum information density' },
+      { id: 'vibrant', title: 'Vibrant Pop', description: 'High-contrast accents and playful shapes' },
+    ];
+    return (
+      <ChoiceGallery
+        label="Select UI Theme"
+        options={options}
+        selected={selected}
+        onSelect={(id) => setSelected(id)}
+      />
+    );
+  },
+  FocusWizard: function FocusWizardDemo() {
+    const [step, setStep] = useState(0);
+    const [name, setName] = useState('');
+    const [done, setDone] = useState(false);
+
+    if (done) {
+      return (
+        <Surface outlined>
+          <Stack gap="md">
+            <Text variant="title">Wizard Completed!</Text>
+            <Text>Created app: {name || 'Untitled'}</Text>
+            <Button label="Reset" onPress={() => { setStep(0); setName(''); setDone(false); }} />
+          </Stack>
+        </Surface>
+      );
+    }
+
+    const steps = [
+      {
+        id: 'name',
+        title: 'Project Name',
+        subtitle: 'What should we call your application?',
+        isValid: name.trim().length > 0,
+        content: (
+          <TextField
+            label="Application Name"
+            value={name}
+            onChangeText={setName}
+            placeholder="e.g. Kyoto Guides"
+          />
+        ),
+      },
+      {
+        id: 'confirm',
+        title: 'Review Details',
+        subtitle: 'Confirm settings before generating project.',
+        content: (
+          <Stack gap="sm">
+            <Text>Name: {name}</Text>
+            <Text muted variant="small">Press Complete to initialize the codebase.</Text>
+          </Stack>
+        ),
+      },
+    ];
+
+    return (
+      <View style={{ minHeight: 360 }}>
+        <FocusWizard
+          steps={steps}
+          activeStepIndex={step}
+          onStepChange={(next) => setStep(next)}
+          onComplete={() => setDone(true)}
+          onCancel={() => { setStep(0); setName(''); }}
+        />
+      </View>
+    );
+  },
+  Portal: function PortalDemo() {
+    const [showOver, setShowOver] = useState(false);
+    return (
+      <PortalProvider>
+        <Stack gap="md">
+          <Text>Base screen content</Text>
+          <Button
+            label={showOver ? 'Hide Overlay' : 'Show Teleported Overlay'}
+            onPress={() => setShowOver(!showOver)}
+          />
+          {showOver ? (
+            <Portal>
+              <Surface outlined style={{ padding: 16 }}>
+                <Text variant="heading">Teleported Portal Node</Text>
+                <Text muted variant="small">Rendered into top-level PortalHost.</Text>
+              </Surface>
+            </Portal>
+          ) : null}
+          <PortalHost />
+        </Stack>
+      </PortalProvider>
+    );
+  },
+  Select: function SelectDemo() {
+    const [val, setVal] = useState('kyoto');
+    const options = [
+      { label: 'Kyoto, Japan', value: 'kyoto' },
+      { label: 'Tokyo, Japan', value: 'tokyo' },
+      { label: 'Osaka, Japan', value: 'osaka' },
+      { label: 'Nara, Japan (Sold Out)', value: 'nara', disabled: true },
+    ];
+    return (
+      <Select
+        label="Select Expedition Destination"
+        value={val}
+        onValueChange={setVal}
+        options={options}
+      />
+    );
+  },
+  Tabs: function TabsDemo() {
+    const [tab, setTab] = useState('overview');
+    const tabs = [
+      { id: 'overview', label: 'Overview' },
+      { id: 'schedule', label: 'Schedule', badge: '3' },
+      { id: 'attendees', label: 'Attendees' },
+    ];
+    return (
+      <Stack gap="md">
+        <Tabs tabs={tabs} value={tab} onValueChange={setTab} />
+        <Surface outlined>
+          <Text variant="heading">Active view: {tab}</Text>
+        </Surface>
+      </Stack>
+    );
+  },
+  Dialog: function DialogDemo() {
+    const [open, setOpen] = useState(false);
+    return (
+      <Stack gap="md">
+        <Button label="Open Confirmation Dialog" onPress={() => setOpen(true)} />
+        <Dialog
+          open={open}
+          onOpenChange={setOpen}
+          title="Reserve Selected Experience"
+          description="Your card will only be charged 24 hours before the departure."
+          primaryAction={{ label: 'Confirm Booking', onPress: () => setOpen(false) }}
+          secondaryAction={{ label: 'Cancel', onPress: () => setOpen(false) }}
+        >
+          <Text muted variant="small">Included: 4 nights, breakfast, temple access.</Text>
+        </Dialog>
+      </Stack>
+    );
+  },
+  AlertDialog: function AlertDialogDemo() {
+    const [open, setOpen] = useState(false);
+    const [deleted, setDeleted] = useState(false);
+    return (
+      <Stack gap="md">
+        <Button
+          label={deleted ? 'Project Deleted (Tap to Reset)' : 'Delete Project'}
+          variant="outline"
+          onPress={() => (deleted ? setDeleted(false) : setOpen(true))}
+        />
+        <AlertDialog
+          open={open}
+          onOpenChange={setOpen}
+          destructive
+          title="Delete Project Permanently?"
+          description="This action cannot be undone. All project files, tasks, and history will be erased."
+          confirmLabel="Delete Forever"
+          cancelLabel="Keep Project"
+          onConfirm={() => {
+            setDeleted(true);
+            setOpen(false);
+          }}
+        />
+      </Stack>
+    );
+  },
+  Accordion: function AccordionDemo() {
+    const [expanded, setExpanded] = useState<string[]>(['faq1']);
+    const items = [
+      {
+        id: 'faq1',
+        title: 'What equipment is required?',
+        subtitle: 'Cameras, lenses, and tripods',
+        content: <Text muted variant="small">We recommend bringing a wide-angle 24-70mm lens and a sturdy lightweight travel tripod.</Text>,
+      },
+      {
+        id: 'faq2',
+        title: 'Is airport transfer included?',
+        content: <Text muted variant="small">Yes, our private shuttle meets all guests at Kansai International (KIX).</Text>,
+      },
+      {
+        id: 'faq3',
+        title: 'What is the cancellation policy?',
+        content: <Text muted variant="small">Full refund up to 14 days prior to departure date.</Text>,
+      },
+    ];
+    const toggle = (id: string) => {
+      setExpanded((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
+    };
+    return <Accordion items={items} expandedIds={expanded} onToggle={toggle} />;
+  },
 };

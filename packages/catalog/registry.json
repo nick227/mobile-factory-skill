@@ -318,5 +318,105 @@
     "exportName": "SwipePager",
     "showcase": "SwipePager",
     "test": "tests/SwipePager.test.tsx"
+  },
+  {
+    "id": "patterns.editorialmosaic",
+    "name": "EditorialMosaic",
+    "category": "patterns",
+    "status": "verified",
+    "source": "patterns/EditorialMosaic.tsx",
+    "exportName": "EditorialMosaic",
+    "showcase": "EditorialMosaic",
+    "test": "tests/EditorialMosaic.test.tsx"
+  },
+  {
+    "id": "patterns.immersivehero",
+    "name": "ImmersiveHero",
+    "category": "patterns",
+    "status": "verified",
+    "source": "patterns/ImmersiveHero.tsx",
+    "exportName": "ImmersiveHero",
+    "showcase": "ImmersiveHero",
+    "test": "tests/ImmersiveHero.test.tsx"
+  },
+  {
+    "id": "patterns.choicegallery",
+    "name": "ChoiceGallery",
+    "category": "patterns",
+    "status": "verified",
+    "source": "patterns/ChoiceGallery.tsx",
+    "exportName": "ChoiceGallery",
+    "showcase": "ChoiceGallery",
+    "test": "tests/ChoiceGallery.test.tsx"
+  },
+  {
+    "id": "patterns.focuswizard",
+    "name": "FocusWizard",
+    "category": "patterns",
+    "status": "verified",
+    "source": "patterns/FocusWizard.tsx",
+    "exportName": "FocusWizard",
+    "showcase": "FocusWizard",
+    "test": "tests/FocusWizard.test.tsx"
+  },
+  {
+    "id": "primitives.portal",
+    "name": "Portal",
+    "category": "primitives",
+    "status": "verified",
+    "source": "primitives/Portal.tsx",
+    "exportName": "Portal",
+    "showcase": "Portal",
+    "test": "tests/Portal.test.tsx"
+  },
+  {
+    "id": "controls.select",
+    "name": "Select",
+    "category": "controls",
+    "status": "verified",
+    "source": "controls/Select.tsx",
+    "exportName": "Select",
+    "showcase": "Select",
+    "test": "tests/Select.test.tsx"
+  },
+  {
+    "id": "controls.tabs",
+    "name": "Tabs",
+    "category": "controls",
+    "status": "verified",
+    "source": "controls/Tabs.tsx",
+    "exportName": "Tabs",
+    "showcase": "Tabs",
+    "test": "tests/Tabs.test.tsx"
+  },
+  {
+    "id": "composites.dialog",
+    "name": "Dialog",
+    "category": "composites",
+    "status": "verified",
+    "source": "composites/Dialog.tsx",
+    "exportName": "Dialog",
+    "showcase": "Dialog",
+    "test": "tests/Dialog.test.tsx"
+  },
+  {
+    "id": "composites.alertdialog",
+    "name": "AlertDialog",
+    "category": "composites",
+    "status": "verified",
+    "source": "composites/AlertDialog.tsx",
+    "exportName": "AlertDialog",
+    "showcase": "AlertDialog",
+    "test": "tests/AlertDialog.test.tsx"
+  },
+  {
+    "id": "composites.accordion",
+    "name": "Accordion",
+    "category": "composites",
+    "status": "verified",
+    "source": "composites/Accordion.tsx",
+    "exportName": "Accordion",
+    "showcase": "Accordion",
+    "test": "tests/Accordion.test.tsx"
   }
 ]

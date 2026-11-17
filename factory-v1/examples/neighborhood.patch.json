@@ -19,6 +19,7 @@
   "roles": ["visitor", "member", "organizer", "moderator"],
   "integrations": ["Authentication provider TBD", "Maps provider TBD"],
   "decisions": [
-    {"type":"design-direction","value":"Photography prioritized over map"}
+    {"type":"design-direction","value":"Photography prioritized over map"},
+    {"type":"user-confirmation","value":"User confirmed photo-first neighborhood event discovery blueprint"}
   ]
 }

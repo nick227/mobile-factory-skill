@@ -7,7 +7,8 @@
     "lab": "pnpm --filter @factory/lab start",
     "lab:android": "pnpm --filter @factory/lab android",
     "lab:ios": "pnpm --filter @factory/lab ios",
-    "check": "node scripts/check.mjs && pnpm exec tsc --noEmit -p apps/lab/tsconfig.json && node --test tests/*.test.mjs",
+    "check": "node scripts/check.mjs && pnpm exec tsc --noEmit -p apps/lab/tsconfig.json && node --test tests/*.test.mjs && corepack pnpm exec tsx --test packages/ui/tests/*.test.tsx",
+    "test:ui": "corepack pnpm exec tsx --test packages/ui/tests/*.test.tsx",
     "component:new": "node scripts/create-component.mjs",
     "create:app": "node scripts/create-app.mjs",
     "skill:build": "node scripts/build-skill.mjs",
@@ -20,6 +21,10 @@
     "test:factory-v1": "node --test tests/factory-v1.test.mjs"
   },
   "devDependencies": {
+    "react": "19.3.0",
+    "react-native": "0.88.1",
+    "react-test-renderer": "19.3.0",
+    "tsx": "4.19.2",
     "typescript": "~5.9.3"
   }
 }

@@ -3,6 +3,15 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 export const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 export const taxonomy = ['foundation', 'primitives', 'controls', 'composites', 'patterns'];
+export const maturityTiers = ['candidate', 'implemented', 'verified', 'recommended'];
+export const allowedStatuses = [...maturityTiers, 'stable', 'preview', 'development'];
+export function normalizeMaturity(status) {
+  if (status === 'candidate' || status === 'development') return 'candidate';
+  if (status === 'implemented' || status === 'preview') return 'implemented';
+  if (status === 'verified') return 'verified';
+  if (status === 'recommended' || status === 'stable') return 'recommended';
+  return 'candidate';
+}
 export function loadCatalog(base=root){return JSON.parse(fs.readFileSync(path.join(base,'packages/catalog/registry.json'),'utf8'));}
 export function copyDir(source,target){fs.mkdirSync(target,{recursive:true});fs.cpSync(source,target,{recursive:true,force:true});}
 export function walk(directory){if(!fs.existsSync(directory))return [];return fs.readdirSync(directory,{withFileTypes:true}).flatMap(entry=>{const p=path.join(directory,entry.name);return entry.isDirectory()?walk(p):[p];});}
@@ -14,7 +23,8 @@ export function validate(base=root){
    if(!taxonomy.includes(item.category) || item.category==='foundation')issues.push(`Unexpected category: ${item.id}`);
    if(item.id !== `${item.category}.${item.name.toLowerCase()}`)issues.push(`Invalid ID: ${item.id}`);
    if(!item.source.startsWith(item.category+'/'))issues.push(`Wrong folder: ${item.source}`);
-   if(!['stable','preview','development'].includes(item.status))issues.push(`Invalid status: ${item.id}`);
+   if(!allowedStatuses.includes(item.status))issues.push(`Invalid status: ${item.id}`);
+   if(item.status==='candidate'||item.status==='development')continue;
    const file=path.join(sourceRoot,item.source);
    if(!fs.existsSync(file)){issues.push(`Missing source: ${item.source}`);continue;}
    const text=fs.readFileSync(file,'utf8');
