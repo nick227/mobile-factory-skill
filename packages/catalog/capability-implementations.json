@@ -1,0 +1,110 @@
+[
+  {
+    "id": "view",
+    "state": "local-mock",
+    "binding": "detail-or-linked-collection",
+    "notes": "Renders record/collection using local in-memory store"
+  },
+  {
+    "id": "search",
+    "state": "local-mock",
+    "binding": "collection-search",
+    "notes": "Filters local records; no server search"
+  },
+  {
+    "id": "filter",
+    "state": "local-mock",
+    "binding": "collection-segments",
+    "notes": "Filters local records by selected segment"
+  },
+  {
+    "id": "create",
+    "state": "local-mock",
+    "binding": "form-create",
+    "notes": "Creates an in-memory record from validated form"
+  },
+  {
+    "id": "update",
+    "state": "local-mock",
+    "binding": "form-update",
+    "notes": "Updates an in-memory record from validated form"
+  },
+  {
+    "id": "remove",
+    "state": "local-mock",
+    "binding": "detail-remove",
+    "notes": "Removes in-memory record after confirmation"
+  },
+  {
+    "id": "complete",
+    "state": "local-mock",
+    "binding": "detail-toggle",
+    "notes": "Toggles a boolean field in the in-memory store"
+  },
+  {
+    "id": "pause",
+    "state": "local-mock",
+    "binding": "detail-toggle",
+    "notes": "Toggles a boolean field in the in-memory store"
+  },
+  {
+    "id": "progress",
+    "state": "local-mock",
+    "binding": "dashboard-progress",
+    "notes": "Displays a bound numeric field; no progress computation"
+  },
+  {
+    "id": "add-to-cart",
+    "state": "local-mock",
+    "binding": "detail-toggle",
+    "notes": "Toggles a boolean field; not a commerce cart or pricing engine"
+  },
+  {
+    "id": "checkout",
+    "state": "missing-adapter",
+    "binding": null,
+    "notes": "Current compiler emits an informational notice only; no payment processing"
+  },
+  {
+    "id": "reschedule",
+    "state": "local-mock",
+    "binding": "form-update",
+    "notes": "Updates local form fields; no remote calendar integration"
+  },
+  {
+    "id": "cancel",
+    "state": "local-mock",
+    "binding": "detail-toggle",
+    "notes": "Toggles a boolean field; does not cancel a remote booking"
+  },
+  {
+    "id": "publish",
+    "state": "local-mock",
+    "binding": "detail-toggle",
+    "notes": "Toggles a boolean field; does not publish remotely"
+  },
+  {
+    "id": "react",
+    "state": "local-mock",
+    "binding": "detail-toggle",
+    "notes": "Toggles a boolean field; does not sync reactions"
+  },
+  {
+    "id": "send",
+    "state": "local-mock",
+    "binding": "form-create",
+    "notes": "Creates local record; no transport or delivery"
+  },
+  {
+    "id": "read-only",
+    "state": "policy",
+    "binding": "selection-conflict",
+    "notes": "Planning policy enforced against incompatible mutations"
+  },
+  {
+    "id": "auth.basic",
+    "state": "missing-adapter",
+    "binding": null,
+    "notes": "No authentication provider; composition deliberately rejects auth"
+  }
+]
