@@ -180,6 +180,7 @@ Statuses are `todo`, `done` and `stale`. `plan next` lists the `todo` tasks whos
 | `experience.navigation` | 04 | yes | |
 | `design.direction` | 04 | yes | |
 | `product.name`, `design.tone` | any | no | |
+| `feature.<name>` | 03 | no | one per capability a document or the user describes; 04 maps each to screens |
 
 You may record other dotted lowercase keys (e.g. `content.moderation`). They're kept and briefed, but no gate
 requires them.

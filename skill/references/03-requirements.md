@@ -42,8 +42,9 @@ Enter requirements when:
 1. **Resolve conflicts first.** They block approval, and they usually signal a real misunderstanding.
 2. **Mine documents in batches.** For each anchor in a `mine-source` batch, decide one of three things:
    - it states a fact → record it with `{anchor, quote}` (the quote is a verbatim fragment of the anchor text or heading);
-   - it describes a screen or behaviour → leave it unmined for now and cite it later in `screens[].sources`
-     during 04, or skip it if it's covered by an acceptance criterion you'll write;
+   - it describes a capability or behaviour (e.g. "Mark an item as used up") → record it as a `feature.<name>`
+     fact citing the anchor. Design (04) turns the `feature.*` facts into screens and acceptance criteria, so
+     nothing in the document is lost between segments;
    - it holds no requirement (marketing copy, background) → `skip`.
 
    Record a whole batch in one `interview record --file`. It's atomic: one bad quote saves nothing, so fix that
@@ -85,12 +86,15 @@ copied from the anchor text:
   { "key": "product.audience", "value": "Busy home cooks who shop weekly", "source": { "anchor": "s1:p2", "quote": "busy home cooks who shop once a week" } },
   { "key": "product.excluded", "value": ["shopping lists", "barcode scanning", "household sharing"], "source": { "anchor": "s1:p6", "quote": "Not in v1: shopping lists, barcode scanning, sharing between households" } },
   { "key": "data.persistence", "value": "device storage (offline)", "source": { "anchor": "s1:p7", "quote": "data stays on the phone" } },
-  { "key": "data.offline", "value": true, "source": { "anchor": "s1:p7", "quote": "Works offline" } }
+  { "key": "data.offline", "value": true, "source": { "anchor": "s1:p7", "quote": "Works offline" } },
+  { "key": "feature.add-item", "value": "Add items with name, quantity and expiry date", "source": { "anchor": "s1:p3", "quote": "Add items with a name, quantity and expiry date" } },
+  { "key": "feature.expiry-order", "value": "List items soonest expiry first", "source": { "anchor": "s1:p4", "quote": "See items that expire soonest first" } },
+  { "key": "feature.mark-used", "value": "Mark an item as used up", "source": { "anchor": "s1:p5", "quote": "Mark an item as used up" } }
 ]
 ```
 
-`s1:p3`–`s1:p5` describe behaviour. They'll be cited by screens in 04 (`"sources": ["s1:p3"]`). The result of the
-record call lists `changed`, `conflicts`, `implied` (for example "data.required = true (implied by …)") and any
+This one batch cites all seven anchors, so `sources:mined` is met. The `feature.*` facts become 04's checklist:
+every feature must be reachable through some screen. The result of the record call lists `changed`, `conflicts`, `implied` (for example "data.required = true (implied by …)") and any
 `staleTasks`.
 
 ## 7. Outputs and examples

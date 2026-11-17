@@ -104,6 +104,14 @@ test('tagged JSON examples are accepted by the factory at their segment', () => 
   assert.ok(count >= 4, `expected tagged examples, found ${count}`);
 });
 
+test('the Requirements example mines the whole spec', () => {
+  const json = read('references/03-requirements.md').match(/<!-- validate: findings @03-requirements -->\n```json\n([\s\S]*?)```/)[1];
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'example-'));
+  F.requirements(dir);
+  plan.record(dir, JSON.parse(json));
+  assert.deepEqual(plan.unminedAnchors(dir), []);
+});
+
 test('the Design example completes segment 04 and the Blueprint example satisfies user:confirmed', () => {
   const text = read('references/04-design.md');
   const json = text.match(/<!-- validate: blueprint @04-design -->\n```json\n([\s\S]*?)```/)[1];

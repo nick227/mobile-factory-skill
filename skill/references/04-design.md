@@ -35,7 +35,9 @@ navigation, visual direction or data shape (even mid-build). Requirements must b
 
 ## 4. Agent behaviour (reasoning procedure)
 
-1. **Derive the journeys** from `product.outcome` and the scope: the 2–4 things a user does most. Each journey
+1. **Derive the journeys** from `product.outcome`, the `feature.*` facts and the scope: the 2–4 things a user
+   does most. Every `feature.*` fact must map to a screen action or acceptance criterion (or be explicitly
+   deferred with the user). Each journey
    is a path through screens.
 2. **Choose the structure** using the design standards. Collection → item is a *push*. Editing is a focused
    editor screen. Tabs are only for true peer areas. The default is a single stack for ≤ 5 screens.
