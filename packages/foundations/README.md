@@ -15,7 +15,7 @@ npx expo install <packages printed by the command>
 | `module.api-client` | `data.source` mentions an API, a server or a mock | — |
 | `module.persistence` | `data.persistence` is set, or accounts are required | expo-sqlite, expo-secure-store |
 | `module.validation` | A screen uses `TextField` or `recipe.form-screen` | zod |
-| `module.env` | `data.source` mentions a remote API | zod |
+| `module.env` | `data.source` mentions a remote server, REST/GraphQL or a URL (not a mock) | zod |
 | `module.auth` | `identity.required = true` | (persistence) |
 
 ## App conventions these modules assume

@@ -4,6 +4,7 @@ import React, { useMemo } from 'react';
 import { Stack } from 'expo-router';
 import { ThemeProvider, Screen, Spinner } from '@/src/ui';
 import { AuthProvider, useAuth } from '@/src/foundations/auth/AuthProvider';
+import { useStackTheme } from '@/src/foundations/navigation/RootLayout';
 import { createMockAuthAdapter, type Session } from '@/src/foundations/auth/auth';
 import { createStore } from '@/src/foundations/persistence/store';
 import { secureBackend } from '@/src/foundations/persistence/device';
@@ -12,9 +13,10 @@ export { RouteErrorBoundary as ErrorBoundary } from '@/src/foundations/error-bou
 
 function Routes() {
   const auth = useAuth();
+  const stackTheme = useStackTheme();
   if (auth.status === 'restoring') return <Screen style={{ justifyContent: 'center' }}><Spinner label="Loading" /></Screen>;
   return (
-    <Stack screenOptions={{ headerBackButtonDisplayMode: 'minimal' }}>
+    <Stack screenOptions={stackTheme}>
       <Stack.Protected guard={auth.status === 'signed-in'}>
         <Stack.Screen name="(app)" options={{ headerShown: false }} />
       </Stack.Protected>

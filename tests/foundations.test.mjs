@@ -33,7 +33,7 @@ test('recommendations follow blueprint facts and pull in dependencies', () => {
 test('install copies modules with dependencies, reports only missing npm packages, and is idempotent', () => {
   const dir = app();
   const r = mods.install(dir, ['module.auth']);
-  assert.deepEqual(r.modules.sort(), ['module.auth', 'module.error-boundary', 'module.persistence']);
+  assert.deepEqual(r.modules.sort(), ['module.auth', 'module.error-boundary', 'module.navigation', 'module.persistence']);
   assert.ok(fs.existsSync(path.join(dir, 'src/foundations/auth/AuthProvider.tsx')));
   assert.equal(r.expoInstall, 'npx expo install expo-secure-store expo-sqlite');
   const again = mods.install(dir, ['module.auth']);
@@ -67,4 +67,25 @@ test('modules are discoverable through the shared catalog with honest maturity',
 test('every module typechecks against the real UI library and SDK 58 types', { skip: !fs.existsSync(path.join(root, 'packages/foundations/node_modules/@types/react')) && 'run pnpm install first' }, () => {
   const r = spawnSync(process.execPath, [path.join(root, 'packages/foundations/node_modules/typescript/bin/tsc'), '-p', 'packages/foundations/tsconfig.json'], { cwd: root, encoding: 'utf8' });
   assert.equal(r.status, 0, r.stdout + r.stderr);
+});
+
+// Regressions from benchmark run 3 (improved factory).
+test('negated phrases do not select modules ("no backend" is not a remote API)', () => {
+  const ids = mods.recommend(facts({ 'data.source': 'No backend; in-app mock API with simulated latency' })).modules.map((m) => m.id);
+  assert.ok(ids.includes('module.api-client'), 'mock API still needs the client');
+  assert.ok(!ids.includes('module.env'), 'no remote API, so no env config');
+});
+
+test('every module only imports itself, its declared dependencies and the UI library', () => {
+  const l = mods.moduleLayout();
+  const all = mods.loadModules(l);
+  const closure = (id, seen = new Set()) => { if (seen.has(id)) return seen; seen.add(id); for (const d of all.find((m) => m.id === id).dependsOn) closure(d, seen); return seen; };
+  for (const m of all) {
+    const allowed = new Set([...closure(m.id)].map((id) => all.find((x) => x.id === id).dir));
+    const dir = path.join(l.source, m.dir);
+    for (const f of fs.readdirSync(dir)) {
+      const text = fs.readFileSync(path.join(dir, f), 'utf8');
+      for (const [, target] of text.matchAll(/from '(?:@\/src\/foundations\/|\.\.\/)([a-z-]+)\//g)) assert.ok(allowed.has(target), `${m.id}/${f} imports ${target} without declaring it`);
+    }
+  }
 });

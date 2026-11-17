@@ -1,10 +1,10 @@
 [
   {
     "id": "module.navigation", "dir": "navigation", "dependsOn": ["module.error-boundary"], "npm": [], "tests": [],
-    "summary": "Root Expo Router layouts: plain Stack with theme and route error recovery, or auth-guarded (app)/(auth) groups.",
-    "capabilities": ["app.navigation", "auth.route-guard"],
+    "summary": "Root Expo Router layout: themed native Stack (header and background follow light/dark) with route error recovery.",
+    "capabilities": ["app.navigation"],
     "when": [{ "always": true }],
-    "usage": "Copy src/foundations/navigation/RootLayout.tsx to app/_layout.tsx (or ProtectedLayout.tsx when accounts are required). Routes: app/index.tsx, app/<things>/[id].tsx (push), app/<things>/new.tsx (focused editor). Read params with useLocalSearchParams<{ id: string }>().",
+    "usage": "Copy src/foundations/navigation/RootLayout.tsx to app/_layout.tsx (with accounts: auth/ProtectedLayout.tsx instead). Routes: app/index.tsx, app/<things>/[id].tsx (push), app/<things>/new.tsx (focused editor). Read params with useLocalSearchParams<{ id: string }>().",
     "constraints": ["One root Stack; add (tabs) only for 3+ persistent peer areas.", "Never hide native back without an in-content back action.", "Import the router Stack in layouts and the UI Stack in screens."]
   },
   {
@@ -43,16 +43,16 @@
     "id": "module.env", "dir": "env", "dependsOn": [], "npm": ["zod"], "tests": ["tests/validation-env-auth.test.ts"],
     "summary": "Fail-fast, typed EXPO_PUBLIC_* configuration with all problems reported at once.",
     "capabilities": ["app.config"],
-    "when": [{ "fact": "data.source", "matches": "api|remote|server|backend" }],
+    "when": [{ "fact": "data.source", "matches": "remote|server|backend|rest|graphql|https?:|production api|live api" }],
     "usage": "export const env = readEnv(z.object({ EXPO_PUBLIC_API_URL: z.url() }), { EXPO_PUBLIC_API_URL: process.env.EXPO_PUBLIC_API_URL });",
     "constraints": ["Write each process.env.EXPO_PUBLIC_* out literally or Expo will not inline it.", "Never put secrets in EXPO_PUBLIC_*; they ship in the bundle."]
   },
   {
-    "id": "module.auth", "dir": "auth", "dependsOn": ["module.persistence", "module.error-boundary"], "npm": [], "tests": ["tests/validation-env-auth.test.ts"],
-    "summary": "Provider-neutral auth contract (AuthAdapter), session state machine, AuthProvider/useAuth, and a mock adapter; pairs with navigation/ProtectedLayout.",
+    "id": "module.auth", "dir": "auth", "dependsOn": ["module.persistence", "module.error-boundary", "module.navigation"], "npm": [], "tests": ["tests/validation-env-auth.test.ts"],
+    "summary": "Provider-neutral auth contract (AuthAdapter), session state machine, AuthProvider/useAuth, and a mock adapter; includes ProtectedLayout (Stack.Protected (app)/(auth) groups).",
     "capabilities": ["auth.session", "auth.route-guard"],
     "when": [{ "fact": "identity.required", "equals": true }],
-    "usage": "Use navigation/ProtectedLayout.tsx as app/_layout.tsx; put signed-in routes in app/(app)/ and sign-in in app/(auth)/. const auth = useAuth(); await auth.signIn({ email, password });",
+    "usage": "Use auth/ProtectedLayout.tsx as app/_layout.tsx; put signed-in routes in app/(app)/ and sign-in in app/(auth)/. const auth = useAuth(); await auth.signIn({ email, password });",
     "constraints": ["Implement one AuthAdapter for the chosen provider before release; the mock adapter is for development only.", "Recovery and sign-up flows come from the provider; record them in identity.recovery."]
   }
 ]

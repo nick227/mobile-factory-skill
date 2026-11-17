@@ -22,7 +22,8 @@ function matches(rule, p) {
   const value = fact && ['stated', 'confirmed'].includes(fact.status) ? fact.value : p.answers?.[rule.fact];
   if (rule.present) return value !== undefined && value !== null && value !== '' && value !== false;
   if ('equals' in rule) return value === rule.equals;
-  if (rule.matches) return value !== undefined && new RegExp(rule.matches, 'i').test(JSON.stringify(value));
+  // Ignore negated phrases ("no backend", "without an api") before matching.
+  if (rule.matches) return value !== undefined && new RegExp(rule.matches, 'i').test(JSON.stringify(value).replace(/\b(no|not|without|never)\s+(an?\s+|the\s+|any\s+)?[\w-]+/gi, ''));
   return false;
 }
 
