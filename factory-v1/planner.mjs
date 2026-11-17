@@ -399,7 +399,12 @@ export function brief(dir, { write = true, workflow } = {}) {
     fs.writeFileSync(path.join(docs, 'DESIGN.md'), `# Global design (rev ${p.revision})\n\nCanonical source: .factory/project.json. This file is generated; do not edit.\n\n` +
       (designFacts.length || legacyDesign.length ? [...designFacts.map(([key, value]) => factLine(key, value)), ...legacyDesign.map(([key, value]) => `- ${key}: ${JSON.stringify(value)} — recorded`)].join('\n') : 'No global design preferences recorded.') + '\n');
     fs.writeFileSync(path.join(docs, 'INTERACTIONS.md'), `# Presentation interactions (rev ${p.revision})\n\nCanonical source: .factory/project.json. This file is generated; do not edit.\n\n` +
-      (p.screens ?? []).map(s => `## ${s.title ?? s.id} (${s.id})\nRoute: ${s.route ?? '?'}\nPurpose: ${s.purpose ?? ''}\nActions:\n${(s.actions ?? []).length ? s.actions.map(a => `- ${typeof a === 'string' ? a : JSON.stringify(a)}`).join('\n') : '- None'}\nStates: ${(s.states ?? []).join(', ')}\n\n`).join(''));
+      (p.screens ?? []).map(s => {
+        let text = `## ${s.title ?? s.id} (${s.id})\nRoute: ${s.route ?? '?'}\nPurpose: ${s.purpose ?? ''}\nActions:\n${(s.actions ?? []).length ? s.actions.map(a => `- ${typeof a === 'string' ? a : JSON.stringify(a)}`).join('\n') : '- None'}\nStates: ${(s.states ?? []).join(', ')}\n`;
+        if (s.empty) text += `Empty state: "${s.empty.title ?? s.empty}"${s.empty.description ? ` — ${s.empty.description}` : ''}\n`;
+        if (s.acceptance?.length) text += `Acceptance criteria:\n${s.acceptance.map(acc => `- ${acc}`).join('\n')}\n`;
+        return text + '\n';
+      }).join(''));
     if (model) fs.writeFileSync(path.join(docs, 'model.ts'), `// Generated from .factory/project.json rev ${p.revision}. Copy into src/features/*/types.ts.\n${model}\n`);
   }
   return { markdown: md, tokensApprox: Math.ceil(md.length / 4) };
