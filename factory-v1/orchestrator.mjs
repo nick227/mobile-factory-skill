@@ -7,6 +7,7 @@ import path from 'node:path';
 import * as engine from './engine.mjs';
 import * as plan from './planner.mjs';
 import * as cat from './catalog-contract.mjs';
+import * as batches from './batches.mjs';
 
 export const SEGMENTS = [
   { id: '02-discovery', title: 'Discovery', goal: 'Understand the product: purpose, audience, scope, accounts and data' },
@@ -58,6 +59,7 @@ function evaluateConditions(dir, p) {
   for (const q of engine.workflow.filter((x) => x.phase === 'design')) {
     g.push(condition(`answer:${q.id}`, !unanswered.some((u) => u.id === q.id), `${q.question} (stated or confirmed)`, `Propose options, then: interview record --key ${q.id} --value <json> --quote "<user words>"`));
   }
+  if (p.batches) g.push(condition('batches:complete', batches.complete(p), `Unresolved decision batch: ${batches.nextId(p) ?? 'none'}`, 'workflow next --project <dir>, then workflow batch set <id> --project <dir> --file SELECTION.json'));
   const screens = p.screens ?? [];
   g.push(condition('screens:defined', screens.length > 0, 'At least one screen', 'blueprint set --file blueprint.json with screens[]'));
   let items = null;

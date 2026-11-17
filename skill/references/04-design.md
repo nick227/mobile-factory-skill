@@ -4,6 +4,8 @@ Decide the experience: how people move through the app, what each screen is for,
 which real catalog parts it uses, and the shape of the data. The output is a set of screen contracts precise
 enough that construction never has to guess.
 
+For projects using the opt-in documentation batch workflow, first finish the ordered selections shown by `workflow next`; the Design gate then requires `batches:complete`. See `references/workflow-batches.md`. This foundation persists compact selections; catalog-backed validation and compilation are delivered in later MRs. Do not treat batch selections as executable page contracts yet.
+
 ## 1. Purpose and entry conditions
 
 Enter design when `workflow status` reports `segment: "04-design"`, or when the user asks to change screens,

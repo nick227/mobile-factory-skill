@@ -80,6 +80,7 @@ Load **one** segment reference at a time. Don't preload the others.
 - **Revisit**: when new information changes an earlier decision, record it. The engine bumps the revision, drops
   approval and stales only the dependent finished tasks. `workflow status` then names the reopened segment.
   Fix only what reopened. Never restart the project.
+- **Optional documentation batches:** after requirements are confirmed, `workflow batch init --project <dir>` activates seven ordered, persisted decision batches. `workflow next --project <dir>` then names exactly one batch and the selection shape. See `references/workflow-batches.md`. Existing projects are unchanged unless this is explicitly enabled.
 - **Advisory** conditions (`advisory` in the status output) improve quality but don't block the gate. Fill them
   when it's cheap, or when the segment reference says they matter for this project.
 - Completeness is measured against conditions, never against how many questions you asked.
