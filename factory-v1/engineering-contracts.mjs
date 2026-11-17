@@ -4,6 +4,7 @@ import * as pages from './pages.mjs';
 import { routeFile } from './assembler.mjs';
 const ID=/^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$/;
 const REQUIREMENT=/^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$/;
+const SYMBOL=/^[a-z][a-zA-Z0-9]*$/;
 const object=x=>x!==null&&typeof x==='object'&&!Array.isArray(x);
 const keys=(x,allowed,at)=>{
   if(!object(x))throw Error(at+': expected object');
@@ -36,7 +37,7 @@ export function resolve(input=[],context={}){
     keys(item.contract,['inputs','outputs','events'],at+'.contract');
     for(const field of ['inputs','outputs','events']){
       strings(item.contract[field]??[],at+'.contract.'+field);
-      if((item.contract[field]??[]).some(v=>!ID.test(v)))throw Error(at+'.contract.'+field+': expected field IDs');
+      if((item.contract[field]??[]).some(v=>!SYMBOL.test(v)))throw Error(at+'.contract.'+field+': expected field IDs');
     }
     if(!(item.contract.outputs?.length||item.contract.events?.length))throw Error(at+'.contract: outputs or events required');
     const wire=[...(item.contract.inputs??[]),...(item.contract.outputs??[]),...(item.contract.events??[])];
