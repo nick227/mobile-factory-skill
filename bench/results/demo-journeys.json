@@ -1,0 +1,27 @@
+[
+  {
+    "name": "Event Discovery: search → filter → detail → booking → confirmation → cancel",
+    "ok": true,
+    "steps": 8
+  },
+  {
+    "name": "Onboarding: validation → preferences → plan → review edit → activation",
+    "ok": true,
+    "steps": 6
+  },
+  {
+    "name": "Progress Dashboard: log hours → milestone details → complete milestone",
+    "ok": true,
+    "steps": 3
+  },
+  {
+    "name": "Marketplace: filter → product qty → bag edits → checkout validation → order",
+    "ok": true,
+    "steps": 6
+  },
+  {
+    "name": "Activity Timeline: feed link → checklist → sign-off → calendar",
+    "ok": true,
+    "steps": 5
+  }
+]

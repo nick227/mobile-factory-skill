@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import { View } from 'react-native';
+import React, { useReducer } from 'react';
 import {
   Text,
   Stack,
@@ -13,166 +12,90 @@ import {
   ActivityCalendar,
   PeopleStack,
   useTheme,
-  tokens,
 } from '@factory/ui';
+import { team, tasks as taskFixtures } from '../demos/timeline/fixtures';
+import { initialState, reducer, taskList, openRequired, canSignOff, marks, agenda, feed } from '../demos/timeline/model';
 
 export function ActivityTimelineScenario() {
   const { colors } = useTheme();
-  const [activeTab, setActiveTab] = useState<'feed' | 'tasks' | 'calendar'>('feed');
-  const [selectedDate, setSelectedDate] = useState('2026-11-18');
-
-  const teamMembers = [
-    { id: '1', name: 'Kengo Kuma' },
-    { id: '2', name: 'Elena Rostova' },
-    { id: '3', name: 'Kenji Sato' },
-    { id: '4', name: 'Amina Diallo' },
-    { id: '5', name: 'Mateo Silva' },
-  ];
-
+  const [s, dispatch] = useReducer(reducer, initialState);
+  const open = openRequired(s);
   const tabs = [
     { id: 'feed', label: 'Activity Feed' },
-    { id: 'tasks', label: 'Punch List', badge: '3' },
+    { id: 'tasks', label: 'Punch List', badge: open > 0 ? String(open) : undefined },
     { id: 'calendar', label: 'Site Visits' },
   ];
-
-  const timelineEvents = [
-    {
-      id: 'e1',
-      user: { name: 'Kengo Kuma' },
-      title: 'Approved Pavilion Lattice Framing',
-      timestamp: '25m ago',
-      badge: 'Sign-off',
-      badgeTone: 'success' as const,
-      description: 'Yoshino cedar structural joinery satisfies all load testing tolerances.',
-      actions: [{ label: 'View Certificate', onPress: () => {} }],
-    },
-    {
-      id: 'e2',
-      user: { name: 'Elena Rostova' },
-      title: 'Submitted Japanese Garden Acoustic Study',
-      timestamp: '2h ago',
-      badge: 'Report',
-      badgeTone: 'accent' as const,
-      description: 'Water basin sound reflections measure 38 dB ambient level.',
-      attachment: { title: 'acoustic_survey_final.pdf', subtitle: '1.8 MB · Certified PDF' },
-      actions: [{ label: 'Download PDF', onPress: () => {} }],
-    },
-    {
-      id: 'e3',
-      user: { name: 'Kenji Sato' },
-      title: 'Dispatched Hand-Split Hinoki Shingles',
-      timestamp: 'Yesterday',
-      badge: 'Logistics',
-      description: 'Batch #28 departed Gifu prefecture warehouse via freight express.',
-    },
-  ];
-
-  const [checklistItems, setChecklistItems] = useState([
-    {
-      id: 'task-1',
-      title: 'Verify foundation bolt anchoring',
-      description: 'Torque wrench verification by site supervisor',
-      completed: true,
-      required: true,
-    },
-    {
-      id: 'task-2',
-      title: 'Inspect tea room tatami mat alignments',
-      description: 'Ensure 3mm expansion gap from cedar skirting',
-      completed: true,
-      required: true,
-    },
-    {
-      id: 'task-3',
-      title: 'Install shoji screen sliding track runners',
-      description: 'Natural beeswax lubrication on cherry wood tracks',
-      completed: false,
-      required: true,
-      badge: 'In Progress',
-      badgeTone: 'warning' as const,
-    },
-    {
-      id: 'task-4',
-      title: 'Hang entrance noren curtain',
-      description: 'Indigo-dyed hemp fabric from Kyoto master dyer',
-      completed: false,
-      badge: 'Pending Delivery',
-    },
-  ]);
-
-  const calendarMarks = {
-    '2026-11-18': { hasEvents: true, dotColor: colors.primary },
-    '2026-11-20': { hasEvents: true, dotColor: colors.warning },
-    '2026-11-24': { hasEvents: true, dotColor: colors.success },
-  };
-
-  const handleToggleChecklist = (id: string, completed: boolean) => {
-    setChecklistItems((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, completed } : item))
-    );
-  };
+  const calendarMarks = Object.fromEntries(Object.entries(marks(s)).map(([date, m]) => [date, { hasEvents: true, dotColor: m.kind === 'visit' ? colors.primary : m.kind === 'due' ? colors.warning : colors.danger }]));
+  const day = agenda(s);
+  const highlighted = taskFixtures.find((t) => t.id === s.highlightTaskId);
 
   return (
     <Stack gap="md">
-      <ScreenHeader
-        title="Pavilion Construction Hub"
-        subtitle="Live site logs, punch lists, and architect inspections"
-      />
-
-      {/* Team header row */}
+      <ScreenHeader title="Pavilion Construction Hub" subtitle="Live site logs, punch lists, and architect inspections" />
       <Surface outlined>
         <Row style={{ justifyContent: 'space-between', alignItems: 'center' }}>
           <Stack gap="xs">
             <Text style={{ fontWeight: '700' }}>Active Site Team</Text>
-            <Text muted variant="caption">5 master craftsmen & architects</Text>
+            <Text muted variant="caption">{s.signedOff ? 'Site signed off' : `${open} required ${open === 1 ? 'item' : 'items'} open`}</Text>
           </Stack>
-          <PeopleStack people={teamMembers} maxVisible={4} size={36} />
+          <PeopleStack people={team} maxVisible={4} size={36} />
         </Row>
       </Surface>
 
-      {/* Tab navigation */}
-      <Tabs tabs={tabs} value={activeTab} onValueChange={(t) => setActiveTab(t as any)} />
+      <Tabs tabs={tabs} value={s.tab} onValueChange={(t) => dispatch({ type: 'tab', tab: t as typeof s.tab })} />
 
-      {/* Tab 1: Live Feed */}
-      {activeTab === 'feed' && (
-        <RichActivityTimeline events={timelineEvents} />
-      )}
-
-      {/* Tab 2: Punch List / Checklist */}
-      {activeTab === 'tasks' && (
-        <SmartChecklist
-          title="On-Site Quality Punch List"
-          description="Mandatory sign-offs before client tea master ceremony."
-          items={checklistItems}
-          onToggle={handleToggleChecklist}
-          action={{
-            label: 'Submit Site Sign-off',
-            onPress: () => {},
-            disabled: !checklistItems.filter((i) => i.required).every((i) => i.completed),
-          }}
+      {s.tab === 'feed' && (
+        <RichActivityTimeline
+          events={feed(s).map((a) => ({
+            id: a.id,
+            user: { name: a.user },
+            title: a.title,
+            timestamp: a.timeLabel,
+            badge: a.badge,
+            badgeTone: a.badgeTone,
+            description: a.description,
+            attachment: a.attachment,
+            actions: [
+              ...(a.taskId ? [{ label: 'Open in Punch List', onPress: () => dispatch({ type: 'openTask', id: a.taskId! }) }] : []),
+              ...(a.visitId ? [{ label: 'Show on Calendar', onPress: () => dispatch({ type: 'openVisit', id: a.visitId! }) }] : []),
+            ],
+          }))}
         />
       )}
 
-      {/* Tab 3: Site Visits Calendar */}
-      {activeTab === 'calendar' && (
-        <Stack gap="md">
-          <ActivityCalendar
-            year={2026}
-            month={11}
-            selectedDate={selectedDate}
-            onSelectDate={setSelectedDate}
-            markedDates={calendarMarks}
+      {s.tab === 'tasks' && (
+        <Stack gap="sm">
+          {highlighted ? (
+            <Surface outlined>
+              <Text variant="small">Opened from the feed: <Text variant="small" style={{ fontWeight: '700' }}>{highlighted.title}</Text> · due {highlighted.due} · {highlighted.owner}</Text>
+            </Surface>
+          ) : null}
+          {s.signedOff ? <Badge label="Site sign-off submitted" tone="success" /> : null}
+          <SmartChecklist
+            title="On-Site Quality Punch List"
+            description={s.signedOff ? 'Locked after sign-off.' : 'Complete every required item to submit the site sign-off.'}
+            items={taskList(s).map((t) => ({ id: t.id, title: t.title, description: `${t.description} · due ${t.due.slice(5)} · ${t.owner}`, completed: t.completed, required: t.required }))}
+            onToggle={(id, completed) => dispatch({ type: 'toggleTask', id, completed })}
+            action={{ label: s.signedOff ? 'Signed Off' : 'Submit Site Sign-off', onPress: () => dispatch({ type: 'signOff' }), disabled: !canSignOff(s) }}
           />
+        </Stack>
+      )}
+
+      {s.tab === 'calendar' && (
+        <Stack gap="md">
+          <ActivityCalendar year={2026} month={11} selectedDate={s.date} onSelectDate={(date) => dispatch({ type: 'selectDate', date })} markedDates={calendarMarks} />
           <Surface outlined>
-            <Stack gap="xs">
-              <Text variant="heading">Schedule for {selectedDate}</Text>
-              <Text muted variant="small">
-                {selectedDate === '2026-11-18'
-                  ? '09:00 AM — Lead timber architect framing inspection with Master Kuma.'
-                  : selectedDate === '2026-11-20'
-                  ? '02:00 PM — Heritage conservation zoning inspector on-site.'
-                  : 'No scheduled public inspections on this date.'}
-              </Text>
+            <Stack gap="sm">
+              <Text variant="heading">Schedule for {s.date}</Text>
+              {day.visits.length + day.due.length + day.activity.length === 0 ? <Text muted variant="small">Nothing scheduled on this date.</Text> : null}
+              {day.visits.map((v) => <Text key={v.id} variant="small">{v.time} — {v.title}</Text>)}
+              {day.due.map((t) => (
+                <Row key={t.id} style={{ justifyContent: 'space-between', alignItems: 'center' }}>
+                  <Text variant="small" style={{ flex: 1 }}>Due: {t.title}</Text>
+                  <Badge label={t.completed ? 'Done' : 'Open'} tone={t.completed ? 'success' : 'warning'} />
+                </Row>
+              ))}
+              {day.activity.map((a) => <Text key={a.id} muted variant="small">{a.user}: {a.title}</Text>)}
             </Stack>
           </Surface>
         </Stack>
