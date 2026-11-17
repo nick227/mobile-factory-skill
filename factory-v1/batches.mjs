@@ -1,12 +1,13 @@
-// Ordered, opt-in documentation decisions. No catalog defaults or page generation in MR 1.
-// Selections are canonical project state; future resolvers will validate catalog semantics.
+// Ordered, opt-in documentation decisions. Catalog-backed classification and object namespaces.
+// Later batches resolve capabilities, pages, composition, and final generation.
 import * as engine from './engine.mjs';
 import { invalidate } from './planner.mjs';
 import * as appTypes from './app-archetypes.mjs';
+import * as objects from './object-schema.mjs';
 
 export const STAGES = Object.freeze([
   { id: 'classification', shape: '{ "type": "catalog-id" }' },
-  { id: 'objects', shape: '["object-id", ...]' },
+  { id: 'objects', shape: '["object-id", {"id":"object-id","relations":[{"to":"parent-id","kind":"belongs-to"}]}]' },
   { id: 'functionality', shape: '["capability-id", ...]' },
   { id: 'pages', shape: '["page-pattern-id", ...]' },
   { id: 'composition', shape: '{ "page-id": { ... } }' },
@@ -26,8 +27,10 @@ function validate(id, selection) {
     if (!isObj(selection) || Object.keys(selection).join(',') !== 'type' || typeof selection.type !== 'string' || !IDENTIFIER.test(selection.type))
       throw Error('classification: expected { "type": "catalog-id" }');
     appTypes.get(selection.type);
-  } else if (id === 'objects' || id === 'functionality' || id === 'pages') {
-    ids(selection, id, id !== 'functionality');
+  } else if (id === 'objects') {
+    objects.validate(selection);
+  } else if (id === 'functionality' || id === 'pages') {
+    ids(selection, id, id === 'pages');
   } else if (id === 'composition') {
     if (!isObj(selection) || !Object.keys(selection).length || Object.entries(selection).some(([k, v]) => !IDENTIFIER.test(k) || !isObj(v)))
       throw Error('composition: expected nonempty map of page IDs to configuration objects');
@@ -78,6 +81,7 @@ export function next(p, workflowStatus) {
     return { kind: 'batch', id, shape: stage.shape, completed: STAGES.indexOf(stage), total: STAGES.length,
       ...(id === 'classification' ? { catalog: 'catalog apps', choices: appTypes.list().map(a => a.id) } : {}),
       ...(id === 'objects' ? { suggestedDefaults: appTypes.expand(p.batches.selections.classification.type) } : {}),
+      ...(id === 'functionality' ? { objectContract: objects.resolve(p.batches.selections.objects) } : {}),
       command: `workflow batch set ${id} --project <dir> --file SELECTION.json` };
   }
   return { kind: 'segment', segment: workflowStatus.segment, next: workflowStatus.next, batchesComplete: true };
