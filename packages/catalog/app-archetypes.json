@@ -1,0 +1,135 @@
+[
+  {
+    "id": "catalog",
+    "name": "Catalog",
+    "summary": "Browse and inspect a searchable collection of items.",
+    "defaults": {
+      "objects": [
+        "item"
+      ],
+      "capabilities": [
+        "item.search",
+        "item.filter",
+        "item.view"
+      ],
+      "pages": [
+        "catalog.home",
+        "catalog.browse",
+        "catalog.detail"
+      ]
+    }
+  },
+  {
+    "id": "marketplace",
+    "name": "Marketplace",
+    "summary": "Discover products and simulate cart and checkout flows.",
+    "defaults": {
+      "objects": [
+        "store",
+        "product",
+        "order"
+      ],
+      "capabilities": [
+        "product.search",
+        "product.add-to-cart",
+        "order.checkout"
+      ],
+      "pages": [
+        "marketplace.home",
+        "marketplace.browse",
+        "marketplace.product",
+        "marketplace.cart",
+        "marketplace.checkout"
+      ]
+    }
+  },
+  {
+    "id": "scheduler",
+    "name": "Scheduler",
+    "summary": "Inspect, create, and manage calendar events.",
+    "defaults": {
+      "objects": [
+        "event"
+      ],
+      "capabilities": [
+        "event.create",
+        "event.reschedule",
+        "event.cancel"
+      ],
+      "pages": [
+        "scheduler.calendar",
+        "scheduler.event",
+        "scheduler.create"
+      ]
+    }
+  },
+  {
+    "id": "social",
+    "name": "Social",
+    "summary": "Browse posts, profiles, and simulated messaging.",
+    "defaults": {
+      "objects": [
+        "post",
+        "profile",
+        "message"
+      ],
+      "capabilities": [
+        "post.publish",
+        "post.react",
+        "profile.view",
+        "message.send"
+      ],
+      "pages": [
+        "social.feed",
+        "social.post",
+        "social.profile",
+        "social.compose",
+        "social.messages"
+      ]
+    }
+  },
+  {
+    "id": "tracker",
+    "name": "Tracker",
+    "summary": "Log records and review history, metrics, and progress.",
+    "defaults": {
+      "objects": [
+        "record"
+      ],
+      "capabilities": [
+        "record.create",
+        "record.update",
+        "record.progress"
+      ],
+      "pages": [
+        "tracker.dashboard",
+        "tracker.history",
+        "tracker.detail",
+        "tracker.create"
+      ]
+    }
+  },
+  {
+    "id": "workspace",
+    "name": "Workspace",
+    "summary": "Organize projects and tasks in a shared-looking presentation.",
+    "defaults": {
+      "objects": [
+        "project",
+        "task"
+      ],
+      "capabilities": [
+        "project.create",
+        "task.create",
+        "task.update"
+      ],
+      "pages": [
+        "workspace.home",
+        "workspace.projects",
+        "workspace.project",
+        "workspace.task",
+        "workspace.settings"
+      ]
+    }
+  }
+]
