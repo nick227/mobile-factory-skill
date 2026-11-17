@@ -56,7 +56,7 @@ test('prepare scaffolds only approved work and produces bounded agent tasks',()=
 test('only authorized code plus owned tests pass static diff validation',()=>{
  const dir=project();controlled.prepare(dir);
  add(dir,'src/extensions/waveform/index.ts','export function range(audioUri: string) { return audioUri; }\n');
- add(dir,'tests/engineering/waveform/waveform.test.mjs',\"import test from 'node:test'; test('range selection',()=>{});\n\");
+ add(dir,'tests/engineering/waveform/waveform.test.mjs',"import test from 'node:test'; test('range selection',()=>{});\n");
  const result=controlled.inspect(dir);
  assert.equal(result.scopeValid,true);
  assert.deepEqual(result.outside,[]);
@@ -100,7 +100,7 @@ test('AEP ejections are explicitly registered and remain developer-owned',()=>{
  let source=fs.readFileSync(file,'utf8');
  source=source.replace('Unrolled ejected content for tracker-home. Customize this screen directly.','Custom controlled engineering view');
  fs.writeFileSync(file,source);
- add(dir,'tests/engineering/waveform/ejection.test.mjs',\"import test from 'node:test'; test('custom route',()=>{});\n\");
+ add(dir,'tests/engineering/waveform/ejection.test.mjs',"import test from 'node:test'; test('custom route',()=>{});\n");
  assert.equal(controlled.inspect(dir).scopeValid,true);
  const manifest2=JSON.parse(fs.readFileSync(path.join(dir,'factory-assembly.json'),'utf8'));
  assert.equal(manifest2.ejected['app/index.tsx'].pageId,'tracker-home');
