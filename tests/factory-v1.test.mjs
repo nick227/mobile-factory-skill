@@ -37,7 +37,7 @@ test('catalog maturity tiers enforce candidate implementation dependencies befor
   try{
     f.init(dir,'CandidateTest');
     const customCatalog=[
-      ...f.catalog('',100),
+      ...f.catalog('',100).filter(c=>c.id!=='patterns.schedulepicker'),
       {id:'patterns.schedulepicker',name:'SchedulePicker',category:'patterns',status:'candidate',source:'patterns/SchedulePicker.tsx',exportName:'SchedulePicker'}
     ];
     const catFile=path.join(dir,'test-catalog.json');

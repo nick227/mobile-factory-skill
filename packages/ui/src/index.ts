@@ -42,3 +42,5 @@ export * from './controls/Tabs';
 export * from './composites/Dialog';
 export * from './composites/AlertDialog';
 export * from './composites/Accordion';
+export * from './patterns/SchedulePicker';
+export * from './patterns/MetricSpotlight';

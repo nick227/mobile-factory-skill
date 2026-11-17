@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Switch, View } from 'react-native';
-import { Text, Stack, Row, Surface, Divider, Screen, Button, TextField, Badge, ListItem, SettingsGroup, useTheme, Spacer, IconButton, Toggle, Checkbox, RadioGroup, SegmentedControl, ProgressBar, Spinner, Avatar, SectionHeader, EmptyState, FormField, ActionFooter, ScreenHeader, FocusScreen, StepProgress, InputStage, ActionDock, CalmSkeleton, MediaFrame, SwipePager, EditorialMosaic, ImmersiveHero, ChoiceGallery, FocusWizard, Portal, PortalHost, PortalProvider, Select, Tabs, Dialog, AlertDialog, Accordion } from '@factory/ui';
+import { Text, Stack, Row, Surface, Divider, Screen, Button, TextField, Badge, ListItem, SettingsGroup, useTheme, Spacer, IconButton, Toggle, Checkbox, RadioGroup, SegmentedControl, ProgressBar, Spinner, Avatar, SectionHeader, EmptyState, FormField, ActionFooter, ScreenHeader, FocusScreen, StepProgress, InputStage, ActionDock, CalmSkeleton, MediaFrame, SwipePager, EditorialMosaic, ImmersiveHero, ChoiceGallery, FocusWizard, Portal, PortalHost, PortalProvider, Select, Tabs, Dialog, AlertDialog, Accordion, SchedulePicker, MetricSpotlight } from '@factory/ui';
 
 export const showcases: Record<string, () => React.JSX.Element> = {
   Text: () => <Stack><Text variant="title">Title typography</Text><Text variant="heading">Section heading</Text><Text>Body text supports dynamic type.</Text><Text muted variant="small">Secondary caption</Text></Stack>,
@@ -275,5 +275,69 @@ export const showcases: Record<string, () => React.JSX.Element> = {
       setExpanded((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
     };
     return <Accordion items={items} expandedIds={expanded} onToggle={toggle} />;
+  },
+  SchedulePicker: function SchedulePickerDemo() {
+    const [selectedDate, setSelectedDate] = useState('2026-11-18');
+    const [selectedSlot, setSelectedSlot] = useState<string | null>('slot-2');
+
+    const days = [
+      { date: '2026-11-17', dayName: 'Tue', dayNumber: 17, monthName: 'Nov' },
+      { date: '2026-11-18', dayName: 'Wed', dayNumber: 18, monthName: 'Nov' },
+      { date: '2026-11-19', dayName: 'Thu', dayNumber: 19, monthName: 'Nov' },
+      { date: '2026-11-20', dayName: 'Fri', dayNumber: 20, monthName: 'Nov' },
+      { date: '2026-11-21', dayName: 'Sat', dayNumber: 21, monthName: 'Nov', isAvailable: false },
+      { date: '2026-11-22', dayName: 'Sun', dayNumber: 22, monthName: 'Nov' },
+    ];
+
+    const slots = [
+      { id: 'slot-1', time: '09:00 AM', period: 'morning' as const, available: true, price: '$45' },
+      { id: 'slot-2', time: '10:30 AM', period: 'morning' as const, available: true, price: '$45' },
+      { id: 'slot-3', time: '01:00 PM', period: 'afternoon' as const, available: false, price: '$50' },
+      { id: 'slot-4', time: '02:30 PM', period: 'afternoon' as const, available: true, price: '$50' },
+      { id: 'slot-5', time: '05:00 PM', period: 'evening' as const, available: true, price: '$60' },
+    ];
+
+    return (
+      <SchedulePicker
+        days={days}
+        slots={slots}
+        selectedDate={selectedDate}
+        onSelectDate={setSelectedDate}
+        selectedSlot={selectedSlot}
+        onSelectSlot={setSelectedSlot}
+        title="Book Studio Session"
+        description="Choose a date and an available sound engineer slot."
+        timeZone="PT (UTC-8)"
+      />
+    );
+  },
+  MetricSpotlight: function MetricSpotlightDemo() {
+    const [loading, setLoading] = useState(false);
+
+    return (
+      <Stack gap="md">
+        <Button
+          label={loading ? 'Show Metric' : 'Show Skeleton State'}
+          variant="outline"
+          onPress={() => setLoading(!loading)}
+        />
+        <MetricSpotlight
+          loading={loading}
+          label="Total Revenue"
+          value="$128,450"
+          unit="USD"
+          delta={{ value: '+18.2%', direction: 'up', period: 'vs last quarter', tone: 'positive' }}
+          sparklineData={[30, 45, 40, 60, 55, 75, 80, 95]}
+          description="Net subscription and direct licensing sales."
+          actionLabel="View Report"
+        />
+        <MetricSpotlight
+          label="Churn Rate"
+          value="1.8%"
+          delta={{ value: '-0.4%', direction: 'down', period: 'vs target 2.5%', tone: 'positive' }}
+          sparklineData={[50, 48, 42, 38, 30, 25, 20, 18]}
+        />
+      </Stack>
+    );
   },
 };

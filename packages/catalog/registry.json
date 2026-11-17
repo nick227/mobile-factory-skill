@@ -418,5 +418,25 @@
     "exportName": "Accordion",
     "showcase": "Accordion",
     "test": "tests/Accordion.test.tsx"
+  },
+  {
+    "id": "patterns.schedulepicker",
+    "name": "SchedulePicker",
+    "category": "patterns",
+    "status": "verified",
+    "source": "patterns/SchedulePicker.tsx",
+    "exportName": "SchedulePicker",
+    "showcase": "SchedulePicker",
+    "test": "tests/SchedulePicker.test.tsx"
+  },
+  {
+    "id": "patterns.metricspotlight",
+    "name": "MetricSpotlight",
+    "category": "patterns",
+    "status": "verified",
+    "source": "patterns/MetricSpotlight.tsx",
+    "exportName": "MetricSpotlight",
+    "showcase": "MetricSpotlight",
+    "test": "tests/MetricSpotlight.test.tsx"
   }
 ]

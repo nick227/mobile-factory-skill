@@ -6,6 +6,7 @@ export const Pressable = (props) => {
   const style = typeof props.style === 'function' ? props.style({ pressed: false }) : props.style;
   return React.createElement('Pressable', { ...props, style }, props.children);
 };
+export const TouchableOpacity = (props) => React.createElement('TouchableOpacity', props, props.children);
 export const ActivityIndicator = (props) => React.createElement('ActivityIndicator', props);
 export const ScrollView = (props) => React.createElement('ScrollView', props, props.children);
 export const TextInput = (props) => React.createElement('TextInput', props);
@@ -28,6 +29,7 @@ export default {
   View,
   Text,
   Pressable,
+  TouchableOpacity,
   ActivityIndicator,
   ScrollView,
   TextInput,
