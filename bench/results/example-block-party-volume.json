@@ -1,0 +1,60 @@
+{
+  "app": "/tmp/claude-1000/-home-administrator-web-claude-mobile-factory/1bd0c9b1-0566-4d53-ab56-e175707eaf60/scratchpad/example-check/block-party",
+  "verification": {
+    "tsc": {
+      "skipped": true
+    },
+    "androidExport": {
+      "skipped": true
+    },
+    "note": "Re-run independently by the scorer. Types and bundles only; no device, simulator or screen reader."
+  },
+  "volume": {
+    "customFiles": 8,
+    "customLoc": 124,
+    "customTsxLoc": 93,
+    "recipeLocCopiedAndAdapted": 96,
+    "factoryFilesInstalled": 65,
+    "factoryLocInstalled": 3933,
+    "factoryUiComponentsUsed": [
+      "ActionDock",
+      "AlertDialog",
+      "Button",
+      "CalmSkeleton",
+      "EmptyState",
+      "ListItem",
+      "MediaFrame",
+      "Screen",
+      "Stack",
+      "Text",
+      "TextField",
+      "TextFieldProps",
+      "ThemeProvider",
+      "useTheme"
+    ],
+    "factoryModulesUsed": [
+      "api-client",
+      "error-boundary",
+      "persistence",
+      "validation"
+    ]
+  },
+  "staticSpecChecks": {
+    "_note": "Source-pattern heuristics only; a pass means the pattern exists, not that it behaves correctly.",
+    "routeList": true,
+    "routeDetail": true,
+    "routeCreate": true,
+    "persistence": true,
+    "destructiveConfirm": true,
+    "errorBoundary": true,
+    "validationLength": true,
+    "validationIsoDate": true,
+    "validationNotPast": true,
+    "descriptionMax500": true,
+    "simulatedLatency": false,
+    "forcedErrors": true,
+    "darkMode": true,
+    "accessibilityLabels": 4,
+    "fixedAspectRatio": true
+  }
+}
