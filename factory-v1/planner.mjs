@@ -22,6 +22,7 @@ const factoryDir = (dir) => path.join(path.resolve(dir), '.factory');
 /** Extra design-minded questions. Engine workflow questions stay required; these sharpen the profile. */
 export const questionBank = [
   { id: 'product.name', question: 'What is the app called?', priority: 3 },
+  { id: 'product.excluded', question: 'What is explicitly NOT in the first version?', priority: 2 },
   { id: 'experience.primary', question: 'Which experience matters most? (catalog experiences: browse-collection, item-detail, form-entry, guided-setup, settings, media-showcase, onboarding-paging, profile, choice-picking)', priority: 1 },
   { id: 'data.source', question: 'Does data come from a remote API, local device only, or both?', when: { 'data.required': true }, priority: 2 },
   { id: 'data.offline', question: 'Must the app work offline?', type: 'boolean', when: { 'data.required': true }, priority: 3 },
@@ -46,13 +47,23 @@ const IMPLIES = [
   { when: (k, v) => /^data\.(persistence|source|offline)$/.test(k) && v && !/^(none|no)\b/i.test(String(v)), set: 'data.required', value: true },
   { when: (k, v) => /^identity\.(method|recovery)$/.test(k) && v && !/^(none|no)\b/i.test(String(v)), set: 'identity.required', value: true },
 ];
-function applyImplications(p) {
+function applyImplications(p, conflicted = []) {
   const out = [];
   for (const [key, f] of Object.entries(p.facts)) {
     if (!PROJECTED.has(f.status)) continue;
     for (const rule of IMPLIES) {
       const target = p.facts[rule.set];
-      if (!rule.when(key, f.value) || (target && !['proposed', 'inferred'].includes(target.status)) || target?.value === rule.value) continue;
+      if (!rule.when(key, f.value) || target?.value === rule.value) continue;
+      // A stated/confirmed fact contradicts a clear consequence: surface it as a conflict instead of
+      // silently keeping both (unless the user already resolved this conflict explicitly).
+      if (target && PROJECTED.has(target.status)) {
+        if (target.resolved || p.conflicts.some((c) => c.key === rule.set)) continue;
+        p.conflicts.push({ key: rule.set, options: [{ value: target.value, sources: target.sources }, { value: rule.value, sources: [{ id: 'factory', note: `implied by ${key}` }] }] });
+        target.status = 'conflicted'; conflicted.push(rule.set);
+        out.push(`${rule.set}: CONFLICT ${JSON.stringify(target.value)} vs ${JSON.stringify(rule.value)} (implied by ${key}); ask the user`);
+        continue;
+      }
+      if (target && !['proposed', 'inferred'].includes(target.status)) continue;
       p.facts[rule.set] = { value: rule.value, status: 'inferred', sources: [{ id: 'factory', note: `implied by ${key}` }], history: target ? [...target.history, { value: target.value, status: target.status, sources: target.sources, replacedAtRevision: p.revision }] : [] };
       out.push(`${rule.set} = ${rule.value} (implied by ${key}; confirm with the user)`);
     }
@@ -180,7 +191,7 @@ export function record(dir, findings) {
       if (prev && same(prev.value, f.value)) {
         // Same value: strengthen status (inferred -> stated -> confirmed) and clear any conflict on confirmation.
         const before = prev.status;
-        if (status === 'confirmed') { prev.status = 'confirmed'; p.conflicts = p.conflicts.filter((c) => c.key !== f.key); }
+        if (status === 'confirmed') { if (before === 'conflicted') prev.resolved = true; prev.status = 'confirmed'; p.conflicts = p.conflicts.filter((c) => c.key !== f.key); }
         else if (status === 'stated' && ['inferred', 'proposed'].includes(prev.status)) prev.status = 'stated';
         prev.sources.push(source);
         (before === prev.status ? unchanged : changed).push(f.key); continue;
@@ -192,13 +203,16 @@ export function record(dir, findings) {
         prev.status = 'conflicted'; conflicts.push(f.key); continue;
       }
       const fact = { value: f.value, status, sources: [source], history: prev ? [...prev.history, { value: prev.value, status: prev.status, sources: prev.sources, replacedAtRevision: p.revision }] : [], note: f.note };
+      if (status === 'confirmed' && prev?.status === 'conflicted') fact.resolved = true;
       p.facts[f.key] = fact;
       if (status === 'confirmed') p.conflicts = p.conflicts.filter((c) => c.key !== f.key);
       changed.push(f.key);
     }
-    implied.push(...applyImplications(p));
+    const raised = [];
+    implied.push(...applyImplications(p, raised));
+    conflicts.push(...raised);
     project(p);
-    const wasProjected = changed.filter((k) => PROJECTED.has(p.facts[k].status) || p.facts[k].history.some((h) => PROJECTED.has(h.status)));
+    const wasProjected = [...changed.filter((k) => PROJECTED.has(p.facts[k].status) || p.facts[k].history.some((h) => PROJECTED.has(h.status))), ...raised];
     const stale = wasProjected.length ? invalidate(p, wasProjected) : [];
     return { changed, unchanged, conflicts, implied: implied.length ? implied : undefined, revision: p.revision, staleTasks: stale };
   });
@@ -269,10 +283,13 @@ export function setBlueprint(dir, patch) {
         if (col === 'screens') touchedScreens.push(item.id); else if (col === 'entities') keys.push('data.model'); else if (col === 'roles') keys.push('identity.roles');
       }
     }
-    for (const d of patch.decisions ?? []) if (!p.decisions.some((x) => same(x, d))) p.decisions.push(d);
+    const added = [];
+    for (const d of patch.decisions ?? []) if (!p.decisions.some((x) => same(x, d))) { const copy = { ...d }; delete copy.revision; p.decisions.push(copy); added.push(copy); }
     for (const [col, ids] of Object.entries(patch.remove ?? {})) { p[col] = (p[col] ?? []).filter((x) => !ids.includes(x.id)); if (col === 'screens') { p.tasks = (p.tasks ?? []).filter((t) => !ids.includes(t.screenId)); touchedScreens.push(...ids); } }
     const changed = touchedScreens.length || keys.length || (patch.decisions ?? []).length;
     const stale = changed ? invalidate(p, keys, touchedScreens) : [];
+    // A user confirmation covers exactly the revision it was recorded at; any later change needs a fresh one.
+    for (const d of added) if (d.type === 'user-confirmation') d.revision = p.revision;
     return { revision: p.revision, screens: touchedScreens, staleTasks: stale, notes: notes.length ? notes : undefined };
   });
 }
@@ -350,7 +367,7 @@ function factLine(key, f) {
   const src = f.sources.map((s) => s.anchor ?? s.id).filter((v, i, a) => a.indexOf(v) === i).join(',');
   return `- \`${key}\`: ${JSON.stringify(f.value)} — ${f.status}${src ? ` [${src}]` : ''}${f.history.length ? ` (rev. ${f.history.length}×)` : ''}`;
 }
-export function brief(dir, { write = true } = {}) {
+export function brief(dir, { write = true, workflow } = {}) {
   const p = ensure(engine.load(dir));
   const audit = engine.audit(p);
   const approved = p.approval?.revision === p.revision;
@@ -360,6 +377,7 @@ export function brief(dir, { write = true } = {}) {
   const md = [
     `# ${p.name} — agent brief (rev ${p.revision}, ${approved ? `APPROVED ${p.approval.blueprintHash.slice(0, 12)}` : 'NOT APPROVED — no construction'})`,
     `Mode: ${p.profile.mode}. Canonical state: .factory/project.json. This brief is a projection; do not edit it.`,
+    workflow ? `\n## Workflow\n${workflow}` : '',
     '', '## Decisions', ...facts.map(([k, f]) => factLine(k, f)),
     p.conflicts.length ? `\n## Conflicts (resolve before approval)\n${p.conflicts.map((c) => `- ${c.key}: ${c.options.map((o) => JSON.stringify(o.value)).join(' vs ')}`).join('\n')}` : '',
     '', `## Screens (${(p.screens ?? []).length})`,
@@ -408,6 +426,7 @@ export function planBuild(dir) {
   const result = engine.planBuild(dir);
   return withProject(dir, (p) => {
     const prev = new Map(before.map((t) => [t.id, t]));
+    p.plannedRevision = p.revision;
     let kept = 0, redo = 0;
     for (const t of p.tasks) {
       const old = prev.get(t.id);
@@ -432,4 +451,11 @@ export function done(dir, id, evidence) {
   const deviceEvidence = /\b(ios|android|web|chrome|safari)\b[^.;]*\d/i.test(text) && !/\b(not|no|without)\b[^.;]*\b(visual|device|browser)/i.test(text);
   if (visual && !deviceEvidence) withProject(dir, (q) => { const t = q.tasks.find((x) => x.id === id); t.gaps = ['visual review: no device/browser evidence recorded']; });
   return visual && !deviceEvidence ? { ...result, gaps: ['visual review: no device/browser evidence recorded'] } : result;
+}
+
+/** Anchor ids in archived sources that no fact, screen, conflict or skip has cited yet. */
+export function unminedAnchors(dir) {
+  const p = ensure(engine.load(dir));
+  const done = cited(p);
+  return p.sources.flatMap((s) => anchorsOf(dir, s.id).filter((a) => !done.has(a.id)).map((a) => a.id));
 }
