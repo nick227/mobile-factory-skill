@@ -37,10 +37,11 @@ export function compile(selection, context) {
   for(const p of graph.pages)if(!(p.id in selection))throw Error('composition: missing '+p.id);
   const byId=new Map(graph.pages.map(p=>[p.id,p]));
   const dataFields=new Map();
+  const booleanFields=new Set();
   const addField=(src,f)=>{
     if(!src)return;
     if(!dataFields.has(src))dataFields.set(src,new Map());
-    if(!dataFields.get(src).has(f))dataFields.get(src).set(f,f==='progress'?0:false);
+    if(!dataFields.get(src).has(f))dataFields.get(src).set(f,f==='progress'?0:'Sample '+titleCase(f));
   };
   const spec={name,data:{},pages:{}};
   const achieved=new Set();
@@ -78,7 +79,7 @@ export function compile(selection, context) {
     if(page.object!==null&&['settings','message'].includes(kind))throw Error(where+': '+kind+' cannot silently discard bound object');
     const bindings=raw.bindings??{};
     const allowed=kind==='collection'?['title','description','search','filter','media']:
-      kind==='detail'?['heading','body','facts','media','progress','unit']:
+      kind==='detail'?['heading','hero','body','facts','media','progress','unit']:
       kind==='form'?['fields']:kind==='settings'?['groups']:['heading','body'];
     only(bindings,allowed,where+'.bindings');
     let subject;
@@ -100,15 +101,18 @@ export function compile(selection, context) {
       }
     } else if(kind==='detail'){
       field(bindings.heading,where+'.bindings.heading');
+      if(archetype==='glance-dashboard')field(bindings.hero,where+'.bindings.hero');
+      else if(bindings.hero!==undefined)throw Error(where+': hero slot requires glance-dashboard');
       if(bindings.body!==undefined)field(bindings.body,where+'.bindings.body');
       if(bindings.media!==undefined)field(bindings.media,where+'.bindings.media');
       if(bindings.progress!==undefined)field(bindings.progress,where+'.bindings.progress');
       if(bindings.unit!==undefined)field(bindings.unit,where+'.bindings.unit');
       fields(bindings.facts??[],where+'.bindings.facts');
-      subject={kind,source:page.object,heading:prop(bindings.heading),actions:[],...(bindings.body?{body:prop(bindings.body)}:{}),
+      subject={kind,source:page.object,heading:prop(bindings.heading),actions:[],...(archetype==='glance-dashboard'?{glance:{value:prop(bindings.hero),label:prop(bindings.heading),...(bindings.progress?{progressField:bindings.progress}:{}),...(bindings.unit?{unit:prop(bindings.unit)}:{})}}:{}),...(bindings.body?{body:prop(bindings.body)}:{}),
         ...(bindings.media?{media:{field:bindings.media,ratio:1.5}}:{}),
         ...(bindings.facts?.length?{facts:bindings.facts.map(k=>({label:titleCase(k),value:prop(k)}))}:{})};
-      for(const k of [bindings.heading,bindings.body,bindings.media,bindings.progress,bindings.unit,...(bindings.facts??[])].filter(Boolean))addField(page.object,k);
+      for(const k of [bindings.heading,bindings.hero,bindings.body,bindings.media,bindings.progress,bindings.unit,...(bindings.facts??[])].filter(Boolean))addField(page.object,k);
+      if(bindings.progress)dataFields.get(page.object).set(bindings.progress,0);
     } else if(kind==='form'){
       fields(bindings.fields,where+'.bindings.fields',true);
       if(!page.object)throw Error(where+': form needs bound object');
@@ -148,7 +152,7 @@ export function compile(selection, context) {
       let ops;
       if(mutableToggle.has(operation)){
         if(kind!=='detail')throw Error(where+': '+v.id+' toggle requires detail subject');
-        field(v.field,where+'.actions['+i+'].field');addField(page.object,v.field);
+        field(v.field,where+'.actions['+i+'].field');addField(page.object,v.field);booleanFields.add(page.object+'.'+v.field);
         ops=[{toggle:page.object,field:v.field}];
       }else if(mutationForm.has(operation)){
         if(kind!=='form')throw Error(where+': '+v.id+' requires form subject');
@@ -176,7 +180,7 @@ export function compile(selection, context) {
       if(operation==='view'&&kind==='collection'&&subject.onSelect)achieved.add(cap.id);
       if(operation==='search'&&kind==='collection'&&subject.search)achieved.add(cap.id);
       if(operation==='filter'&&kind==='collection'&&subject.segments)achieved.add(cap.id);
-      if(operation==='progress'&&kind==='detail'&&archetype==='glance-dashboard'&&bindings.progress==='progress')achieved.add(cap.id);
+      if(operation==='progress'&&kind==='detail'&&archetype==='glance-dashboard'&&bindings.progress)achieved.add(cap.id);
     }
     if(Object.keys(events).length)compiled.events=events;
     spec.pages[pageId(page.id)]=compiled;
@@ -189,7 +193,7 @@ export function compile(selection, context) {
   // Fixture data is intentionally synthetic and must be replaced by the editorial batch.
   for(const name of new Set(graph.pages.map(p=>p.object).filter(Boolean))){
     const mock={id:name+'-sample'};
-    for(const [key,value] of dataFields.get(name)??[])mock[key]=value===0?0:key==='progress'?0:'Sample '+titleCase(key);
+    for(const [key,value] of dataFields.get(name)??[])mock[key]=booleanFields.has(name+'.'+key)?false:value;
     spec.data[name]=[mock];
   }
   // Retain all declared object namespaces even when no page displays them yet.

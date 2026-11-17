@@ -36,6 +36,8 @@ export interface DetailSubject {
   param?: string;
   media?: { field: string; ratio: number };
   heading?: Template;
+  /** Explicit glance-dashboard slots. Legacy pages without these keep their original field heuristics. */
+  glance?: { value: Template; label?: Template; progressField?: string; unit?: Template };
   facts?: { label: string; value: Template }[];
   body?: Template;
   badge?: { label: Template; tone?: 'neutral' | 'accent' | 'success' | 'warning' | 'danger'; when?: string };

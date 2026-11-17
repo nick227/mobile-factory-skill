@@ -14,7 +14,7 @@ export function runtimeDir(root = path.resolve(here, '..')) {
 
 const KIND_KEYS = {
   collection: ['kind', 'source', 'title', 'description', 'badge', 'media', 'search', 'segments', 'sort', 'onSelect'],
-  detail: ['kind', 'source', 'param', 'media', 'heading', 'facts', 'body', 'badge', 'actions'],
+  detail: ['kind', 'source', 'param', 'media', 'heading', 'glance', 'facts', 'body', 'badge', 'actions'],
   form: ['kind', 'source', 'mode', 'param', 'fields'],
   settings: ['kind', 'groups'],
   message: ['kind', 'heading', 'body'],
@@ -162,6 +162,15 @@ export function validateSpec(spec) {
     }
     if (s.kind === 'detail') {
       checkTemplate(s.heading, `${p}.subject.heading`); checkTemplate(s.body, `${p}.subject.body`);
+      if (s.glance) {
+        unknownKeys(s.glance, ['value', 'label', 'progressField', 'unit'], `${p}.subject.glance`);
+        if (!s.glance.value) err(`${p}.subject.glance.value`, 'required hero value template');
+        checkTemplate(s.glance.value, `${p}.subject.glance.value`);
+        checkTemplate(s.glance.label, `${p}.subject.glance.label`);
+        checkTemplate(s.glance.unit, `${p}.subject.glance.unit`);
+        if (s.glance.progressField && known && !known.has(s.glance.progressField)) err(`${p}.subject.glance.progressField`, `unknown field ${s.glance.progressField}`);
+        if (page.archetype !== 'glance-dashboard') err(`${p}.subject.glance`, 'explicit glance slots require glance-dashboard archetype');
+      }
       (s.facts ?? []).forEach((f, i) => checkTemplate(f.value, `${p}.subject.facts[${i}].value`));
       if (s.badge) checkTemplate(s.badge.label, `${p}.subject.badge.label`);
       if (s.media && known && !known.has(s.media.field)) err(`${p}.subject.media.field`, `unknown field ${s.media.field}`);
