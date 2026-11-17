@@ -60,7 +60,8 @@ export function Button({
     borderColor = 'transparent';
   }
 
-  const minHeight = size === 'sm' ? 36 : size === 'lg' ? 56 : 48;
+  // Compact buttons stay at the 44pt minimum touch target (standards/design/geometry.md).
+  const minHeight = size === 'sm' ? 44 : size === 'lg' ? 56 : 48;
   const paddingHorizontal = size === 'sm' ? tokens.spacing.md : size === 'lg' ? tokens.spacing.xl : tokens.spacing.lg;
   const fontSize = size === 'sm' ? tokens.typography.small : tokens.typography.body;
 

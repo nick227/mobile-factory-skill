@@ -66,7 +66,8 @@ export function Dialog({
         onPress={handleDismiss}
       >
         <Pressable
-          accessibilityRole="dialog"
+          role="dialog"
+          accessibilityViewIsModal
           accessibilityLabel={title}
           style={[
             {

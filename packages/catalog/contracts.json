@@ -90,7 +90,7 @@
     "primitives.text": {
       "summary": "Themed text with body, small, heading and title variants and a muted tone.",
       "capabilities": ["text.typography"], "experiences": [],
-      "props": "variant?: 'body'|'small'|'heading'|'title'; muted?: boolean; ...TextProps",
+      "props": "variant?: 'display'|'title'|'heading'|'body'|'small'|'caption'; muted?: boolean; tabular?: boolean (tabular figures for numbers); ...TextProps",
       "constraints": ["Use variants instead of hard-coded font sizes."],
       "recipe": "<Text variant=\"heading\">Upcoming</Text>",
       "compat": { "platforms": ["ios", "android", "web"] }
@@ -114,7 +114,7 @@
     "primitives.surface": {
       "summary": "Raised, rounded content group with optional outline.",
       "capabilities": ["layout.surface"], "experiences": [],
-      "props": "padded?: boolean (default true); outlined?: boolean; ...ViewProps",
+      "props": "padded?: boolean (default true); outlined?: boolean; elevated?: boolean (shadow); radius?: 'none'|'sm'|'md'|'lg'|'full'; ...ViewProps",
       "constraints": ["Do not nest surfaces more than one level."],
       "recipe": "<Surface outlined>{children}</Surface>",
       "compat": { "platforms": ["ios", "android", "web"] }
@@ -146,8 +146,8 @@
     "controls.button": {
       "summary": "Labelled button with primary, secondary, outline and ghost variants and a loading state.",
       "capabilities": ["action.primary", "action.secondary", "action.pending"], "experiences": ["form-entry", "item-detail"],
-      "props": "label: string; onPress?; variant?: 'primary'|'secondary'|'outline'|'ghost'; loading?: boolean; disabled?: boolean; fullWidth?: boolean",
-      "constraints": ["One primary Button per focused task.", "Caller owns pending/success/failure; pass loading while the action runs.", "No destructive variant: confirm destructive actions with AlertDialog (composites.alertdialog)."],
+      "props": "label: string; onPress?; variant?: 'primary'|'secondary'|'outline'|'ghost'; size?: 'sm'|'md'|'lg' (44/48/56 min height); tone?: 'default'|'danger'; icon?: ReactNode; trailingIcon?: ReactNode; loading?: boolean; disabled?: boolean; fullWidth?: boolean",
+      "constraints": ["One primary Button per focused task.", "Caller owns pending/success/failure; pass loading while the action runs.", "Use tone=\"danger\" for destructive actions and confirm them with AlertDialog (composites.alertdialog)."],
       "recipe": "<Button label=\"Save\" loading={saving} onPress={save} fullWidth />",
       "compat": { "platforms": ["ios", "android", "web"] }
     },
@@ -162,7 +162,7 @@
     "controls.badge": {
       "summary": "Compact pill label in neutral or accent tone.",
       "capabilities": ["feedback.status-label"], "experiences": [],
-      "props": "label: string; tone?: 'neutral'|'accent'",
+      "props": "label: string; tone?: 'neutral'|'accent'|'success'|'warning'|'danger'",
       "constraints": ["Not interactive; do not use as a button."],
       "recipe": "<Badge label=\"Today\" tone=\"accent\" />",
       "compat": { "platforms": ["ios", "android", "web"] }
@@ -170,7 +170,7 @@
     "composites.listitem": {
       "summary": "List row with title, description and leading/trailing slots; pressable when onPress is set.",
       "capabilities": ["list.row"], "experiences": ["browse-collection", "settings"],
-      "props": "title: string; description?: string; leading?: ReactNode; trailing?: ReactNode; onPress?; ...PressableProps",
+      "props": "title: string; description?: string; leading?: ReactNode; trailing?: ReactNode; showChevron?: boolean; onPress?; ...PressableProps",
       "constraints": ["Use stable record ids as keys.", "For long lists render inside FlatList renderItem, not .map in a ScrollView."],
       "recipe": "<ListItem title={event.title} description={event.venue} onPress={() => router.push(`/events/${event.id}`)} />",
       "compat": { "platforms": ["ios", "android", "web"] }
@@ -332,7 +332,7 @@
     "composites.mediaframe": {
       "summary": "Image in a reserved aspect-ratio frame with failure fallback (expo-image).",
       "capabilities": ["media.image"], "experiences": ["media-showcase", "browse-collection", "item-detail"],
-      "props": "ratio: number (required); source?: string | ImageSource | number | null; fit?: 'cover'|'contain'; label?: string; radius?: number",
+      "props": "ratio: number (required); source?: string | ImageSource | number | null; placeholder?: ImageSource | string | number (shown while loading/failed); fit?: 'cover'|'contain'; label?: string; radius?: number; containerStyle?: ViewStyle",
       "constraints": ["Always pass ratio; never let media resize after decode.", "Give label for meaningful images."],
       "recipe": "<MediaFrame ratio={16 / 9} source={event.coverUrl} label={event.title} />",
       "compat": { "platforms": ["ios", "android", "web"] }
@@ -348,7 +348,7 @@
     "patterns.editorialmosaic": {
       "summary": "Premium editorial multi-column media mosaic with badges and metadata.",
       "capabilities": ["media.mosaic", "media.image", "list.row"], "experiences": ["media-showcase", "browse-collection"],
-      "props": "items: { id; title; subtitle?; image?; aspectRatio?; badge?; badgeTone?; metadata? }[]; columns?: number; density?: 'compact'|'comfortable'|'spacious'; onItemPress?: (item) => void; emptyState?; header?; footer?",
+      "props": "items: { id; title; subtitle?; image?; aspectRatio?; badge?; badgeTone?; metadata? }[]; columns?: number; density?: 'compact'|'comfortable'|'spacious'; onItemPress?: (item) => void; emptyState?; header?; footer?; accessibilityLabel?",
       "constraints": ["Give each item an aspectRatio so layout is stable before images load."],
       "recipe": "<EditorialMosaic items={events.map(e => ({ id: e.id, title: e.title, subtitle: e.venue, image: e.coverUrl, aspectRatio: 4 / 3 }))} onItemPress={item => open(item.id)} />",
       "compat": { "platforms": ["ios", "android", "web"] }
@@ -356,7 +356,7 @@
     "patterns.immersivehero": {
       "summary": "Premium full-bleed hero image with overlay title, tag, metadata, back and actions.",
       "capabilities": ["media.hero", "action.primary", "nav.header"], "experiences": ["media-showcase", "item-detail"],
-      "props": "title: string; subtitle?; tag?; tagTone?; metadata?; image?; aspectRatio?; height?; onBack?; backLabel?; primaryAction?: ButtonProps; secondaryAction?: ButtonProps; actions?: ReactNode; overlayOpacity?; align?: 'bottom'|'center'",
+      "props": "title: string; subtitle?; tag?; tagTone?; metadata?; image?; aspectRatio?; height?; onBack?; backLabel?; primaryAction?: ButtonProps; secondaryAction?: ButtonProps; actions?: ReactNode; overlayOpacity?; align?: 'bottom'|'center'; accessibilityLabel?",
       "constraints": ["Use as the first element of a detail screen with the router header hidden.", "Requires SafeAreaProvider."],
       "recipe": "<ImmersiveHero title={event.title} subtitle={event.venue} image={event.coverUrl} onBack={router.back} primaryAction={{ label: 'RSVP', onPress: rsvp, loading: pending }} />",
       "compat": { "platforms": ["ios", "android", "web"] },
@@ -381,7 +381,7 @@
     },
     "primitives.portal": {"summary": "Custom portal host/provider for rendering overlays above the tree (not used by Dialog, which uses RN Modal).", "capabilities": ["overlay.portal"], "experiences": [], "props": "<PortalProvider> at root; <PortalHost name?> once; <Portal hostName?>{children}</Portal>; usePortal()", "constraints": ["Mount PortalProvider and one PortalHost in app/_layout.tsx before using Portal."], "recipe": "<Portal><View>{overlay}</View></Portal>", "compat": {"platforms": ["ios", "android", "web"]}, "requires": ["PortalProvider", "PortalHost"]},
     "controls.select": {"summary": "Labelled select field that opens an options sheet (RN Modal) with combobox role.", "capabilities": ["input.select", "input.choice-single", "form.validation-message"], "experiences": ["form-entry"], "props": "options: { label; value; disabled? }[]; value?: string; onValueChange: (v) => void; label?; placeholder?; error?; hint?; disabled?", "constraints": ["Use for 5+ options; RadioGroup or SegmentedControl for fewer."], "recipe": "<Select label=\"Category\" value={category} options={categories} onValueChange={setCategory} />", "compat": {"platforms": ["ios", "android", "web"]}},
-    "controls.tabs": {"summary": "In-place pill or underline tabs for switching peer sections.", "capabilities": ["nav.tabs", "input.segmented"], "experiences": ["browse-collection", "profile"], "props": "tabs: { id; label; badge?; disabled? }[]; value: string; onValueChange: (id) => void; variant?: 'pill'|'underline'", "constraints": ["In-screen sections only; persistent app areas use expo-router (tabs) layout.", "Keep each tab's scroll position in the parent."], "recipe": "<Tabs tabs={[{ id: 'upcoming', label: 'Upcoming' }, { id: 'past', label: 'Past' }]} value={tab} onValueChange={setTab} />", "compat": {"platforms": ["ios", "android", "web"]}},
+    "controls.tabs": {"summary": "In-place pill or underline tabs for switching peer sections.", "capabilities": ["nav.tabs", "input.segmented"], "experiences": ["browse-collection", "profile"], "props": "tabs: { id; label; badge?; disabled? }[]; value: string; onValueChange: (id) => void; variant?: 'pill'|'underline'; scrollable?: boolean (horizontal scroll for many or long tabs)", "constraints": ["In-screen sections only; persistent app areas use expo-router (tabs) layout.", "Keep each tab's scroll position in the parent."], "recipe": "<Tabs tabs={[{ id: 'upcoming', label: 'Upcoming' }, { id: 'past', label: 'Past' }]} value={tab} onValueChange={setTab} />", "compat": {"platforms": ["ios", "android", "web"]}},
     "composites.dialog": {"summary": "Controlled modal dialog (RN Modal) with title, description, content and up to two actions; Android back dismisses.", "capabilities": ["overlay.dialog"], "experiences": ["item-detail", "form-entry"], "props": "open: boolean; onOpenChange: (open) => void; title: string; description?; children?; primaryAction?: { label; onPress; loading?; disabled? }; secondaryAction?: { label; onPress }; dismissible?: boolean", "constraints": ["Short, single-decision content only; multi-field editing gets a full screen.", "Review: uses accessibilityRole=\"dialog\", which is not a React Native AccessibilityRole value (role=\"dialog\" is); screen-reader announcement unverified."], "recipe": "<Dialog open={open} onOpenChange={setOpen} title=\"Share event\" primaryAction={{ label: 'Copy link', onPress: copy }} secondaryAction={{ label: 'Close', onPress: () => setOpen(false) }} />", "compat": {"platforms": ["ios", "android", "web"]}, "requires": ["SafeAreaProvider"]},
     "composites.alertdialog": {"summary": "Controlled confirm/cancel dialog with destructive styling and loading state; preferred for destructive confirmation.", "capabilities": ["overlay.confirm", "overlay.dialog", "action.pending"], "experiences": ["item-detail", "settings"], "props": "open: boolean; onOpenChange: (open) => void; title: string; description: string; onConfirm: () => void; onCancel?; confirmLabel?; cancelLabel?; destructive?: boolean; loading?: boolean", "constraints": ["Use for every destructive action (standards/design/navigation.md).", "Keep the dialog open with loading until the action settles; close on success."], "recipe": "<AlertDialog open={confirming} onOpenChange={setConfirming} title=\"Cancel RSVP?\" description=\"You can RSVP again later.\" destructive confirmLabel=\"Cancel RSVP\" loading={pending} onConfirm={cancelRsvp} />", "compat": {"platforms": ["ios", "android", "web"]}, "requires": ["SafeAreaProvider"]},
     "composites.accordion": {"summary": "Controlled expandable sections with titles and subtitles.", "capabilities": ["layout.disclosure"], "experiences": ["item-detail", "settings"], "props": "items: { id; title; subtitle?; content: ReactNode; disabled? }[]; expandedIds: string[]; onToggle: (id) => void", "constraints": ["Do not hide the primary action inside a collapsed section."], "recipe": "<Accordion items={faq} expandedIds={open} onToggle={(id) => setOpen((o) => o.includes(id) ? o.filter((x) => x !== id) : [...o, id])} />", "compat": {"platforms": ["ios", "android", "web"]}},

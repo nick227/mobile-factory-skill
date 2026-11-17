@@ -136,7 +136,9 @@ export function ImmersiveHero({
               backgroundColor: 'rgba(0, 0, 0, 0.5)',
               paddingHorizontal: 12,
               paddingVertical: 6,
-              borderRadius: 20,
+              minHeight: 44,
+              justifyContent: 'center',
+              borderRadius: 22,
               opacity: pressed ? 0.7 : 1,
             })}
           >

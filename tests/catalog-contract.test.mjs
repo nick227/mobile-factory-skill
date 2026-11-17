@@ -99,3 +99,26 @@ test('the built skill catalogs every implemented component and its contract has 
   assert.deepEqual(dist.problems, []);
   assert.deepEqual(dist.warnings, []);
 });
+
+// Guard against contract drift: every prop (and every value of a local string-literal union)
+// declared in a registered component's Props interface must be described in its contract.
+test('contracts describe every current prop and union value of each component', () => {
+  const registry = JSON.parse(fs.readFileSync(path.join(root, 'packages/catalog/registry.json'), 'utf8'));
+  const contracts = JSON.parse(fs.readFileSync(path.join(root, 'packages/catalog/contracts.json'), 'utf8')).items;
+  const drift = [];
+  for (const r of registry) {
+    const src = fs.readFileSync(path.join(root, 'packages/ui/src', r.source), 'utf8');
+    const unions = Object.fromEntries([...src.matchAll(/export type (\w+) = ((?:\s*\|?\s*'[^']+')+);/g)].map((m) => [m[1], [...m[2].matchAll(/'([^']+)'/g)].map((x) => x[1])]));
+    const start = src.search(new RegExp(`export interface ${r.exportName}Props\\b[^{]*\\{`));
+    if (start < 0) continue;
+    let depth = 0, body = '';
+    for (let k = src.indexOf('{', start); k < src.length; k++) { const c = src[k]; if (c === '{') depth++; if (c === '}' && --depth === 0) break; body += depth === 1 ? c : ' '; }
+    const text = contracts[r.id]?.props ?? '';
+    for (const [, key, type] of body.matchAll(/(?:^|[;\n{])\s*([A-Za-z_]\w*)\??\s*:\s*([^;\n]+)/g)) {
+      if (key === 'style') continue;
+      if (!new RegExp(`\\b${key}\\b`).test(text)) drift.push(`${r.id}: prop ${key}`);
+      for (const v of unions[type.trim()] ?? []) if (!text.includes(`'${v}'`)) drift.push(`${r.id}: ${key} value '${v}'`);
+    }
+  }
+  assert.deepEqual(drift, []);
+});
