@@ -376,6 +376,11 @@ export function brief(dir, { write = true } = {}) {
     fs.writeFileSync(path.join(docs, 'BRIEF.md'), md);
     fs.writeFileSync(path.join(docs, 'SCREENS.md'), `# Screen contracts and wireframes (rev ${p.revision})\n\n` + (p.screens ?? []).map((s) => `## ${s.title ?? s.id}\n\n\`\`\`\n${wireframe(s)}\n\`\`\`\n`).join('\n'));
     fs.writeFileSync(path.join(docs, 'DECISIONS.md'), `# Decision log (rev ${p.revision})\n\n` + facts.map(([k, f]) => `## ${k}\n${factLine(k, f)}\n${f.sources.filter((s) => s.quote).map((s) => `> ${s.quote}`).join('\n')}${f.history.length ? '\n\nHistory:\n' + f.history.map((h) => `- ${JSON.stringify(h.value)} (${h.status}, replaced at rev ${h.replacedAtRevision})`).join('\n') : ''}\n`).join('\n'));
+    const designFacts = facts.filter(([key]) => key.startsWith('design.'));
+    fs.writeFileSync(path.join(docs, 'DESIGN.md'), `# Global design (rev ${p.revision})\n\nCanonical source: .factory/project.json. This file is generated; do not edit.\n\n` +
+      (designFacts.length ? designFacts.map(([key, value]) => `- ${factLine(key, value)}`).join('\n') : 'No global design preferences recorded.') + '\n');
+    fs.writeFileSync(path.join(docs, 'INTERACTIONS.md'), `# Presentation interactions (rev ${p.revision})\n\nCanonical source: .factory/project.json. This file is generated; do not edit.\n\n` +
+      (p.screens ?? []).map(s => `## ${s.title ?? s.id} (${s.id})\nRoute: ${s.route ?? '?'}\nPurpose: ${s.purpose ?? ''}\nActions:\n${(s.actions ?? []).length ? s.actions.map(a => `- ${typeof a === 'string' ? a : JSON.stringify(a)}`).join('\n') : '- None'}\nStates: ${(s.states ?? []).join(', ')}\n\n`).join(''));
     if (model) fs.writeFileSync(path.join(docs, 'model.ts'), `// Generated from .factory/project.json rev ${p.revision}. Copy into src/features/*/types.ts.\n${model}\n`);
   }
   return { markdown: md, tokensApprox: Math.ceil(md.length / 4) };
