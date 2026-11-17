@@ -36,8 +36,8 @@ Within a task, its `acceptance` list is the definition of done.
 
 | Task | What to do |
 |---|---|
-| `setup-project` | Copy `templates/expo-app/` to the app dir (if absent). Run `npx expo install --check`, then `npx tsc --noEmit`. |
-| `setup-design` | `node scripts/install-source.mjs library catalog.json <app> --all` installs `src/ui/` and `factory-install.json`. Then `module add` the modules from `module recommend --project <app>`, run the printed `npx expo install …`, and copy `src/foundations/navigation/RootLayout.tsx` to `app/_layout.tsx`, with `ProtectedLayout.tsx` instead when the app has accounts. Typecheck. |
+| `setup-project` | Copy `templates/expo-app/` to the app dir (if absent) **and** install the UI source in the same task: `node scripts/install-source.mjs library catalog.json <app> --all`. The template's `app/index.tsx` already imports `src/ui`, so typechecking before the install always fails. Then run `npx expo install --check` and `npx tsc --noEmit`. |
+| `setup-design` | `module add` the modules from `module recommend --project <app>`, run the printed `npx expo install …`, and copy `src/foundations/navigation/RootLayout.tsx` to `app/_layout.tsx` (use `ProtectedLayout.tsx` instead when the app has accounts). Check that `useTheme` tokens resolve and the app typechecks. |
 | `module-data` | Create `src/features/<feature>/` with `types.ts` (from `.factory/docs/model.ts`), `schema.ts` (zod), `api.ts`, `mock.ts`, `store.ts` and `use<Thing>.ts`, following the module `usage` lines in the package. Add Node tests for pure logic where practical. |
 | `module-auth` | Use `module.auth` usage. Signed-in routes go in `app/(app)/`, sign-in in `app/(auth)/`. Cover the success, failure and recovery paths. |
 | `implement-<component>` | **Factory repository only:** build the component in `packages/ui/src`, with a test in `packages/ui/tests`, a Lab showcase and a catalog record. In an unpacked skill, you can't promote components: tell the user, and propose an existing alternative. |
