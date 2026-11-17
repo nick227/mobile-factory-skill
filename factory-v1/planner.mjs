@@ -81,7 +81,7 @@ function project(p) {
   }
 }
 /** Bump revision, drop approval and mark only dependent tasks stale (unrelated work keeps its status). */
-function invalidate(p, keys, screenIds = []) {
+export function invalidate(p, keys, screenIds = []) {
   p.revision = (p.revision || 1) + 1; p.approval = null; p.phase = 'design';
   const global = keys.some((k) => GLOBAL_KEYS.test(k));
   const screens = new Set(screenIds);
