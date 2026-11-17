@@ -6,6 +6,7 @@ import * as appTypes from './app-archetypes.mjs';
 import * as objects from './object-schema.mjs';
 import * as functionality from './functionality.mjs';
 import * as pages from './pages.mjs';
+import * as composition from './composition.mjs';
 
 export const STAGES = Object.freeze([
   { id: 'classification', shape: '{ "type": "catalog-id" }' },
@@ -36,8 +37,7 @@ function validate(id, selection, p) {
   } else if (id === 'pages') {
     pages.resolve(selection,p.batches.selections.classification.type,p.batches.selections.objects,p.batches.selections.functionality);
   } else if (id === 'composition') {
-    if (!isObj(selection) || !Object.keys(selection).length || Object.entries(selection).some(([k, v]) => !IDENTIFIER.test(k) || !isObj(v)))
-      throw Error('composition: expected nonempty map of page IDs to configuration objects');
+    composition.compile(selection,{name:p.name,type:p.batches.selections.classification.type,objects:p.batches.selections.objects,capabilities:p.batches.selections.functionality,pages:p.batches.selections.pages});
   } else if (id === 'content') {
     if (!isObj(selection) || !Object.keys(selection).length) throw Error('content: expected nonempty content object');
   } else if (id === 'review') {
@@ -87,7 +87,8 @@ export function next(p, workflowStatus) {
       ...(id === 'objects' ? { suggestedDefaults: appTypes.expand(p.batches.selections.classification.type) } : {}),
       ...(id === 'functionality' ? { objectContract: objects.resolve(p.batches.selections.objects), capabilityCatalog: functionality.list(), suggestedCapabilities: appTypes.get(p.batches.selections.classification.type).defaults.capabilities } : {}),
       ...(id === 'pages' ? { functionalityContract: functionality.resolve(p.batches.selections.functionality,p.batches.selections.objects), pageCatalog: pages.list(p.batches.selections.classification.type), suggestedPages:pages.suggest(p.batches.selections.classification.type,p.batches.selections.objects,p.batches.selections.functionality) } : {}),
-      ...(id === 'composition' ? { pageInventory: pages.resolve(p.batches.selections.pages,p.batches.selections.classification.type,p.batches.selections.objects,p.batches.selections.functionality) } : {}),
+      ...(id === 'composition' ? { pageInventory: pages.resolve(p.batches.selections.pages,p.batches.selections.classification.type,p.batches.selections.objects,p.batches.selections.functionality), contract: 'workflow composition --project <dir> after selecting all page compositions' } : {}),
+      ...(id === 'content' ? { compositionPreview: composition.compile(p.batches.selections.composition,{name:p.name,type:p.batches.selections.classification.type,objects:p.batches.selections.objects,capabilities:p.batches.selections.functionality,pages:p.batches.selections.pages}) } : {}),
       command: `workflow batch set ${id} --project <dir> --file SELECTION.json` };
   }
   return { kind: 'segment', segment: workflowStatus.segment, next: workflowStatus.next, batchesComplete: true };

@@ -16,7 +16,7 @@ const selections = {
   objects: ['activity'],
   functionality: ['activity.complete'],
   pages: ['tracker.home'],
-  composition: { 'tracker.home': { archetype: 'glance-dashboard' } },
+  composition: { 'tracker.home': { kind:'detail', archetype:'glance-dashboard', bindings:{heading:'name'}, actions:[{id:'activity.complete',placement:'primary',field:'completed'}] } },
   content: { copy: { 'home.title': 'Today' } },
   review: { passed: true, evidence: 'Reviewed against source requirements' },
 };
