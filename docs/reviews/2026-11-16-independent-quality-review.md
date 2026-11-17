@@ -7,7 +7,7 @@
 
 | # | Finding | Severity | Evidence | Regression check |
 |---|---|---|---|---|
-| R1 | `pnpm check` fails on a clean clone of `origin/main`: the Lab typecheck reports 127 errors (React types don't resolve). It passes only in a working tree with leftover `node_modules`. | High | clean-checkout | Repro below; needs a CI job from a clean clone |
+| R1 | `pnpm check` fails on a clean clone of `origin/main`: the Lab typecheck reports 127 errors (React types don't resolve). It passes only in a working tree with leftover `node_modules`. | High | clean-checkout | **Fixed** in PR #5 (`@types/react` declared in `@factory/ui`); enforced by `.github/workflows/check.yml` |
 | R2 | 18 components are `verified` (all premium widgets, Dialog, AlertDialog, Select, Tabs, Accordion, Portal) with no recorded device evidence. The shared quality gate forbids this. | High | static (catalog contract) | `tests/quality-regressions.test.mjs` Q1 (`todo`) |
 | R3 | The built skill shipped **none** of those 18 components in `catalog.json`, because `build-skill` kept only `stable`/`preview`. Their source shipped, but agents could not discover the product's differentiators. | High | clean-checkout | **Fixed** in `claude/construction-foundations` (`catalog-contract.test.mjs`) |
 | R4 | `packages/ui/tsconfig.json` extends `tsconfig.base.json`, which maps `react-native`, `expo-image` and `react-native-safe-area-context` to **hand-written test mocks**. The library is typechecked against fake types. | Medium | static | Q3 (`todo`) |
@@ -42,7 +42,7 @@ node bench/browser-probe.mjs /tmp/lab-web packages/catalog/registry.json /tmp/pr
 
 ## Recommended owner actions (UI foundation)
 
-1. Add a CI job that runs `pnpm install --frozen-lockfile && pnpm check` from a clean clone (fixes R1 permanently).
+1. ~~Add a clean-clone CI job (R1).~~ Done in PR #5. Keep it required on `main`.
 2. Set the 18 `verified` records back to `preview`, or record device evidence in `packages/catalog/contracts.json#items.<id>.evidence` (R2). The contract computes maturity, so it never has to be hand-edited again.
 3. Move the mock path mappings into `tsconfig.test.json` (R4). Change Dialog to `role="dialog"` (R5).
 4. Raise the SchedulePicker chips and the ImmersiveHero back button to a 44 pt minimum (R7). Make the whole Toggle row pressable.
