@@ -73,7 +73,10 @@ export function materialize(p,selection=p.batches?.selections?.content) {
       for(const key of required.filter(k=>k!=='id')){
         const type=typeof templateRows[0][key];
         if(typeof r[key]!==type)throw Error(where+'.'+key+': expected '+type);
-        if(type==='string')text(r[key],where+'.'+key);
+        if(type==='string'){
+          text(r[key],where+'.'+key);
+          if(r[key]===templateRows[0][key])throw Error(where+'.'+key+': synthetic fixture value must be replaced');
+        }
         if(type==='number'&&!Number.isFinite(r[key]))throw Error(where+'.'+key+': finite number required');
       }
     }
