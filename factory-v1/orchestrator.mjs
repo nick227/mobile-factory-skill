@@ -8,6 +8,7 @@ import * as engine from './engine.mjs';
 import * as plan from './planner.mjs';
 import * as cat from './catalog-contract.mjs';
 import * as batches from './batches.mjs';
+import * as editorial from './editorial.mjs';
 
 export const SEGMENTS = [
   { id: '02-discovery', title: 'Discovery', goal: 'Understand the product: purpose, audience, scope, accounts and data' },
@@ -61,26 +62,27 @@ function evaluateConditions(dir, p) {
   }
   if (p.batches) g.push(condition('batches:complete', batches.complete(p), `Unresolved decision batch: ${batches.nextId(p) ?? 'none'}`, 'workflow next --project <dir>, then workflow batch set <id> --project <dir> --file SELECTION.json'));
   const screens = p.screens ?? [];
-  g.push(condition('screens:defined', screens.length > 0, 'At least one screen', 'blueprint set --file blueprint.json with screens[]'));
+  if (!p.batches) g.push(condition('screens:defined', screens.length > 0, 'At least one screen', 'blueprint set --file blueprint.json with screens[]'));
+  else g.push(condition('appspec:validated', Boolean(p.batches.selections?.review && editorial.audit(p).problems.every(issue=>issue.scope==='approval')), 'Final executable AppSpec reviewed and validated', 'workflow spec --project <dir>, then workflow batch set review --file REVIEW.json'));
   let items = null;
   try { items = new Set(cat.load().items.map((i) => i.id)); } catch { /* catalog unavailable */ }
   const registry = new Set(JSON.parse(fs.readFileSync(engine.getRegistryPath(), 'utf8')).map((x) => x.id));
-  for (const s of screens) {
+  for (const s of p.batches ? [] : screens) {
     const issues = engine.screenIssues(s, registry);
     if (s.recipe && items && !items.has(s.recipe)) issues.push(`Unknown recipe ${s.recipe}`);
     for (const e of s.entities ?? []) if (!(p.entities ?? []).some((x) => x.id === e)) issues.push(`Unknown entity ${e}`);
     g.push(condition(`screen:${s.id}`, !issues.length, issues.length ? `${s.id}: ${issues.join('; ')}` : `${s.id} contract complete`, `blueprint set with the missing fields for ${s.id} (load 06-catalog for component ids)`));
   }
   if (screens.length) g.push(condition('screens:basis', screens.every((s) => (s.basis ?? []).length), `Screens without basis[]: ${screens.filter((s) => !(s.basis ?? []).length).map((s) => s.id).join(', ')}`, 'Add basis[] (fact keys each screen depends on) so later changes stale only that screen', false));
-  if (p.answers?.['data.required'] === true) g.push(condition('entities:defined', (p.entities ?? []).some((e) => e && typeof e === 'object' && e.fields), 'Persistent data needs typed entities', 'blueprint set with entities[] {id, fields}'));
-  if (p.answers?.['identity.required'] === true) g.push(condition('roles:defined', (p.roles ?? []).length > 0, 'Accounts need roles/permissions', 'blueprint set with roles[] {id, can[]}'));
+  if (!p.batches && p.answers?.['data.required'] === true) g.push(condition('entities:defined', (p.entities ?? []).some((e) => e && typeof e === 'object' && e.fields), 'Persistent data needs typed entities', 'blueprint set with entities[] {id, fields}'));
+  if (!p.batches && p.answers?.['identity.required'] === true) g.push(condition('roles:defined', (p.roles ?? []).length > 0, 'Accounts need roles/permissions', 'blueprint set with roles[] {id, can[]}'));
 
   // 05 Blueprint: user confirmation for this revision, then approval.
   const b = out['05-blueprint'];
   const confirmations = (p.decisions ?? []).filter((x) => x?.type === 'user-confirmation');
-  const current = confirmations.some((x) => x.revision === undefined || x.revision === p.revision);
-  b.push(condition('user:confirmed', current, confirmations.length ? `User confirmation for revision ${p.revision}` : 'User has confirmed the blueprint', 'Show blueprint brief + wireframes; after explicit approval: blueprint set --file confirm.json {"decisions":[{"type":"user-confirmation","value":"USER: <their words>"}]}'));
-  const approved = p.approval?.revision === p.revision;
+  const current = confirmations.some((x) => p.batches ? (x.revision===p.revision && typeof x.value==='string' && x.value.startsWith('USER: ')) : (x.revision === undefined || x.revision === p.revision));
+  b.push(condition('user:confirmed', current, confirmations.length ? `User confirmation for revision ${p.revision}` : 'User has confirmed the blueprint', p.batches ? 'After showing workflow spec, run workflow confirm --project <dir> --quote "<actual user approval words>"' : 'Show blueprint brief + wireframes; after explicit approval: blueprint set --file confirm.json {"decisions":[{"type":"user-confirmation","value":"USER: <their words>"}]}'));
+  const approved = p.batches ? editorial.approved(p) : p.approval?.revision === p.revision;
   b.push(condition('blueprint:approved', approved, `Blueprint approved at revision ${p.revision}`, 'blueprint audit (must be ready), then: blueprint approve'));
 
   // 06 Catalog & plan: approved parts resolve and the task plan matches this approval.

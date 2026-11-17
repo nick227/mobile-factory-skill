@@ -8,17 +8,19 @@ import * as engine from '../factory-v1/engine.mjs';
 import * as plan from '../factory-v1/planner.mjs';
 import * as orch from '../factory-v1/orchestrator.mjs';
 import * as batches from '../factory-v1/batches.mjs';
+import * as editorial from '../factory-v1/editorial.mjs';
 import * as F from '../bench/segments/fixtures.mjs';
 
 const project = () => { const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'batch-')); F.design(dir); return dir; };
+const awaitedHash = dir => editorial.materialize(engine.load(dir)).hash;
 const selections = {
   classification: { type: 'tracker' },
   objects: ['activity'],
   functionality: ['activity.complete'],
   pages: ['tracker.home'],
   composition: { 'tracker.home': { kind:'detail', archetype:'glance-dashboard', bindings:{heading:'name',hero:'count'}, actions:[{id:'activity.complete',placement:'primary',field:'completed'}] } },
-  content: { copy: { 'home.title': 'Today' } },
-  review: { passed: true, evidence: 'Reviewed against source requirements' },
+  content: { pages: { 'tracker.home': {title:'Today'} }, data: {activity:[{id:'activity-one',name:'Daily Activity',count:'10',completed:false}]} },
+  review: null,
 };
 
 test('existing projects retain their pre-batch workflow behavior', () => {
@@ -35,7 +37,7 @@ test('one ordered selection at a time, persisted and resumable', () => {
   assert.throws(() => batches.set(dir, 'pages', selections.pages), /Complete classification/);
   for (const [id, selection] of Object.entries(selections)) {
     assert.equal(batches.next(engine.load(dir), orch.status(dir)).id, id);
-    batches.set(dir, id, selection);
+    batches.set(dir, id, id==='review' ? {passed:true,evidence:'Reviewed all pages and content',specHash:(awaitedHash(dir))} : selection);
   }
   assert.equal(batches.complete(engine.load(dir)), true);
   assert.equal(orch.status(dir).segments.find(s => s.id === '04-design').unmet.some(x => x.id === 'batches:complete'), false);
@@ -57,7 +59,7 @@ test('invalid input and repeat writes do not mutate revision', () => {
 
 test('editing earlier decisions invalidates downstream only and stales build tasks', () => {
   const dir = project(); batches.init(dir);
-  for (const [id, value] of Object.entries(selections)) batches.set(dir, id, value);
+  for (const [id, value] of Object.entries(selections)) batches.set(dir, id, id==='review' ? {passed:true,evidence:'Reviewed content',specHash:awaitedHash(dir)} : value);
   const p = engine.load(dir);
   p.tasks = [
     { id:'setup-project', status:'done', dependsOn:[] },

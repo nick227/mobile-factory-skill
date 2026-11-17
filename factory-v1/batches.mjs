@@ -7,6 +7,7 @@ import * as objects from './object-schema.mjs';
 import * as functionality from './functionality.mjs';
 import * as pages from './pages.mjs';
 import * as composition from './composition.mjs';
+import * as editorial from './editorial.mjs';
 
 export const STAGES = Object.freeze([
   { id: 'classification', shape: '{ "type": "catalog-id" }' },
@@ -14,8 +15,8 @@ export const STAGES = Object.freeze([
   { id: 'functionality', shape: '["capability-id", ...]' },
   { id: 'pages', shape: '["page-pattern-id", ...]' },
   { id: 'composition', shape: '{ "page-id": { ... } }' },
-  { id: 'content', shape: '{ "copy": { ... }, ... }' },
-  { id: 'review', shape: '{ "passed": true, "evidence": "..." }' },
+  { id: 'content', shape: '{ "pages": {"page-id":{"title":"..."}}, "data":{"object-id":[{"id":"..."}]} }' },
+  { id: 'review', shape: '{ "passed": true, "evidence": "...", "specHash": "sha256" }' },
 ]);
 const IDENTIFIER = /^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$/;
 const own = (obj, key) => Object.prototype.hasOwnProperty.call(obj, key);
@@ -39,10 +40,9 @@ function validate(id, selection, p) {
   } else if (id === 'composition') {
     composition.compile(selection,{name:p.name,type:p.batches.selections.classification.type,objects:p.batches.selections.objects,capabilities:p.batches.selections.functionality,pages:p.batches.selections.pages});
   } else if (id === 'content') {
-    if (!isObj(selection) || !Object.keys(selection).length) throw Error('content: expected nonempty content object');
+    editorial.materialize(p,selection);
   } else if (id === 'review') {
-    if (!isObj(selection) || selection.passed !== true || typeof selection.evidence !== 'string' || !selection.evidence.trim())
-      throw Error('review: expected { "passed": true, "evidence": "..." }');
+    editorial.review(p,selection);
   }
 }
 export function nextId(p) {
@@ -88,7 +88,8 @@ export function next(p, workflowStatus) {
       ...(id === 'functionality' ? { objectContract: objects.resolve(p.batches.selections.objects), capabilityCatalog: functionality.list(), suggestedCapabilities: appTypes.get(p.batches.selections.classification.type).defaults.capabilities } : {}),
       ...(id === 'pages' ? { functionalityContract: functionality.resolve(p.batches.selections.functionality,p.batches.selections.objects), pageCatalog: pages.list(p.batches.selections.classification.type), suggestedPages:pages.suggest(p.batches.selections.classification.type,p.batches.selections.objects,p.batches.selections.functionality) } : {}),
       ...(id === 'composition' ? { pageInventory: pages.resolve(p.batches.selections.pages,p.batches.selections.classification.type,p.batches.selections.objects,p.batches.selections.functionality), contract: 'workflow composition --project <dir> after selecting all page compositions' } : {}),
-      ...(id === 'content' ? { preview: 'workflow composition --project <dir>', note: 'Draft AppSpec with synthetic fixtures; replace editorial content before approval.' } : {}),
+      ...(id === 'content' ? { preview: 'workflow composition --project <dir>', note: 'Replace all synthetic fixture records and supply page titles; inspect the final spec before review.' } : {}),
+      ...(id === 'review' ? { candidate: editorial.materialize(p), next: 'Inspect the materialized spec and save its hash with review evidence.' } : {}),
       command: `workflow batch set ${id} --project <dir> --file SELECTION.json` };
   }
   return { kind: 'segment', segment: workflowStatus.segment, next: workflowStatus.next, batchesComplete: true };
