@@ -11,6 +11,12 @@
       ],
       "expo-image": [
         "./tests/mocks/expo-image.js"
+      ],
+      "expo-router": [
+        "./tests/mocks/expo-router.js"
+      ],
+      "@/src/ui": [
+        "./packages/ui/src/index.ts"
       ]
     }
   },
