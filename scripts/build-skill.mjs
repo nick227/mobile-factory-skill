@@ -20,6 +20,11 @@ const full=loadCatalog();
 if(full.some(x=>x.status==='development')) throw new Error('Promote or remove development components before building skill');
 const stable=full.filter(x=>['stable','preview'].includes(x.status));
 fs.writeFileSync(path.join(skill,'catalog.json'),JSON.stringify(stable,null,2)+'\n');
+// Agent-facing contract and typechecked recipes (packages/catalog/CONTRACT.md).
+fs.copyFileSync(path.join(root,'packages/catalog/contracts.json'),path.join(skill,'contracts.json'));
+fs.copyFileSync(path.join(root,'packages/catalog/CONTRACT.md'),path.join(skill,'references/catalog-contract.md'));
+fs.mkdirSync(path.join(skill,'recipes'),{recursive:true});
+for(const f of fs.readdirSync(path.join(root,'packages/catalog/recipes')).filter(f=>f.endsWith('.tsx')))fs.copyFileSync(path.join(root,'packages/catalog/recipes',f),path.join(skill,'recipes',f));
 fs.writeFileSync(path.join(skill,'RELEASE.json'),JSON.stringify({version,designStandard:'focus-first-native/0.6',components:stable.length,schemaVersion:1,source:'mobile-software-factory'},null,2)+'\n');
 // Standard-library Python ZIP packaging, no JS ZIP dependency.
 const zip=path.join(dist,`mobile-development-skill-v${version}.zip`);fs.rmSync(zip,{force:true});
