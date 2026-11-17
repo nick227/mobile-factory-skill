@@ -28,6 +28,7 @@ fs.copyFileSync(path.join(root,'packages/catalog/contracts.json'),path.join(skil
 fs.copyFileSync(path.join(root,'packages/catalog/archetypes.json'),path.join(skill,'archetypes.json'));
 fs.copyFileSync(path.join(root,'packages/catalog/app-archetypes.json'),path.join(skill,'app-archetypes.json'));
 fs.copyFileSync(path.join(root,'packages/catalog/functionality.json'),path.join(skill,'functionality.json'));
+fs.copyFileSync(path.join(root,'packages/catalog/page-patterns.json'),path.join(skill,'page-patterns.json'));
 fs.copyFileSync(path.join(root,'packages/catalog/CONTRACT.md'),path.join(skill,'references/catalog-contract.md'));
 fs.mkdirSync(path.join(skill,'recipes'),{recursive:true});
 for(const f of fs.readdirSync(path.join(root,'packages/catalog/recipes')).filter(f=>f.endsWith('.tsx')))fs.copyFileSync(path.join(root,'packages/catalog/recipes',f),path.join(skill,'recipes',f));

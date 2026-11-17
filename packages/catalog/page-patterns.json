@@ -1,0 +1,454 @@
+[
+  {
+    "id": "catalog.home",
+    "app": "catalog",
+    "route": "/",
+    "objectRole": 0,
+    "covers": [
+      "search",
+      "filter"
+    ],
+    "links": [
+      "catalog.browse",
+      "catalog.detail"
+    ],
+    "entry": true,
+    "status": "planning-only"
+  },
+  {
+    "id": "catalog.browse",
+    "app": "catalog",
+    "route": "/browse",
+    "objectRole": 0,
+    "covers": [
+      "search",
+      "filter",
+      "view"
+    ],
+    "links": [
+      "catalog.detail"
+    ],
+    "entry": false,
+    "status": "planning-only"
+  },
+  {
+    "id": "catalog.detail",
+    "app": "catalog",
+    "route": "/items/[id]",
+    "objectRole": 0,
+    "covers": [
+      "view"
+    ],
+    "links": [
+      "catalog.browse"
+    ],
+    "entry": false,
+    "status": "planning-only"
+  },
+  {
+    "id": "marketplace.home",
+    "app": "marketplace",
+    "route": "/",
+    "objectRole": 1,
+    "covers": [
+      "search"
+    ],
+    "links": [
+      "marketplace.browse",
+      "marketplace.product",
+      "marketplace.cart"
+    ],
+    "entry": true,
+    "status": "planning-only"
+  },
+  {
+    "id": "marketplace.browse",
+    "app": "marketplace",
+    "route": "/browse",
+    "objectRole": 1,
+    "covers": [
+      "search",
+      "filter"
+    ],
+    "links": [
+      "marketplace.product"
+    ],
+    "entry": false,
+    "status": "planning-only"
+  },
+  {
+    "id": "marketplace.product",
+    "app": "marketplace",
+    "route": "/products/[id]",
+    "objectRole": 1,
+    "covers": [
+      "view",
+      "add-to-cart"
+    ],
+    "links": [
+      "marketplace.cart",
+      "marketplace.browse"
+    ],
+    "entry": false,
+    "status": "planning-only"
+  },
+  {
+    "id": "marketplace.cart",
+    "app": "marketplace",
+    "route": "/cart",
+    "objectRole": 1,
+    "covers": [
+      "add-to-cart"
+    ],
+    "links": [
+      "marketplace.checkout",
+      "marketplace.browse"
+    ],
+    "entry": false,
+    "status": "planning-only"
+  },
+  {
+    "id": "marketplace.checkout",
+    "app": "marketplace",
+    "route": "/checkout",
+    "objectRole": 2,
+    "covers": [
+      "checkout"
+    ],
+    "links": [
+      "marketplace.home"
+    ],
+    "entry": false,
+    "status": "planning-only"
+  },
+  {
+    "id": "scheduler.calendar",
+    "app": "scheduler",
+    "route": "/",
+    "objectRole": 0,
+    "covers": [
+      "view"
+    ],
+    "links": [
+      "scheduler.event",
+      "scheduler.create"
+    ],
+    "entry": true,
+    "status": "planning-only"
+  },
+  {
+    "id": "scheduler.event",
+    "app": "scheduler",
+    "route": "/events/[id]",
+    "objectRole": 0,
+    "covers": [
+      "view",
+      "reschedule",
+      "cancel"
+    ],
+    "links": [
+      "scheduler.calendar",
+      "scheduler.create"
+    ],
+    "entry": false,
+    "status": "planning-only"
+  },
+  {
+    "id": "scheduler.create",
+    "app": "scheduler",
+    "route": "/events/new",
+    "objectRole": 0,
+    "covers": [
+      "create"
+    ],
+    "links": [
+      "scheduler.calendar"
+    ],
+    "entry": false,
+    "status": "planning-only"
+  },
+  {
+    "id": "social.feed",
+    "app": "social",
+    "route": "/",
+    "objectRole": 0,
+    "covers": [
+      "react"
+    ],
+    "links": [
+      "social.post",
+      "social.profile",
+      "social.compose",
+      "social.messages"
+    ],
+    "entry": true,
+    "status": "planning-only"
+  },
+  {
+    "id": "social.post",
+    "app": "social",
+    "route": "/posts/[id]",
+    "objectRole": 0,
+    "covers": [
+      "react"
+    ],
+    "links": [
+      "social.feed",
+      "social.profile"
+    ],
+    "entry": false,
+    "status": "planning-only"
+  },
+  {
+    "id": "social.profile",
+    "app": "social",
+    "route": "/profiles/[id]",
+    "objectRole": 1,
+    "covers": [
+      "view"
+    ],
+    "links": [
+      "social.feed",
+      "social.messages"
+    ],
+    "entry": false,
+    "status": "planning-only"
+  },
+  {
+    "id": "social.compose",
+    "app": "social",
+    "route": "/compose",
+    "objectRole": 0,
+    "covers": [
+      "publish"
+    ],
+    "links": [
+      "social.feed"
+    ],
+    "entry": false,
+    "status": "planning-only"
+  },
+  {
+    "id": "social.messages",
+    "app": "social",
+    "route": "/messages",
+    "objectRole": 2,
+    "covers": [
+      "send"
+    ],
+    "links": [
+      "social.feed"
+    ],
+    "entry": false,
+    "status": "planning-only"
+  },
+  {
+    "id": "tracker.dashboard",
+    "app": "tracker",
+    "route": "/",
+    "objectRole": 0,
+    "covers": [
+      "progress",
+      "complete",
+      "pause",
+      "search",
+      "filter",
+      "view"
+    ],
+    "links": [
+      "tracker.history",
+      "tracker.detail",
+      "tracker.create"
+    ],
+    "entry": true,
+    "status": "planning-only"
+  },
+  {
+    "id": "tracker.home",
+    "app": "tracker",
+    "route": "/",
+    "objectRole": 0,
+    "covers": [
+      "progress",
+      "complete",
+      "pause",
+      "search",
+      "filter",
+      "view"
+    ],
+    "links": [
+      "tracker.history",
+      "tracker.detail",
+      "tracker.create"
+    ],
+    "entry": true,
+    "status": "planning-only"
+  },
+  {
+    "id": "tracker.history",
+    "app": "tracker",
+    "route": "/history",
+    "objectRole": 0,
+    "covers": [
+      "search",
+      "filter",
+      "update",
+      "view"
+    ],
+    "links": [
+      "tracker.detail",
+      "tracker.create",
+      "tracker.dashboard",
+      "tracker.home"
+    ],
+    "entry": false,
+    "status": "planning-only"
+  },
+  {
+    "id": "tracker.detail",
+    "app": "tracker",
+    "route": "/records/[id]",
+    "objectRole": 0,
+    "covers": [
+      "view",
+      "complete",
+      "pause",
+      "update",
+      "remove"
+    ],
+    "links": [
+      "tracker.history",
+      "tracker.dashboard",
+      "tracker.home"
+    ],
+    "entry": false,
+    "status": "planning-only"
+  },
+  {
+    "id": "tracker.create",
+    "app": "tracker",
+    "route": "/records/new",
+    "objectRole": 0,
+    "covers": [
+      "create"
+    ],
+    "links": [
+      "tracker.dashboard",
+      "tracker.home"
+    ],
+    "entry": false,
+    "status": "planning-only"
+  },
+  {
+    "id": "workspace.home",
+    "app": "workspace",
+    "route": "/",
+    "objectRole": 0,
+    "covers": [
+      "create",
+      "view"
+    ],
+    "links": [
+      "workspace.projects",
+      "workspace.project",
+      "workspace.task",
+      "workspace.settings"
+    ],
+    "entry": true,
+    "status": "planning-only"
+  },
+  {
+    "id": "workspace.projects",
+    "app": "workspace",
+    "route": "/projects",
+    "objectRole": 0,
+    "covers": [
+      "create",
+      "view",
+      "search",
+      "filter"
+    ],
+    "links": [
+      "workspace.project",
+      "workspace.home"
+    ],
+    "entry": false,
+    "status": "planning-only"
+  },
+  {
+    "id": "workspace.project",
+    "app": "workspace",
+    "route": "/projects/[id]",
+    "objectRole": 0,
+    "covers": [
+      "view",
+      "update",
+      "remove"
+    ],
+    "links": [
+      "workspace.task",
+      "workspace.projects"
+    ],
+    "entry": false,
+    "status": "planning-only"
+  },
+  {
+    "id": "workspace.task",
+    "app": "workspace",
+    "route": "/tasks/[id]",
+    "objectRole": 1,
+    "covers": [
+      "create",
+      "update",
+      "remove",
+      "complete",
+      "view"
+    ],
+    "links": [
+      "workspace.project",
+      "workspace.home"
+    ],
+    "entry": false,
+    "status": "planning-only"
+  },
+  {
+    "id": "workspace.settings",
+    "app": "workspace",
+    "route": "/settings",
+    "objectRole": null,
+    "covers": [],
+    "links": [
+      "workspace.home"
+    ],
+    "entry": false,
+    "status": "planning-only"
+  },
+  {
+    "id": "auth.login",
+    "app": "global",
+    "route": "/login",
+    "objectRole": null,
+    "covers": [
+      "auth.basic"
+    ],
+    "links": [
+      "auth.register"
+    ],
+    "entry": false,
+    "status": "planning-only"
+  },
+  {
+    "id": "auth.register",
+    "app": "global",
+    "route": "/register",
+    "objectRole": null,
+    "covers": [
+      "auth.basic"
+    ],
+    "links": [
+      "auth.login"
+    ],
+    "entry": false,
+    "status": "planning-only"
+  }
+]

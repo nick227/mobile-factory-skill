@@ -5,6 +5,7 @@ import { invalidate } from './planner.mjs';
 import * as appTypes from './app-archetypes.mjs';
 import * as objects from './object-schema.mjs';
 import * as functionality from './functionality.mjs';
+import * as pages from './pages.mjs';
 
 export const STAGES = Object.freeze([
   { id: 'classification', shape: '{ "type": "catalog-id" }' },
@@ -33,7 +34,7 @@ function validate(id, selection, p) {
   } else if (id === 'functionality') {
     functionality.resolve(selection, p.batches.selections.objects);
   } else if (id === 'pages') {
-    ids(selection, id, true);
+    pages.resolve(selection,p.batches.selections.classification.type,p.batches.selections.objects,p.batches.selections.functionality);
   } else if (id === 'composition') {
     if (!isObj(selection) || !Object.keys(selection).length || Object.entries(selection).some(([k, v]) => !IDENTIFIER.test(k) || !isObj(v)))
       throw Error('composition: expected nonempty map of page IDs to configuration objects');
@@ -85,7 +86,8 @@ export function next(p, workflowStatus) {
       ...(id === 'classification' ? { catalog: 'catalog apps', choices: appTypes.list().map(a => a.id) } : {}),
       ...(id === 'objects' ? { suggestedDefaults: appTypes.expand(p.batches.selections.classification.type) } : {}),
       ...(id === 'functionality' ? { objectContract: objects.resolve(p.batches.selections.objects), capabilityCatalog: functionality.list(), suggestedCapabilities: appTypes.get(p.batches.selections.classification.type).defaults.capabilities } : {}),
-      ...(id === 'pages' ? { functionalityContract: functionality.resolve(p.batches.selections.functionality,p.batches.selections.objects) } : {}),
+      ...(id === 'pages' ? { functionalityContract: functionality.resolve(p.batches.selections.functionality,p.batches.selections.objects), pageCatalog: pages.list(p.batches.selections.classification.type), suggestedPages:pages.suggest(p.batches.selections.classification.type,p.batches.selections.objects,p.batches.selections.functionality) } : {}),
+      ...(id === 'composition' ? { pageInventory: pages.resolve(p.batches.selections.pages,p.batches.selections.classification.type,p.batches.selections.objects,p.batches.selections.functionality) } : {}),
       command: `workflow batch set ${id} --project <dir> --file SELECTION.json` };
   }
   return { kind: 'segment', segment: workflowStatus.segment, next: workflowStatus.next, batchesComplete: true };
