@@ -33,7 +33,7 @@ try{
  else if(family==='factory'&&verb==='generate'){const result=generator.generate(dir,{dryRun:flags.get('dry-run')==='true'});output(result);if(!result.ok)process.exitCode=1;}
  else if(family==='engineering'&&verb==='prepare')output(controlled.prepare(dir));
  else if(family==='engineering'&&verb==='tasks')output(controlled.tasks(dir));
- else if(family==='engineering'&&verb==='verify'){const result=controlled.inspect(dir,{runChecks:flags.get('run-checks')==='true'});output(result);if(!result.scopeValid||flags.get('run-checks')==='true'&&!result.ok)process.exitCode=1;}
+ else if(family==='engineering'&&verb==='verify'){const result=controlled.inspect(dir,{runChecks:flags.get('run-checks')==='true'});output(result);if(!result.ok)process.exitCode=1;}
  else if(family==='project'&&verb==='init')output(plan.initProject(dir,flags.get('name')||path.basename(path.resolve(dir)),flags.get('mode')||'standard'));
  else if(family==='source'&&verb==='add')output(plan.addSource(dir,flags.get('file'),flags.get('title')));
  else if(family==='interview'&&verb==='next')output(plan.next(dir));
