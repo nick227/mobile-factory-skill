@@ -59,7 +59,7 @@ test('invalid object selections never change revision or erase previous state', 
 test('changes to objects invalidate only downstream batches and avoid redundant writes', () => {
   const dir = project();
   batches.set(dir,'objects',selection);
-  batches.set(dir,'functionality',['activity.complete']);
+  batches.set(dir,'functionality',['program.complete']);
   batches.set(dir,'pages',['tracker.dashboard']);
   const before = engine.load(dir).revision;
   const same = batches.set(dir,'objects',selection);
