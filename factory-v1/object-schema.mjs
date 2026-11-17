@@ -30,7 +30,7 @@ export function resolve(input) {
     return { id: value.id, relations };
   });
   const known = new Set(objects.map(o => o.id));
-  if (known.size !== objects.length) throw Error('objects: duplicate object ID');
+  if (known.size !== objects.length) throw Error('objects: duplicate object ID; unique IDs required');
   for (const obj of objects) {
     const seen = new Set();
     for (const rel of obj.relations) {
