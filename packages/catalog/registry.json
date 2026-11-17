@@ -548,5 +548,45 @@
     "exportName": "RichActivityTimeline",
     "showcase": "RichActivityTimeline",
     "test": "tests/RichActivityTimeline.test.tsx"
+  },
+  {
+    "id": "controls.searchbar",
+    "name": "SearchBar",
+    "category": "controls",
+    "status": "preview",
+    "source": "controls/SearchBar.tsx",
+    "exportName": "SearchBar",
+    "showcase": "SearchBar",
+    "test": "tests/SearchBar.test.tsx"
+  },
+  {
+    "id": "controls.stepper",
+    "name": "Stepper",
+    "category": "controls",
+    "status": "preview",
+    "source": "controls/Stepper.tsx",
+    "exportName": "Stepper",
+    "showcase": "Stepper",
+    "test": "tests/Stepper.test.tsx"
+  },
+  {
+    "id": "composites.noticebanner",
+    "name": "NoticeBanner",
+    "category": "composites",
+    "status": "preview",
+    "source": "composites/NoticeBanner.tsx",
+    "exportName": "NoticeBanner",
+    "showcase": "NoticeBanner",
+    "test": "tests/NoticeBanner.test.tsx"
+  },
+  {
+    "id": "composites.bottomsheet",
+    "name": "BottomSheet",
+    "category": "composites",
+    "status": "preview",
+    "source": "composites/BottomSheet.tsx",
+    "exportName": "BottomSheet",
+    "showcase": "BottomSheet",
+    "test": "tests/BottomSheet.test.tsx"
   }
 ]

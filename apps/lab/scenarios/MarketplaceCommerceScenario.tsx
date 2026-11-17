@@ -16,6 +16,8 @@ import {
   EmptyState,
   Dialog,
   tokens,
+  Stepper,
+  NoticeBanner,
 } from '@factory/ui';
 import { SHIPPING } from '../demos/marketplace/fixtures';
 import {
@@ -23,16 +25,6 @@ import {
   lines, itemCount, subtotal, savings, shippingCents, taxCents, total, checkoutErrors, type Shipping,
 } from '../demos/marketplace/model';
 import { formatUSD } from '../demos/shared/money';
-
-function Stepper({ label, value, min, max, onChange }: { label: string; value: number; min: number; max: number; onChange: (n: number) => void }) {
-  return (
-    <Row style={{ alignItems: 'center', gap: tokens.spacing.sm }}>
-      <Button label="−" variant="outline" disabled={value <= min} onPress={() => onChange(value - 1)} accessibilityLabel={`Decrease ${label}`} />
-      <Text style={{ minWidth: 28, textAlign: 'center', fontWeight: '700' }} accessibilityLabel={`${label} quantity ${value}`}>{value}</Text>
-      <Button label="+" variant="outline" disabled={value >= max} onPress={() => onChange(value + 1)} accessibilityLabel={`Increase ${label}`} />
-    </Row>
-  );
-}
 
 export function MarketplaceCommerceScenario() {
   const [s, dispatch] = useReducer(reducer, initialState);
@@ -54,7 +46,13 @@ export function MarketplaceCommerceScenario() {
       <Row style={{ justifyContent: 'space-between' }}><Text style={{ fontWeight: '700' }}>Total</Text><Text style={{ fontWeight: '700' }}>{formatUSD(total(s))}</Text></Row>
     </Stack>
   );
-  const notice = s.notice ? <Text variant="small" accessibilityRole="alert">{s.notice}</Text> : null;
+  const notice = s.notice ? (
+    <NoticeBanner
+      tone="info"
+      title="Cart Update"
+      description={s.notice}
+    />
+  ) : null;
 
   if (s.screen === 'confirmed' && s.order) {
     return (
@@ -87,7 +85,7 @@ export function MarketplaceCommerceScenario() {
         {inCart(s, p.id) > 0 ? <Text muted variant="small">{inCart(s, p.id)} already in your bag</Text> : null}
         {left > 0 ? (
           <Stack gap="sm">
-            <Stepper label={p.title} value={s.qtyDraft} min={1} max={left} onChange={(qty) => dispatch({ type: 'setDraft', qty })} />
+            <Stepper label={p.title} value={s.qtyDraft} min={1} max={left} onValueChange={(qty) => dispatch({ type: 'setDraft', qty })} />
             <Button label={`Add ${s.qtyDraft} to Bag · ${formatUSD(p.priceCents * s.qtyDraft)}`} fullWidth onPress={() => dispatch({ type: 'add', productId: p.id, qty: s.qtyDraft })} />
           </Stack>
         ) : (
@@ -113,7 +111,7 @@ export function MarketplaceCommerceScenario() {
                   <Text style={{ fontWeight: '700' }}>{l.product.title}</Text>
                   <Text muted variant="small">{formatUSD(l.product.priceCents)} each · {formatUSD(l.cents)}</Text>
                   <Row style={{ justifyContent: 'space-between', alignItems: 'center' }}>
-                    <Stepper label={l.product.title} value={l.qty} min={1} max={l.product.stock} onChange={(qty) => dispatch({ type: 'setQty', productId: l.product.id, qty })} />
+                    <Stepper label={l.product.title} value={l.qty} min={1} max={l.product.stock} onValueChange={(qty) => dispatch({ type: 'setQty', productId: l.product.id, qty })} />
                     <Button label="Remove" variant="ghost" onPress={() => dispatch({ type: 'remove', productId: l.product.id })} accessibilityLabel={`Remove ${l.product.title}`} />
                   </Row>
                 </Stack>

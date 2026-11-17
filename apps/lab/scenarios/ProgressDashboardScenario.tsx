@@ -13,6 +13,7 @@ import {
   StatusTracker,
   Accordion,
   ScreenHeader,
+  NoticeBanner,
 } from '@factory/ui';
 import { scrapRateByWeek } from '../demos/dashboard/fixtures';
 import { initialState, reducer, milestoneList, activeMilestone, completedCount, totalHours, hoursDelta, progress, activitiesFor, isComplete } from '../demos/dashboard/model';
@@ -34,12 +35,12 @@ export function ProgressDashboardScenario() {
     { id: 'guidelines', label: 'Facilities' },
   ];
   const feedback = s.feedback ? (
-    <Surface outlined>
-      <Row style={{ justifyContent: 'space-between', alignItems: 'center' }}>
-        <Text variant="small" accessibilityRole="alert" style={{ flex: 1 }}>{s.feedback}</Text>
-        <Button label="Dismiss" variant="ghost" onPress={() => dispatch({ type: 'dismissFeedback' })} />
-      </Row>
-    </Surface>
+    <NoticeBanner
+      tone="info"
+      title="Studio Notice"
+      description={s.feedback}
+      onDismiss={() => dispatch({ type: 'dismissFeedback' })}
+    />
   ) : null;
 
   return (

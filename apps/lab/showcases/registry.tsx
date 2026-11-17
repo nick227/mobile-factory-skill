@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Switch, View } from 'react-native';
-import { Text, Stack, Row, Surface, Divider, Screen, Button, TextField, Badge, ListItem, SettingsGroup, useTheme, Spacer, IconButton, Toggle, Checkbox, RadioGroup, SegmentedControl, ProgressBar, Spinner, Avatar, SectionHeader, EmptyState, FormField, ActionFooter, ScreenHeader, FocusScreen, StepProgress, InputStage, ActionDock, CalmSkeleton, MediaFrame, SwipePager, EditorialMosaic, ImmersiveHero, ChoiceGallery, FocusWizard, Portal, PortalHost, PortalProvider, Select, Tabs, Dialog, AlertDialog, Accordion, SchedulePicker, MetricSpotlight, PeopleStack, StoryRail, DiscoveryFilters, IdentityHeader, ProgressJourney, StatusTracker, SelectionDock, SmartChecklist, ActivityCalendar, ProductShowcase, RichActivityTimeline } from '@factory/ui';
+import { Text, Stack, Row, Surface, Divider, Screen, Button, TextField, Badge, ListItem, SettingsGroup, useTheme, Spacer, IconButton, Toggle, Checkbox, RadioGroup, SegmentedControl, ProgressBar, Spinner, Avatar, SectionHeader, EmptyState, FormField, ActionFooter, ScreenHeader, FocusScreen, StepProgress, InputStage, ActionDock, CalmSkeleton, MediaFrame, SwipePager, EditorialMosaic, ImmersiveHero, ChoiceGallery, FocusWizard, Portal, PortalHost, PortalProvider, Select, Tabs, Dialog, AlertDialog, Accordion, SchedulePicker, MetricSpotlight, PeopleStack, StoryRail, DiscoveryFilters, IdentityHeader, ProgressJourney, StatusTracker, SelectionDock, SmartChecklist, ActivityCalendar, ProductShowcase, RichActivityTimeline, SearchBar, Stepper, NoticeBanner, BottomSheet } from '@factory/ui';
 
 export const showcases: Record<string, () => React.JSX.Element> = {
   Text: () => <Stack><Text variant="title">Title typography</Text><Text variant="heading">Section heading</Text><Text>Body text supports dynamic type.</Text><Text muted variant="small">Secondary caption</Text></Stack>,
@@ -564,5 +564,128 @@ export const showcases: Record<string, () => React.JSX.Element> = {
       },
     ];
     return <RichActivityTimeline events={events} />;
+  },
+  SearchBar: function SearchBarDemo() {
+    const [query, setQuery] = useState('');
+    const [loading, setLoading] = useState(false);
+    return (
+      <Stack gap="md">
+        <SearchBar
+          value={query}
+          onChangeText={setQuery}
+          placeholder="Search Kyoto workshops, crafts…"
+          loading={loading}
+          showCancelButton={query.length > 0}
+          onCancel={() => setQuery('')}
+        />
+        <Row gap="sm">
+          <Button
+            label={loading ? 'Stop loading' : 'Simulate async fetch'}
+            size="sm"
+            variant="outline"
+            onPress={() => setLoading(!loading)}
+          />
+        </Row>
+        {query ? <Text variant="small" muted>Current search query: "{query}"</Text> : null}
+      </Stack>
+    );
+  },
+  Stepper: function StepperDemo() {
+    const [guests, setGuests] = useState(2);
+    const [tickets, setTickets] = useState(1);
+    return (
+      <Stack gap="md">
+        <Surface outlined>
+          <Row style={{ justifyContent: 'space-between', alignItems: 'center' }}>
+            <Stack gap="xs">
+              <Text style={{ fontWeight: '700' }}>Masterclass Guests</Text>
+              <Text variant="small" muted>Max 6 participants per session</Text>
+            </Stack>
+            <Stepper
+              label="Guests"
+              value={guests}
+              min={1}
+              max={6}
+              onValueChange={setGuests}
+              formatValue={(v) => `${v} people`}
+            />
+          </Row>
+        </Surface>
+        <Surface outlined>
+          <Row style={{ justifyContent: 'space-between', alignItems: 'center' }}>
+            <Stack gap="xs">
+              <Text style={{ fontWeight: '700' }}>Tea Ceremony Pass</Text>
+              <Text variant="small" muted>$45 each</Text>
+            </Stack>
+            <Stepper
+              label="Tickets"
+              value={tickets}
+              min={1}
+              max={10}
+              size="sm"
+              onValueChange={setTickets}
+            />
+          </Row>
+        </Surface>
+      </Stack>
+    );
+  },
+  NoticeBanner: function NoticeBannerDemo() {
+    const [showSuccess, setShowSuccess] = useState(true);
+    return (
+      <Stack gap="md">
+        {showSuccess ? (
+          <NoticeBanner
+            tone="success"
+            title="Order Placed Successfully"
+            description="Your handcrafted cedar chawan has been reserved and sent to wrapping."
+            onDismiss={() => setShowSuccess(false)}
+            action={{ label: 'View Receipt', onPress: () => {} }}
+          />
+        ) : (
+          <Button label="Restore Success Banner" variant="outline" onPress={() => setShowSuccess(true)} />
+        )}
+        <NoticeBanner
+          tone="warning"
+          title="Kiln Reservation Limit Approaching"
+          description="Gas kiln 2 has only 1 open firing slot left this week."
+        />
+        <NoticeBanner
+          tone="info"
+          title="Studio Maintenance Tonight"
+          description="Woodworking shop ventilation filters are scheduled for replacement at 9 PM."
+        />
+      </Stack>
+    );
+  },
+  BottomSheet: function BottomSheetDemo() {
+    const [open, setOpen] = useState(false);
+    return (
+      <Stack gap="md">
+        <Button label="Open Filter Sheet" onPress={() => setOpen(true)} />
+        <BottomSheet
+          open={open}
+          onOpenChange={setOpen}
+          title="Filter Experiences"
+          subtitle="Refine by category, duration, and craft"
+          footer={
+            <Button
+              label="Apply Filters"
+              fullWidth
+              onPress={() => setOpen(false)}
+            />
+          }
+        >
+          <Stack gap="md">
+            <Text>Select your preferred experience type and duration.</Text>
+            <NoticeBanner
+              tone="info"
+              title="Tip for Travelers"
+              description="Morning sessions offer the best light for photography."
+            />
+          </Stack>
+        </BottomSheet>
+      </Stack>
+    );
   },
 };

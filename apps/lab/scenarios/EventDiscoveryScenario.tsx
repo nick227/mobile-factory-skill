@@ -15,6 +15,7 @@ import {
   SchedulePicker,
   SegmentedControl,
   TextField,
+  SearchBar,
   EmptyState,
   Dialog,
   AlertDialog,
@@ -45,7 +46,7 @@ export function EventDiscoveryScenario() {
       <Stack gap="md">
         <ScreenHeader title="Kyoto Journeys" subtitle="Curated cultural masterclasses and private heritage access" />
         <StoryRail stories={stories} onPressStory={(id) => { const st = stories.find((x) => x.id === id); if (st) dispatch({ type: 'open', eventId: st.eventId }); }} />
-        <TextField label="Search experiences" placeholder="Tea, sake, Gion…" value={s.query} onChangeText={(query) => dispatch({ type: 'search', query })} autoCorrect={false} returnKeyType="search" />
+        <SearchBar placeholder="Search experiences (tea, sake, Gion…)" value={s.query} onChangeText={(query) => dispatch({ type: 'search', query })} onClear={() => dispatch({ type: 'search', query: '' })} />
         <DiscoveryFilters
           options={filterOptions(s)}
           selectedIds={selectedFilterIds(s)}

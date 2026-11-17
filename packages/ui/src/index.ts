@@ -55,3 +55,7 @@ export * from './patterns/SmartChecklist';
 export * from './patterns/ActivityCalendar';
 export * from './patterns/ProductShowcase';
 export * from './patterns/RichActivityTimeline';
+export * from './controls/SearchBar';
+export * from './controls/Stepper';
+export * from './composites/NoticeBanner';
+export * from './composites/BottomSheet';
