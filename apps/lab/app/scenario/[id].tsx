@@ -18,7 +18,8 @@ export default function ScenarioPage() {
           <TouchableOpacity
             accessibilityRole="button"
             accessibilityLabel="Back to Scenarios"
-            onPress={() => router.back()}
+            // Deep links and reloads have no history: fall back to the Lab home.
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/'))}
             style={styles.backButton}
           >
             <Text style={{ color: colors.primary, fontSize: 18, fontWeight: '600' }}>
