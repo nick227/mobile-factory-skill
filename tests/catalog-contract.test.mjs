@@ -87,3 +87,15 @@ test('every recipe typechecks against the real library', { skip: !fs.existsSync(
   assert.equal(tsc.status, 0, tsc.stdout + tsc.stderr);
   for (const r of catalog.items.filter((i) => i.kind === 'recipe')) assert.ok(r.uses.length && r.recipe.includes("from '@/src/ui'"), r.id);
 });
+
+test('the built skill catalogs every implemented component and its contract has no errors', () => {
+  const build = spawnSync(process.execPath, ['scripts/build-skill.mjs'], { cwd: root, encoding: 'utf8' });
+  assert.equal(build.status, 0, build.stderr);
+  const skill = path.join(root, 'dist/mobile-development');
+  const shipped = JSON.parse(fs.readFileSync(path.join(skill, 'catalog.json'), 'utf8')).map((x) => x.id).sort();
+  const registered = JSON.parse(fs.readFileSync(path.join(root, 'packages/catalog/registry.json'), 'utf8')).filter((x) => !['candidate', 'development'].includes(x.status)).map((x) => x.id).sort();
+  assert.deepEqual(shipped, registered);
+  const dist = cat.load(cat.layout(skill));
+  assert.deepEqual(dist.problems, []);
+  assert.deepEqual(dist.warnings, []);
+});

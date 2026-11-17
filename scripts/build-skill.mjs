@@ -18,7 +18,8 @@ fs.copyFileSync(path.join(root,'scripts/factory.mjs'),path.join(skill,'scripts/f
 const version=JSON.parse(fs.readFileSync(path.join(root,'package.json'),'utf8')).version;
 const full=loadCatalog();
 if(full.some(x=>x.status==='development')) throw new Error('Promote or remove development components before building skill');
-const stable=full.filter(x=>['stable','preview'].includes(x.status));
+// Ship every implemented component; maturity is reported by the catalog contract, not by omission.
+const stable=full.filter(x=>!['candidate','development'].includes(x.status));
 fs.writeFileSync(path.join(skill,'catalog.json'),JSON.stringify(stable,null,2)+'\n');
 // Agent-facing contract and typechecked recipes (packages/catalog/CONTRACT.md).
 fs.copyFileSync(path.join(root,'packages/catalog/contracts.json'),path.join(skill,'contracts.json'));
