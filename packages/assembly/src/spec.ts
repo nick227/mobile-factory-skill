@@ -75,10 +75,20 @@ export interface MessageSubject {
 
 export type Subject = ListSubject | DetailSubject | FormSubject | SettingsSubject | MessageSubject;
 
+/** Factory-owned compositional archetypes that determine how the page subject is visually arranged. */
+export type PageArchetype =
+  | 'hero-decision'
+  | 'glance-dashboard'
+  | 'focus-wizard'
+  | 'bento-overview'
+  | 'content-canvas'
+  | 'system-settings';
+
 export interface PageSpec {
   route: string;
   title: Template;
   subtitle?: Template;
+  archetype?: PageArchetype;
   back?: boolean;
   headerAction?: { label: string; event: EventRef };
   subject: Subject;
@@ -87,9 +97,21 @@ export interface PageSpec {
   empty?: { title: string; description?: string; action?: { label: string; event: EventRef } };
 }
 
+export interface AppDesignSpec {
+  colorMode?: 'system' | 'light' | 'dark';
+  preset?: 'minimal-pro' | 'kyoto-craft' | 'fintech-midnight' | 'wellness-botanical' | 'editorial-luxury' | 'playful-consumer';
+  palette?: 'default' | 'kyoto' | 'midnight' | 'emerald' | 'crimson' | 'amber';
+  radius?: 'sharp' | 'smooth' | 'curved';
+  density?: 'compact' | 'comfortable' | 'spacious';
+  typography?: 'compact' | 'default' | 'editorial';
+  surface?: 'flat' | 'outlined' | 'elevated';
+  layout?: 'standard' | 'editorial' | 'immersive';
+  media?: 'contained' | 'edge-to-edge' | 'mosaic';
+}
+
 export interface AppSpec {
   name: string;
-  design?: { colorMode?: 'system' | 'light' | 'dark' };
+  design?: AppDesignSpec;
   mock?: { latencyMs?: number; failFirstLoad?: string[] };
   data: Record<string, Record<string, unknown>[]>;
   settings?: Record<string, boolean>;

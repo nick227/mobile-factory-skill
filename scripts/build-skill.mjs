@@ -25,6 +25,7 @@ const stable=full.filter(x=>!['candidate','development'].includes(x.status));
 fs.writeFileSync(path.join(skill,'catalog.json'),JSON.stringify(stable,null,2)+'\n');
 // Agent-facing contract and typechecked recipes (packages/catalog/CONTRACT.md).
 fs.copyFileSync(path.join(root,'packages/catalog/contracts.json'),path.join(skill,'contracts.json'));
+fs.copyFileSync(path.join(root,'packages/catalog/archetypes.json'),path.join(skill,'archetypes.json'));
 fs.copyFileSync(path.join(root,'packages/catalog/CONTRACT.md'),path.join(skill,'references/catalog-contract.md'));
 fs.mkdirSync(path.join(skill,'recipes'),{recursive:true});
 for(const f of fs.readdirSync(path.join(root,'packages/catalog/recipes')).filter(f=>f.endsWith('.tsx')))fs.copyFileSync(path.join(root,'packages/catalog/recipes',f),path.join(skill,'recipes',f));

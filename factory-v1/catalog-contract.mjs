@@ -16,8 +16,13 @@ const CLAIM = { development: 'candidate', candidate: 'candidate', preview: 'impl
 export function layout(root = path.resolve(here, '..')) {
   const repo = fs.existsSync(path.join(root, 'packages/catalog/registry.json'));
   return repo
-    ? { root, registry: path.join(root, 'packages/catalog/registry.json'), contracts: path.join(root, 'packages/catalog/contracts.json'), recipes: path.join(root, 'packages/catalog/recipes'), source: path.join(root, 'packages/ui/src'), tests: path.join(root, 'packages/ui') }
-    : { root, registry: path.join(root, 'catalog.json'), contracts: path.join(root, 'contracts.json'), recipes: path.join(root, 'recipes'), source: path.join(root, 'library'), tests: null };
+    ? { root, registry: path.join(root, 'packages/catalog/registry.json'), contracts: path.join(root, 'packages/catalog/contracts.json'), archetypes: path.join(root, 'packages/catalog/archetypes.json'), recipes: path.join(root, 'packages/catalog/recipes'), source: path.join(root, 'packages/ui/src'), tests: path.join(root, 'packages/ui') }
+    : { root, registry: path.join(root, 'catalog.json'), contracts: path.join(root, 'contracts.json'), archetypes: path.join(root, 'archetypes.json'), recipes: path.join(root, 'recipes'), source: path.join(root, 'library'), tests: null };
+}
+
+export function archetypes(root) {
+  const l = layout(root);
+  return readJSON(l.archetypes, []);
 }
 
 const readJSON = (file, fallback) => (fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, 'utf8')) : fallback);

@@ -1,6 +1,14 @@
 {
   "name": "Pantry Pal",
-  "design": { "colorMode": "system" },
+  "design": {
+    "preset": "minimal-pro",
+    "palette": "default",
+    "radius": "smooth",
+    "density": "comfortable",
+    "typography": "default",
+    "surface": "flat",
+    "colorMode": "system"
+  },
   "mock": { "latencyMs": 400 },
   "data": {
     "items": [
@@ -36,6 +44,7 @@
     "item": {
       "route": "/items/[id]",
       "title": "{name}",
+      "archetype": "content-canvas",
       "subject": {
         "kind": "detail",
         "source": "items",

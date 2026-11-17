@@ -44,13 +44,14 @@ navigation, visual direction or data shape (even mid-build). Requirements must b
 3. **Map each screen to a content family** (overview, collection, detail, editor, focus) and to a recipe, if one
    fits (`recipe.collection-screen`, `recipe.detail-screen`, `recipe.form-screen`, `recipe.settings-screen`,
    `recipe.onboarding-pager`). Load `06-catalog.md` for parts. That doesn't change the active segment.
-4. **Write the contract** for each screen. The purpose is one sentence. States cover loading, error, empty and
+4. **Select factory-owned Monad page archetypes** (`hero-decision`, `glance-dashboard`, `focus-wizard`, `bento-overview`, `content-canvas`, `system-settings`) for each screen in the app specification (`spec.json`). Do not author arbitrary per-screen JSX. Run `node scripts/factory.mjs catalog archetypes` to inspect constraints and compatible subjects.
+5. **Write the contract** for each screen. The purpose is one sentence. States cover loading, error, empty and
    saving where relevant. Actions are verbs. Acceptance criteria are testable by someone who has never seen the
    conversation. `basis` lists the keys the screen depends on.
-5. **Define the entities** with the type grammar (`references/factory-state.md` §4). Include only the fields the
+6. **Define the entities** with the type grammar (`references/factory-state.md` §4). Include only the fields the
    screens use.
-6. **Show the wireframes** (`wireframe all`). Iterate with the user on structure and content, not on pixels.
-7. **Persist** with `blueprint set` after each agreed change. Ids merge, so send only what changed.
+7. **Show the wireframes** (`wireframe all`). Iterate with the user on structure and content, not on pixels.
+8. **Persist** with `blueprint set` after each agreed change. Ids merge, so send only what changed.
 
 ## 5. User interaction
 

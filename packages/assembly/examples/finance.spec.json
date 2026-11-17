@@ -1,0 +1,101 @@
+{
+  "name": "Apex Wealth",
+  "design": {
+    "preset": "fintech-midnight",
+    "palette": "midnight",
+    "radius": "sharp",
+    "density": "compact",
+    "surface": "outlined",
+    "colorMode": "dark"
+  },
+  "mock": { "latencyMs": 0 },
+  "data": {
+    "accounts": [
+      {
+        "id": "main",
+        "title": "Total Net Worth",
+        "metric": "$142,500.00",
+        "unit": "USD",
+        "delta": "+3.4%",
+        "status": "active",
+        "body": "Capital accounts verified and balanced",
+        "cash": "$12,400.00",
+        "invested": "$130,100.00"
+      }
+    ],
+    "transactions": [
+      {
+        "id": "tx1",
+        "title": "Dividend Yield",
+        "amount": "+$450.00",
+        "category": "Income"
+      },
+      {
+        "id": "tx2",
+        "title": "Treasury Allocation",
+        "amount": "-$2,000.00",
+        "category": "Bonds"
+      }
+    ]
+  },
+  "settings": {
+    "biometrics": true,
+    "instantAlerts": false
+  },
+  "pages": {
+    "portfolio": {
+      "route": "/",
+      "title": "Portfolio",
+      "subtitle": "Apex Institutional",
+      "archetype": "glance-dashboard",
+      "headerAction": { "label": "Settings", "event": "goSettings" },
+      "subject": {
+        "kind": "detail",
+        "source": "accounts",
+        "heading": "Net Assets",
+        "facts": [
+          { "label": "Liquid Cash", "value": "{cash}" },
+          { "label": "Portfolio Holdings", "value": "{invested}" }
+        ],
+        "body": "{body}"
+      },
+      "primary": { "label": "Deploy Capital", "event": "goTransfer" },
+      "events": {
+        "goSettings": [{ "navigate": "/settings" }],
+        "goTransfer": [{ "navigate": "/transfer" }]
+      }
+    },
+    "transfer": {
+      "route": "/transfer",
+      "title": "Instant Wire",
+      "subtitle": "Direct vault settlement",
+      "archetype": "hero-decision",
+      "subject": {
+        "kind": "message",
+        "heading": "Authorize $5,000 Transfer",
+        "body": "Funds settle instantly to your high-yield treasury reserve."
+      },
+      "primary": { "label": "Authorize Settlement", "event": "authorize" },
+      "events": {
+        "authorize": [{ "notice": "Settlement of $5,000 authorized successfully", "tone": "success" }, { "back": true }]
+      }
+    },
+    "settings": {
+      "route": "/settings",
+      "title": "Security & Controls",
+      "archetype": "system-settings",
+      "subject": {
+        "kind": "settings",
+        "groups": [
+          {
+            "title": "Authentication",
+            "toggles": [
+              { "key": "biometrics", "label": "Face ID Authorization", "description": "Require biometrics for wire transfers" },
+              { "key": "instantAlerts", "label": "Transaction Telemetry", "description": "Push alerts on capital allocation" }
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

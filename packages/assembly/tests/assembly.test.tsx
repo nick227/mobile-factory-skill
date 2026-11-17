@@ -5,7 +5,7 @@ import path from 'node:path';
 import React from 'react';
 import renderer, { act } from 'react-test-renderer';
 import { routerCalls, __setParams } from 'expo-router';
-import { MonadPage, createStore, relativeDay, fill, validateForm, coerce, runActions, type AppSpec, type ActionDeps } from '../src';
+import { MonadPage, AppShell, createStore, relativeDay, fill, validateForm, coerce, runActions, type AppSpec, type ActionDeps } from '../src';
 
 const spec = JSON.parse(fs.readFileSync(path.join(__dirname, '../examples/pantry.spec.json'), 'utf8')) as AppSpec;
 const instant = (): AppSpec => ({ ...spec, mock: { latencyMs: 0 } });
@@ -103,4 +103,104 @@ test('MonadPage form: empty submit shows errors; valid submit creates and return
   assert.equal(store.list('items')[0].name, 'Eggs');
   assert.equal(store.list('items')[0].quantity, 1, 'default value used');
   assert.deepEqual(routerCalls, [['back']]);
+});
+
+const fitnessSpec = JSON.parse(fs.readFileSync(path.join(__dirname, '../examples/fitness.spec.json'), 'utf8')) as AppSpec;
+const financeSpec = JSON.parse(fs.readFileSync(path.join(__dirname, '../examples/finance.spec.json'), 'utf8')) as AppSpec;
+
+test('Archetype glance-dashboard renders monumental hero metric, radial progress and facts', () => {
+  __setParams({});
+  const store = createStore({ ...fitnessSpec, mock: { latencyMs: 0 } });
+  let root!: renderer.ReactTestRenderer;
+  act(() => { root = renderer.create(<MonadPage app={fitnessSpec} page="today" store={store} />); });
+  const t = texts(root);
+  assert.ok(t.includes('8,420'), 'renders hero metric value');
+  assert.ok(t.includes('Movement'), 'renders hero metric label');
+  assert.ok(t.includes('Active Minutes'), 'renders fact label');
+  assert.ok(t.includes('42 min'), 'renders fact value');
+  routerCalls.length = 0;
+  press(root, 'Log Session');
+  assert.deepEqual(routerCalls[0], ['push', '/log']);
+});
+
+test('Archetype bento-overview renders squircle ControlTiles for collection items', () => {
+  const store = createStore({ ...fitnessSpec, mock: { latencyMs: 0 } });
+  let root!: renderer.ReactTestRenderer;
+  act(() => { root = renderer.create(<MonadPage app={fitnessSpec} page="workouts" store={store} />); });
+  const t = texts(root);
+  assert.ok(t.includes('Forest Flow Yoga'), 'renders first bento item');
+  assert.ok(t.includes('Cedar Ridge Walk'), 'renders second bento item');
+  assert.ok(t.includes('Twilight Relaxation'), 'renders third bento item');
+  press(root, 'Forest Flow Yoga');
+  assert.ok(texts(root).includes('Selected Forest Flow Yoga'), 'fires notification on select');
+});
+
+test('Archetype focus-wizard guides step-by-step sequential input and submits', () => {
+  const store = createStore({ ...fitnessSpec, mock: { latencyMs: 0 } });
+  let root!: renderer.ReactTestRenderer;
+  act(() => { root = renderer.create(<MonadPage app={fitnessSpec} page="log" store={store} />); });
+  assert.ok(texts(root).includes('Step 1 of 3'), 'starts on step 1');
+  assert.ok(texts(root).includes('Activity Name'));
+  const inputs1 = root.root.findAll((n) => (n.type as unknown) === 'TextInput');
+  act(() => { inputs1[0].props.onChangeText('Garden Walk'); });
+  press(root, 'Continue');
+  assert.ok(texts(root).includes('Step 2 of 3'), 'advances to step 2');
+  assert.ok(texts(root).includes('Duration'));
+  const inputs2 = root.root.findAll((n) => (n.type as unknown) === 'TextInput');
+  act(() => { inputs2[0].props.onChangeText('25 mins'); });
+  press(root, 'Continue');
+  assert.ok(texts(root).includes('Step 3 of 3'), 'advances to step 3');
+  assert.ok(texts(root).includes('Intensity'));
+  const inputs3 = root.root.findAll((n) => (n.type as unknown) === 'TextInput');
+  act(() => { inputs3[0].props.onChangeText('Gentle'); });
+  routerCalls.length = 0;
+  press(root, 'Save Activity');
+  assert.equal(store.list('workouts')[0].title, 'Garden Walk');
+  assert.equal(store.list('workouts')[0].duration, '25 mins');
+  assert.deepEqual(routerCalls, [['back']]);
+});
+
+test('Archetype hero-decision renders HeroPrompt headline, calm subtitle and primary action', () => {
+  const store = createStore({ ...financeSpec, mock: { latencyMs: 0 } });
+  let root!: renderer.ReactTestRenderer;
+  act(() => { root = renderer.create(<MonadPage app={financeSpec} page="transfer" store={store} />); });
+  const t = texts(root);
+  assert.ok(t.includes('Authorize $5,000 Transfer'), 'renders monumental title');
+  assert.ok(t.includes('Funds settle instantly to your high-yield treasury reserve.'), 'renders calm subtitle');
+  routerCalls.length = 0;
+  press(root, 'Authorize Settlement');
+  assert.ok(texts(root).includes('Settlement of $5,000 authorized successfully'));
+  assert.deepEqual(routerCalls, [['back']]);
+});
+
+test('Archetype system-settings renders grouped toggles and reacts to changes', () => {
+  const store = createStore({ ...financeSpec, mock: { latencyMs: 0 } });
+  let root!: renderer.ReactTestRenderer;
+  act(() => { root = renderer.create(<MonadPage app={financeSpec} page="settings" store={store} />); });
+  assert.ok(texts(root).includes('Authentication'), 'renders group title');
+  assert.ok(texts(root).includes('Face ID Authorization'), 'renders toggle label');
+  assert.equal(store.setting('biometrics'), true);
+  const switches = root.root.findAll((n) => (n.type as unknown) === 'Switch');
+  assert.equal(switches.length, 2);
+  act(() => { switches[0].props.onValueChange(false); });
+  assert.equal(store.setting('biometrics'), false);
+});
+
+test('Archetype content-canvas renders media frame and editorial rhythm', () => {
+  __setParams({ id: 'milk' });
+  const store = createStore(instant());
+  let root!: renderer.ReactTestRenderer;
+  act(() => { root = renderer.create(<MonadPage app={instant()} page="item" store={store} />); });
+  const t = texts(root);
+  assert.ok(t.includes('Milk'), 'editorial title');
+  assert.ok(t.includes('Quantity'), 'editorial metadata label');
+  assert.ok(t.includes('Whole milk, opened Sunday'), 'editorial body');
+});
+
+test('AppShell initializes with multi-axis design config from app.design', () => {
+  let root!: renderer.ReactTestRenderer;
+  act(() => { root = renderer.create(<AppShell app={fitnessSpec} />); });
+  assert.ok(root.toJSON(), 'renders AppShell with fitnessSpec multi-axis config');
+  act(() => { root = renderer.create(<AppShell app={financeSpec} />); });
+  assert.ok(root.toJSON(), 'renders AppShell with financeSpec multi-axis config');
 });

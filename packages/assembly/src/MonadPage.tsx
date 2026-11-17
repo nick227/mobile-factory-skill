@@ -1,14 +1,21 @@
 // The Monad page: every page is header → one subject → at most one primary action, with overlays
 // and presentation states supplied by the factory. Pages are data (PageSpec); this is the only renderer.
+// Visual composition is selected deterministically through factory-owned Monad page archetypes.
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { FlatList, ScrollView, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
-  ActionDock, AlertDialog, Badge, Button, CalmSkeleton, EmptyState, ListItem, MediaFrame, NoticeBanner,
-  Row, ScreenHeader, SearchBar, SegmentedControl, SettingsGroup, Stack, Text, TextField, Toggle, useTheme,
+  ActionDock, AlertDialog, Badge, Button, CalmSkeleton, ControlTile, EmptyState,
+  GlanceHero, HeroPrompt, ListItem, MediaFrame, NoticeBanner,
+  Row, ScreenHeader, SearchBar, SegmentedControl, SettingsGroup,
+  Stack, StepProgress, Surface, Text, TextField, Toggle, useTheme,
+  type GlanceStatus,
 } from '@/src/ui';
-import type { AppSpec, PageSpec, ListSubject, DetailSubject, FormSubject, SettingsSubject, MessageSubject, EventRef } from './spec';
+import type {
+  AppSpec, PageSpec, ListSubject, DetailSubject, FormSubject, SettingsSubject, MessageSubject,
+  EventRef, PageArchetype,
+} from './spec';
 import { useStore, type Store, type Rec } from './store';
 import { fill, holds } from './template';
 import { coerce, initialValues, validate, type FormErrors, type FormValues } from './form';
@@ -24,7 +31,9 @@ function LoadError({ onRetry }: { onRetry: () => void }) {
   return <EmptyState title="Couldn't load this" description="Check your connection and try again." action={<Button label="Retry" variant="outline" onPress={onRetry} />} />;
 }
 
-function Collection({ subject, page, store, fire }: { subject: ListSubject; page: PageSpec; store: Store; fire: Fire }) {
+// ---------------- Standard Default Compositions ----------------
+
+function CollectionList({ subject, page, store, fire }: { subject: ListSubject; page: PageSpec; store: Store; fire: Fire }) {
   const [query, setQuery] = useState('');
   const [segment, setSegment] = useState(0);
   const status = store.status(subject.source);
@@ -72,7 +81,7 @@ function Collection({ subject, page, store, fire }: { subject: ListSubject; page
   );
 }
 
-function Detail({ subject, record, store, fire }: { subject: DetailSubject; record: Rec | undefined; store: Store; fire: Fire }) {
+function StandardDetail({ subject, record, store, fire }: { subject: DetailSubject; record: Rec | undefined; store: Store; fire: Fire }) {
   const status = store.status(subject.source);
   if (status === 'error') return <LoadError onRetry={() => store.retry(subject.source)} />;
   if (status !== 'ready') return <Loading rows={3} height={48} />;
@@ -106,7 +115,7 @@ function Detail({ subject, record, store, fire }: { subject: DetailSubject; reco
   );
 }
 
-function Form({ subject, values, errors, onChange }: { subject: FormSubject; values: FormValues; errors: FormErrors; onChange: (k: string, v: string | boolean) => void }) {
+function StandardForm({ subject, values, errors, onChange }: { subject: FormSubject; values: FormValues; errors: FormErrors; onChange: (k: string, v: string | boolean) => void }) {
   return (
     <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ padding: GUTTER, gap: 16 }}>
       {subject.fields.map((f) => f.type === 'toggle'
@@ -127,7 +136,7 @@ function Form({ subject, values, errors, onChange }: { subject: FormSubject; val
   );
 }
 
-function Settings({ subject, store, fire }: { subject: SettingsSubject; store: Store; fire: Fire }) {
+function SettingsView({ subject, store, fire }: { subject: SettingsSubject; store: Store; fire: Fire }) {
   return (
     <ScrollView contentContainerStyle={{ padding: GUTTER, gap: 24 }}>
       {subject.groups.map((g) => (
@@ -140,9 +149,392 @@ function Settings({ subject, store, fire }: { subject: SettingsSubject; store: S
   );
 }
 
-function Message({ subject, record }: { subject: MessageSubject; record?: Rec }) {
+function MessageView({ subject, record }: { subject: MessageSubject; record?: Rec }) {
   return <View style={{ flex: 1, justifyContent: 'center', padding: GUTTER, gap: 12 }}><Text variant="title">{fill(subject.heading, record)}</Text>{subject.body ? <Text muted>{fill(subject.body, record)}</Text> : null}</View>;
 }
+
+// ---------------- Archetype Compositions ----------------
+
+/** hero-decision: A focused decision with one dominant action, prominent headline and subtitle */
+function HeroDecisionComposition({
+  page,
+  record,
+  fire,
+  deps,
+}: {
+  page: PageSpec;
+  record?: Rec;
+  fire: Fire;
+  deps: ActionDeps;
+}) {
+  const subject = page.subject;
+  let title = fill(page.title, record);
+  let subtitle = page.subtitle ? fill(page.subtitle, record) : '';
+  let badgeText: string | undefined;
+
+  if (subject.kind === 'message') {
+    title = fill(subject.heading, record);
+    if (subject.body) subtitle = fill(subject.body, record);
+  } else if (subject.kind === 'detail') {
+    if (subject.heading) title = fill(subject.heading, record);
+    if (subject.body) subtitle = fill(subject.body, record);
+    if (subject.badge && holds(subject.badge.when, record)) badgeText = fill(subject.badge.label, record);
+  }
+
+  const primaryLabel = page.primary?.label ?? 'Confirm';
+  const primaryOnPress = () => {
+    if (page.primary) fire(page.primary.event, record);
+    else deps.back();
+  };
+
+  const detailAction = subject.kind === 'detail' && subject.actions ? subject.actions[0] : undefined;
+  const secondaryAction = page.headerAction
+    ? { label: page.headerAction.label, onPress: () => fire(page.headerAction!.event, record) }
+    : detailAction
+    ? { label: detailAction.label, onPress: () => fire(detailAction.event, record) }
+    : undefined;
+
+  return (
+    <View style={{ flex: 1, justifyContent: 'center', padding: GUTTER }}>
+      <HeroPrompt
+        title={title}
+        subtitle={subtitle}
+        badge={badgeText}
+        illustration={
+          subject.kind === 'detail' && subject.media ? (
+            <View style={{ width: '100%', maxWidth: 320, alignSelf: 'center', marginBottom: 16 }}>
+              <MediaFrame ratio={subject.media.ratio} source={record?.[subject.media.field] as string} radius={16} />
+            </View>
+          ) : undefined
+        }
+        primaryAction={{ label: primaryLabel, onPress: primaryOnPress }}
+        secondaryAction={secondaryAction}
+        docked={false}
+        align="center"
+      />
+    </View>
+  );
+}
+
+/** glance-dashboard: Metrics, progress and status indicators for high-frequency consumption */
+function GlanceDashboardComposition({
+  page,
+  record,
+  store,
+  fire,
+}: {
+  page: PageSpec;
+  record?: Rec;
+  store: Store;
+  fire: Fire;
+}) {
+  const subject = page.subject;
+  const { colors } = useTheme();
+
+  if (subject.kind === 'detail') {
+    const status = store.status(subject.source);
+    if (status === 'error') return <LoadError onRetry={() => store.retry(subject.source)} />;
+    if (status !== 'ready') return <Loading rows={3} height={48} />;
+    if (!record) return <EmptyState title="Not found" description="This item no longer exists." />;
+
+    const heroVal = (record.metric as string | number) ?? (record.value as string | number) ?? (subject.facts?.[0] ? fill(subject.facts[0].value, record) : fill(page.title, record));
+    const heroLabel = subject.heading ? fill(subject.heading, record) : (subject.facts?.[0] ? subject.facts[0].label : fill(page.title, record));
+    const remainingFacts = subject.facts?.[0] && heroVal === fill(subject.facts[0].value, record) ? subject.facts.slice(1) : subject.facts;
+
+    const ringVal = typeof record.progress === 'number' ? record.progress : typeof record.percent === 'number' ? record.percent : undefined;
+    const glanceStatus = (record.status as GlanceStatus) || 'calm';
+
+    return (
+      <ScrollView contentContainerStyle={{ padding: GUTTER, gap: 16 }}>
+        <GlanceHero
+          value={heroVal}
+          label={heroLabel}
+          unit={typeof record.unit === 'string' ? record.unit : undefined}
+          status={glanceStatus}
+          statusText={subject.body ? fill(subject.body, record) : undefined}
+          radialRing={ringVal !== undefined ? { value: ringVal, max: 100 } : undefined}
+        />
+        {subject.media ? <MediaFrame ratio={subject.media.ratio} source={record[subject.media.field] as string} radius={12} /> : null}
+        {remainingFacts && remainingFacts.length > 0 ? (
+          <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginTop: 8 }}>
+            {remainingFacts.map((f) => (
+              <Surface key={f.label} style={{ flexBasis: '47%', flexGrow: 1, padding: 12, borderRadius: 12 }}>
+                <Text muted variant="caption">{f.label}</Text>
+                <Text variant="heading" style={{ marginTop: 4 }}>{fill(f.value, record)}</Text>
+              </Surface>
+            ))}
+          </View>
+        ) : null}
+        {subject.actions?.length ? (
+          <Stack gap="sm" style={{ marginTop: 8 }}>
+            {subject.actions.map((a) => <Button key={a.label} label={a.label} variant="outline" tone={a.tone ?? 'default'} onPress={() => fire(a.event, record)} />)}
+          </Stack>
+        ) : null}
+      </ScrollView>
+    );
+  }
+
+  if (subject.kind === 'collection') {
+    const status = store.status(subject.source);
+    const rows = store.list(subject.source);
+    if (status === 'error') return <LoadError onRetry={() => store.retry(subject.source)} />;
+    return (
+      <View style={{ flex: 1 }}>
+        <View style={{ paddingHorizontal: GUTTER, paddingBottom: 8 }}>
+          <GlanceHero
+            value={rows.length}
+            label={fill(page.title, undefined)}
+            statusText={rows.length === 0 ? 'No items active' : `${rows.length} active entries`}
+            status="active"
+          />
+        </View>
+        <CollectionList subject={subject} page={page} store={store} fire={fire} />
+      </View>
+    );
+  }
+
+  return null;
+}
+
+/** focus-wizard: Step-by-step sequential input for multi-field forms */
+function FocusWizardComposition({
+  subject,
+  values,
+  errors,
+  onChange,
+  onSubmit,
+  primaryLabel = 'Submit',
+}: {
+  subject: FormSubject;
+  values: FormValues;
+  errors: FormErrors;
+  onChange: (k: string, v: string | boolean) => void;
+  onSubmit: () => void;
+  primaryLabel?: string;
+}) {
+  const [step, setStep] = useState(0);
+  const total = subject.fields.length;
+  const current = subject.fields[step];
+
+  if (total <= 1) {
+    return <StandardForm subject={subject} values={values} errors={errors} onChange={onChange} />;
+  }
+
+  const isLast = step === total - 1;
+  const handleNext = () => {
+    if (isLast) onSubmit();
+    else setStep((s) => Math.min(total - 1, s + 1));
+  };
+
+  return (
+    <View style={{ flex: 1 }}>
+      <View style={{ paddingHorizontal: GUTTER, paddingVertical: 8, gap: 4 }}>
+        <StepProgress step={step + 1} total={total} label={`Step ${step + 1} of ${total}`} />
+        <Text muted variant="caption">{`Step ${step + 1} of ${total}`}</Text>
+      </View>
+      <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ padding: GUTTER, gap: 20, flexGrow: 1, justifyContent: 'center' }}>
+        <View style={{ gap: 8 }}>
+          <Text variant="heading" style={{ fontSize: 24, fontWeight: '700' }}>{current.label}</Text>
+          {current.hint ? <Text muted>{current.hint}</Text> : null}
+        </View>
+        {current.type === 'toggle' ? (
+          <Toggle label={current.label} description={current.hint} value={Boolean(values[current.key])} onValueChange={(v) => onChange(current.key, v)} />
+        ) : (
+          <TextField
+            label={current.required ? current.label : `${current.label} (optional)`}
+            hint={current.hint ?? (current.type === 'date' ? 'YYYY-MM-DD' : undefined)}
+            placeholder={current.placeholder}
+            value={String(values[current.key] ?? '')}
+            error={errors[current.key]}
+            multiline={current.type === 'multiline'}
+            keyboardType={current.type === 'number' ? 'numeric' : current.type === 'email' ? 'email-address' : 'default'}
+            autoCapitalize={current.type === 'email' ? 'none' : 'sentences'}
+            onChangeText={(v) => onChange(current.key, v)}
+          />
+        )}
+      </ScrollView>
+      <ActionDock separated>
+        <View style={{ flexDirection: 'row', gap: 10, alignItems: 'center' }}>
+          {step > 0 ? (
+            <View style={{ flex: 1 }}>
+              <Button label="Back" variant="outline" fullWidth onPress={() => setStep((s) => Math.max(0, s - 1))} />
+            </View>
+          ) : null}
+          <View style={{ flex: 2 }}>
+            <Button label={isLast ? primaryLabel : 'Continue'} fullWidth onPress={handleNext} />
+          </View>
+        </View>
+      </ActionDock>
+    </View>
+  );
+}
+
+/** bento-overview: Compact overview arranged in squircle bento tiles */
+function BentoOverviewComposition({
+  page,
+  record,
+  store,
+  fire,
+}: {
+  page: PageSpec;
+  record?: Rec;
+  store: Store;
+  fire: Fire;
+}) {
+  const subject = page.subject;
+  const { colors } = useTheme();
+
+  if (subject.kind === 'collection') {
+    const status = store.status(subject.source);
+    const rows = store.list(subject.source);
+    if (status === 'error') return <LoadError onRetry={() => store.retry(subject.source)} />;
+    if (status !== 'ready') return <Loading rows={4} height={88} />;
+    if (rows.length === 0) return <EmptyState title={page.empty?.title ?? 'No items'} description={page.empty?.description} />;
+
+    return (
+      <ScrollView contentContainerStyle={{ padding: GUTTER, paddingBottom: 32 }}>
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12 }}>
+          {rows.map((item, idx) => (
+            <View key={item.id ?? idx} style={{ width: '48%' }}>
+              <ControlTile
+                label={fill(subject.title, item)}
+                subtitle={subject.description ? fill(subject.description, item) : undefined}
+                badge={subject.badge && holds(subject.badge.when, item) ? fill(subject.badge.label, item) : undefined}
+                active={Boolean(item.active || item.selected || item.inStock)}
+                icon={<View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: colors.primary }} />}
+                aspect="square"
+                onPress={subject.onSelect ? () => fire(subject.onSelect, item) : () => {}}
+              />
+            </View>
+          ))}
+        </View>
+      </ScrollView>
+    );
+  }
+
+  if (subject.kind === 'detail') {
+    const status = store.status(subject.source);
+    if (status === 'error') return <LoadError onRetry={() => store.retry(subject.source)} />;
+    if (status !== 'ready') return <Loading rows={3} height={48} />;
+    if (!record) return <EmptyState title="Not found" description="This item no longer exists." />;
+
+    return (
+      <ScrollView contentContainerStyle={{ padding: GUTTER, gap: 16 }}>
+        {subject.media ? <MediaFrame ratio={subject.media.ratio} source={record[subject.media.field] as string} radius={14} /> : null}
+        {subject.heading ? <Text variant="title">{fill(subject.heading, record)}</Text> : null}
+        {subject.body ? <Text muted>{fill(subject.body, record)}</Text> : null}
+        {subject.facts?.length ? (
+          <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12, marginTop: 8 }}>
+            {subject.facts.map((f) => (
+              <View key={f.label} style={{ width: '48%' }}>
+                <ControlTile
+                  label={f.label}
+                  subtitle={fill(f.value, record)}
+                  icon={<View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: colors.primary }} />}
+                  aspect="square"
+                  onPress={() => {}}
+                />
+              </View>
+            ))}
+          </View>
+        ) : null}
+      </ScrollView>
+    );
+  }
+
+  return null;
+}
+
+/** content-canvas: Media-led content presentation with high-ratio frames and editorial typography */
+function ContentCanvasComposition({
+  page,
+  record,
+  store,
+  fire,
+}: {
+  page: PageSpec;
+  record?: Rec;
+  store: Store;
+  fire: Fire;
+}) {
+  const subject = page.subject;
+  const { colors, tokens } = useTheme();
+
+  if (subject.kind === 'detail') {
+    const status = store.status(subject.source);
+    if (status === 'error') return <LoadError onRetry={() => store.retry(subject.source)} />;
+    if (status !== 'ready') return <Loading rows={3} height={48} />;
+    if (!record) return <EmptyState title="Not found" description="This item no longer exists." />;
+
+    return (
+      <ScrollView contentContainerStyle={{ padding: GUTTER, gap: 20 }}>
+        {subject.media ? (
+          <MediaFrame ratio={subject.media.ratio || 16 / 9} source={record[subject.media.field] as string} radius={tokens.radius.lg} />
+        ) : null}
+        <View style={{ gap: 8 }}>
+          {subject.badge && holds(subject.badge.when, record) ? (
+            <Badge label={fill(subject.badge.label, record)} tone={subject.badge.tone} style={{ alignSelf: 'flex-start' }} />
+          ) : null}
+          <Text style={{ fontSize: tokens.typography.display * 0.9, fontWeight: '800', letterSpacing: -0.8, color: colors.text }}>
+            {fill(subject.heading ?? page.title, record)}
+          </Text>
+          {page.subtitle ? <Text muted style={{ fontSize: 16 }}>{fill(page.subtitle, record)}</Text> : null}
+        </View>
+        {subject.body ? (
+          <Text style={{ fontSize: 16, lineHeight: 26, color: colors.text }}>{fill(subject.body, record)}</Text>
+        ) : null}
+        {subject.facts?.length ? (
+          <Surface style={{ padding: 16, borderRadius: tokens.radius.md, gap: 12 }}>
+            {subject.facts.map((f) => (
+              <Row key={f.label} gap="md" align="flex-start">
+                <View style={{ width: 120 }}><Text muted>{f.label}</Text></View>
+                <View style={{ flex: 1 }}><Text style={{ fontWeight: '600' }}>{fill(f.value, record)}</Text></View>
+              </Row>
+            ))}
+          </Surface>
+        ) : null}
+        {subject.actions?.length ? (
+          <Stack gap="sm">
+            {subject.actions.map((a) => <Button key={a.label} label={a.label} variant="outline" tone={a.tone ?? 'default'} onPress={() => fire(a.event, record)} />)}
+          </Stack>
+        ) : null}
+      </ScrollView>
+    );
+  }
+
+  if (subject.kind === 'collection') {
+    const status = store.status(subject.source);
+    const rows = store.list(subject.source);
+    if (status === 'error') return <LoadError onRetry={() => store.retry(subject.source)} />;
+    if (status !== 'ready') return <Loading />;
+    if (rows.length === 0) return <EmptyState title={page.empty?.title ?? 'No stories'} description={page.empty?.description} />;
+
+    return (
+      <FlatList
+        data={rows}
+        keyExtractor={(r) => r.id}
+        contentContainerStyle={{ padding: GUTTER, gap: 16 }}
+        renderItem={({ item }) => (
+          <Surface style={{ borderRadius: tokens.radius.lg, overflow: 'hidden', paddingBottom: 16 }}>
+            {subject.media ? <MediaFrame ratio={subject.media.ratio || 16 / 9} source={item[subject.media.field] as string} /> : null}
+            <View style={{ paddingHorizontal: 16, paddingTop: 12, gap: 6 }}>
+              {subject.badge && holds(subject.badge.when, item) ? (
+                <Badge label={fill(subject.badge.label, item)} tone={subject.badge.tone} style={{ alignSelf: 'flex-start' }} />
+              ) : null}
+              <Text variant="heading">{fill(subject.title, item)}</Text>
+              {subject.description ? <Text muted>{fill(subject.description, item)}</Text> : null}
+              {subject.onSelect ? <Button size="sm" variant="ghost" label="Open" onPress={() => fire(subject.onSelect, item)} /> : null}
+            </View>
+          </Surface>
+        )}
+      />
+    );
+  }
+
+  return null;
+}
+
+// ---------------- Monad Page Shell ----------------
 
 export function MonadPage({ app, page: pageId, store: rawStore }: { app: AppSpec; page: string; store: Store }) {
   const page = app.pages[pageId];
@@ -154,7 +546,10 @@ export function MonadPage({ app, page: pageId, store: rawStore }: { app: AppSpec
   const subject = page.subject;
   const source = 'source' in subject ? subject.source : undefined;
   const paramName = 'param' in subject ? subject.param ?? 'id' : 'id';
-  const record = source && (subject.kind === 'detail' || (subject.kind === 'form' && subject.mode === 'edit')) ? store.get(source, String(params[paramName] ?? '')) : undefined;
+  const hasRouteParam = (page.route ?? '').includes(`[${paramName}]`);
+  const record = source && (subject.kind === 'detail' || (subject.kind === 'form' && subject.mode === 'edit'))
+    ? (hasRouteParam && params[paramName] ? store.get(source, String(params[paramName])) : store.list(source)[0])
+    : undefined;
   useEffect(() => { if (source) store.load(source); }, [source]);
 
   const isForm = subject.kind === 'form';
@@ -183,12 +578,46 @@ export function MonadPage({ app, page: pageId, store: rawStore }: { app: AppSpec
   const fire: Fire = (event, rec) => { if (event && page.events?.[event]) runActions(page.events[event], rec ?? record, deps); };
   const showBack = page.back ?? page.route !== '/';
 
+  // Resolve archetype
+  const archetype: PageArchetype | undefined = page.archetype;
+
   let body: React.ReactNode;
-  if (subject.kind === 'collection') body = <Collection subject={subject} page={page} store={store} fire={fire} />;
-  else if (subject.kind === 'detail') body = <Detail subject={subject} record={record} store={store} fire={fire} />;
-  else if (subject.kind === 'form') body = subject.mode === 'edit' && store.status(subject.source) !== 'ready' ? <Loading rows={3} height={52} /> : <Form subject={subject} values={values} errors={errors} onChange={(k, v) => { touched.current = true; setValues((s) => ({ ...s, [k]: v })); }} />;
-  else if (subject.kind === 'settings') body = <Settings subject={subject} store={store} fire={fire} />;
-  else body = <Message subject={subject} record={record} />;
+  let hasHandledPrimary = false;
+
+  if (archetype === 'hero-decision') {
+    body = <HeroDecisionComposition page={page} record={record} fire={fire} deps={deps} />;
+    hasHandledPrimary = true;
+  } else if (archetype === 'glance-dashboard') {
+    body = <GlanceDashboardComposition page={page} record={record} store={store} fire={fire} />;
+  } else if (archetype === 'focus-wizard' && isForm) {
+    body = (
+      <FocusWizardComposition
+        subject={subject as FormSubject}
+        values={values}
+        errors={errors}
+        onChange={(k, v) => { touched.current = true; setValues((s) => ({ ...s, [k]: v })); }}
+        onSubmit={() => { if (page.primary) fire(page.primary.event); }}
+        primaryLabel={page.primary?.label}
+      />
+    );
+    hasHandledPrimary = true;
+  } else if (archetype === 'bento-overview') {
+    body = <BentoOverviewComposition page={page} record={record} store={store} fire={fire} />;
+  } else if (archetype === 'content-canvas') {
+    body = <ContentCanvasComposition page={page} record={record} store={store} fire={fire} />;
+  } else if (archetype === 'system-settings' || subject.kind === 'settings') {
+    body = <SettingsView subject={subject as SettingsSubject} store={store} fire={fire} />;
+  } else if (subject.kind === 'collection') {
+    body = <CollectionList subject={subject} page={page} store={store} fire={fire} />;
+  } else if (subject.kind === 'detail') {
+    body = <StandardDetail subject={subject} record={record} store={store} fire={fire} />;
+  } else if (subject.kind === 'form') {
+    body = subject.mode === 'edit' && store.status(subject.source) !== 'ready'
+      ? <Loading rows={3} height={52} />
+      : <StandardForm subject={subject} values={values} errors={errors} onChange={(k, v) => { touched.current = true; setValues((s) => ({ ...s, [k]: v })); }} />;
+  } else {
+    body = <MessageView subject={subject as MessageSubject} record={record} />;
+  }
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.background, paddingTop: insets.top }}>
@@ -200,7 +629,9 @@ export function MonadPage({ app, page: pageId, store: rawStore }: { app: AppSpec
       />
       {notice ? <View style={{ paddingHorizontal: GUTTER, paddingBottom: 8 }}><NoticeBanner title={notice.text} tone={notice.tone} onDismiss={() => setNotice(null)} /></View> : null}
       <View style={{ flex: 1 }}>{body}</View>
-      {page.primary ? <ActionDock><Button label={page.primary.label} tone={page.primary.tone ?? 'default'} fullWidth onPress={() => fire(page.primary!.event)} /></ActionDock> : null}
+      {page.primary && !hasHandledPrimary ? (
+        <ActionDock><Button label={page.primary.label} tone={page.primary.tone ?? 'default'} fullWidth onPress={() => fire(page.primary!.event)} /></ActionDock>
+      ) : null}
       <AlertDialog
         open={Boolean(pending)}
         onOpenChange={(open) => { if (!open) setPending(null); }}

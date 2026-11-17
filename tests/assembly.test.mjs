@@ -21,9 +21,13 @@ function newApp() {
   return app;
 }
 
-test('the example spec is valid', () => {
-  const r = asm.validateSpec(spec());
-  assert.deepEqual(r.errors, []);
+test('the example specs (pantry, fitness, finance) are valid', () => {
+  for (const name of ['pantry', 'fitness', 'finance']) {
+    const file = path.join(root, `packages/assembly/examples/${name}.spec.json`);
+    const s = JSON.parse(fs.readFileSync(file, 'utf8'));
+    const r = asm.validateSpec(s);
+    assert.deepEqual(r.errors, [], `${name}.spec.json errors: ${r.errors.join(', ')}`);
+  }
 });
 
 test('validator reports agent mistakes with a JSON path and the fix', () => {
@@ -37,6 +41,17 @@ test('validator reports agent mistakes with a JSON path and the fix', () => {
   assert.match(errorsOf((s) => { s.pages.pantry.subject.colour = 'red'; }), /pages\.pantry\.subject\.colour: unknown key/);
   assert.match(errorsOf((s) => { s.pages.pantry.primary = { label: 'Add', event: 'nope' }; }), /event 'nope' is not defined/);
   assert.match(errorsOf((s) => { s.pages.pantry.subject.description = '{expires|ago}'; }), /unknown format \|ago/);
+  // Archetype mistakes
+  assert.match(errorsOf((s) => { s.pages.pantry.archetype = 'magical-grid'; }), /pages\.pantry\.archetype: one of hero-decision/);
+  assert.match(errorsOf((s) => { s.pages.pantry.archetype = 'focus-wizard'; }), /pages\.pantry\.archetype: archetype 'focus-wizard' is incompatible with subject kind 'collection'/);
+  assert.match(errorsOf((s) => { s.pages.pantry.archetype = 'system-settings'; }), /pages\.pantry\.archetype: archetype 'system-settings' is incompatible with subject kind 'collection'/);
+  // Multi-axis design configuration mistakes
+  assert.match(errorsOf((s) => { s.design.preset = 'space-station'; }), /design\.preset: minimal-pro \| kyoto-craft/);
+  assert.match(errorsOf((s) => { s.design.palette = 'neon-pink'; }), /design\.palette: default \| kyoto \| midnight/);
+  assert.match(errorsOf((s) => { s.design.radius = 'extra-round'; }), /design\.radius: sharp \| smooth \| curved/);
+  assert.match(errorsOf((s) => { s.design.density = 'ultra-compact'; }), /design\.density: compact \| comfortable \| spacious/);
+  assert.match(errorsOf((s) => { s.design.surface = 'glass'; }), /design\.surface: flat \| outlined \| elevated/);
+  assert.match(errorsOf((s) => { s.design.shadow = 'heavy'; }), /design\.shadow: unknown key/);
 });
 
 test('emission is deterministic and maps routes to Expo Router files', () => {

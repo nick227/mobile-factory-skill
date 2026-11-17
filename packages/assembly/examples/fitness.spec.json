@@ -1,0 +1,110 @@
+{
+  "name": "Botanical Vitality",
+  "design": {
+    "preset": "wellness-botanical",
+    "palette": "emerald",
+    "radius": "curved",
+    "density": "spacious",
+    "surface": "elevated",
+    "colorMode": "light"
+  },
+  "mock": { "latencyMs": 0 },
+  "data": {
+    "summary": [
+      {
+        "id": "today",
+        "title": "Daily Movement",
+        "metric": "8,420",
+        "unit": "steps",
+        "progress": 84,
+        "status": "calm",
+        "body": "84% of your daily serenity target achieved",
+        "activeMinutes": 42,
+        "calories": 380
+      }
+    ],
+    "workouts": [
+      {
+        "id": "morning-yoga",
+        "title": "Forest Flow Yoga",
+        "duration": "30 mins",
+        "intensity": "Gentle",
+        "active": true
+      },
+      {
+        "id": "trail-walk",
+        "title": "Cedar Ridge Walk",
+        "duration": "45 mins",
+        "intensity": "Moderate",
+        "active": false
+      },
+      {
+        "id": "evening-stretch",
+        "title": "Twilight Relaxation",
+        "duration": "20 mins",
+        "intensity": "Restorative",
+        "active": false
+      }
+    ]
+  },
+  "pages": {
+    "today": {
+      "route": "/",
+      "title": "Today",
+      "subtitle": "Daily mindful activity",
+      "archetype": "glance-dashboard",
+      "headerAction": { "label": "Workouts", "event": "goWorkouts" },
+      "subject": {
+        "kind": "detail",
+        "source": "summary",
+        "heading": "Movement",
+        "facts": [
+          { "label": "Active Minutes", "value": "{activeMinutes} min" },
+          { "label": "Energy Expended", "value": "{calories} kcal" }
+        ],
+        "body": "{body}"
+      },
+      "primary": { "label": "Log Session", "event": "logSession" },
+      "events": {
+        "goWorkouts": [{ "navigate": "/workouts" }],
+        "logSession": [{ "navigate": "/log" }]
+      }
+    },
+    "workouts": {
+      "route": "/workouts",
+      "title": "Workouts",
+      "subtitle": "Mind & body rituals",
+      "archetype": "bento-overview",
+      "subject": {
+        "kind": "collection",
+        "source": "workouts",
+        "title": "{title}",
+        "description": "{duration} · {intensity}",
+        "onSelect": "selectWorkout"
+      },
+      "events": {
+        "selectWorkout": [{ "notice": "Selected {title}", "tone": "success" }]
+      }
+    },
+    "log": {
+      "route": "/log",
+      "title": "Log Activity",
+      "subtitle": "Record your movement",
+      "archetype": "focus-wizard",
+      "subject": {
+        "kind": "form",
+        "source": "workouts",
+        "mode": "create",
+        "fields": [
+          { "key": "title", "label": "Activity Name", "required": true, "placeholder": "e.g. Garden Walk" },
+          { "key": "duration", "label": "Duration", "required": true, "placeholder": "e.g. 25 mins" },
+          { "key": "intensity", "label": "Intensity", "required": true, "placeholder": "e.g. Gentle" }
+        ]
+      },
+      "primary": { "label": "Save Activity", "event": "save" },
+      "events": {
+        "save": [{ "create": "workouts", "from": "form" }, { "back": true }]
+      }
+    }
+  }
+}

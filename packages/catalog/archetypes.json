@@ -1,0 +1,50 @@
+[
+  {
+    "id": "hero-decision",
+    "name": "Hero Decision",
+    "summary": "A focused decision with one dominant action, prominent headline and subtitle, and optional secondary action.",
+    "bestUse": "Decisive single-action pages, daily focus prompts, welcome/onboarding moments, and clear milestone choices.",
+    "compatibleSubjects": ["detail", "message", "form"],
+    "constraints": "Requires a clear primary action. Keeps content calm and uncluttered without distracting secondary lists."
+  },
+  {
+    "id": "glance-dashboard",
+    "name": "Glance Dashboard",
+    "summary": "Metrics, progress, and status indicators designed for high-frequency glanceable consumption.",
+    "bestUse": "Today views, progress trackers, daily summaries, telemetry, and live status displays.",
+    "compatibleSubjects": ["detail", "collection"],
+    "constraints": "Highlights a monumental metric or radial progress ring with serene status micro-sentences."
+  },
+  {
+    "id": "focus-wizard",
+    "name": "Focus Wizard",
+    "summary": "Step-by-step input with sequential progression, focused field presentation, and persistent action dock.",
+    "bestUse": "Multi-field forms, onboarding questionnaires, guided check-ins, and multi-step data entry.",
+    "compatibleSubjects": ["form"],
+    "constraints": "Partitions form fields into sequential steps with dedicated advance/submit actions."
+  },
+  {
+    "id": "bento-overview",
+    "name": "Bento Overview",
+    "summary": "A compact overview of related content arranged in squircle bento tiles with icons, status, and badges.",
+    "bestUse": "Hub pages, category grids, collection summaries, control centers, and resource cards.",
+    "compatibleSubjects": ["collection", "detail"],
+    "constraints": "Organizes collection items or detail facts into structured 2-column squircle bento tiles."
+  },
+  {
+    "id": "content-canvas",
+    "name": "Content Canvas",
+    "summary": "Media-led content presentation with high-ratio media frames, generous editorial spacing, and reading rhythm.",
+    "bestUse": "Articles, item showcases, visual guides, recipes, product profiles, and editorial narratives.",
+    "compatibleSubjects": ["detail", "collection"],
+    "constraints": "Leads with prominent photography/media and preserves calm editorial typography."
+  },
+  {
+    "id": "system-settings",
+    "name": "System Settings",
+    "summary": "Grouped preferences, switches, and navigation links organized into standard platform groups.",
+    "bestUse": "App preferences, account configuration, notification toggles, privacy controls, and links.",
+    "compatibleSubjects": ["settings"],
+    "constraints": "Grouped rows with divider rules, clean switch controls, and explicit navigation links."
+  }
+]

@@ -19,13 +19,43 @@ const KIND_KEYS = {
   settings: ['kind', 'groups'],
   message: ['kind', 'heading', 'body'],
 };
-const PAGE_KEYS = ['route', 'title', 'subtitle', 'back', 'headerAction', 'subject', 'primary', 'events', 'empty'];
+const PAGE_KEYS = ['route', 'title', 'subtitle', 'archetype', 'back', 'headerAction', 'subject', 'primary', 'events', 'empty'];
 const APP_KEYS = ['$schema', 'name', 'design', 'mock', 'data', 'settings', 'pages'];
 const FIELD_KEYS = ['key', 'label', 'type', 'required', 'min', 'max', 'placeholder', 'hint', 'default'];
 const FIELD_TYPES = ['text', 'multiline', 'number', 'date', 'email', 'toggle'];
 const FORMATS = ['date', 'relative', 'upper', 'yesno'];
 const TONES = ['neutral', 'accent', 'success', 'warning', 'danger'];
 const ID = /^[a-z][a-z0-9-]*$/;
+
+export const ARCHETYPES = [
+  'hero-decision',
+  'glance-dashboard',
+  'focus-wizard',
+  'bento-overview',
+  'content-canvas',
+  'system-settings',
+];
+
+export const ARCHETYPE_COMPAT = {
+  'hero-decision': ['detail', 'message', 'form'],
+  'glance-dashboard': ['detail', 'collection'],
+  'focus-wizard': ['form'],
+  'bento-overview': ['collection', 'detail'],
+  'content-canvas': ['detail', 'collection'],
+  'system-settings': ['settings'],
+};
+
+const DESIGN_AXES = {
+  preset: ['minimal-pro', 'kyoto-craft', 'fintech-midnight', 'wellness-botanical', 'editorial-luxury', 'playful-consumer'],
+  palette: ['default', 'kyoto', 'midnight', 'emerald', 'crimson', 'amber'],
+  radius: ['sharp', 'smooth', 'curved'],
+  density: ['compact', 'comfortable', 'spacious'],
+  typography: ['compact', 'default', 'editorial'],
+  surface: ['flat', 'outlined', 'elevated'],
+  layout: ['standard', 'editorial', 'immersive'],
+  media: ['contained', 'edge-to-edge', 'mosaic'],
+  colorMode: ['system', 'light', 'dark'],
+};
 
 const segs = (route) => route.split('/').filter(Boolean);
 const dynamicParams = (route) => segs(route).filter((s) => /^\[[^\]]+\]$/.test(s)).map((s) => s.slice(1, -1));
@@ -39,7 +69,14 @@ export function validateSpec(spec) {
   if (!isObj(spec)) return { ok: false, errors: ['$: spec must be a JSON object'], warnings };
   unknownKeys(spec, APP_KEYS, '$');
   if (!spec.name || typeof spec.name !== 'string') err('$.name', 'required string');
-  if (spec.design !== undefined) { unknownKeys(spec.design, ['colorMode'], '$.design'); if (spec.design.colorMode && !['system', 'light', 'dark'].includes(spec.design.colorMode)) err('$.design.colorMode', 'system | light | dark'); }
+  if (spec.design !== undefined) {
+    unknownKeys(spec.design, Object.keys(DESIGN_AXES), '$.design');
+    for (const [axis, allowed] of Object.entries(DESIGN_AXES)) {
+      if (spec.design[axis] !== undefined && !allowed.includes(spec.design[axis])) {
+        err(`$.design.${axis}`, allowed.join(' | '));
+      }
+    }
+  }
   if (spec.mock !== undefined) unknownKeys(spec.mock, ['latencyMs', 'failFirstLoad'], '$.mock');
   if (!isObj(spec.data)) err('$.data', 'required object of collection name → array of records');
   const fieldsOf = {};
@@ -72,6 +109,16 @@ export function validateSpec(spec) {
     const s = page.subject;
     if (!isObj(s) || !KIND_KEYS[s.kind]) { err(`${p}.subject.kind`, `one of ${Object.keys(KIND_KEYS).join(', ')}`); continue; }
     unknownKeys(s, KIND_KEYS[s.kind], `${p}.subject`);
+    if (page.archetype !== undefined) {
+      if (!ARCHETYPES.includes(page.archetype)) {
+        err(`${p}.archetype`, `one of ${ARCHETYPES.join(' | ')}`);
+      } else {
+        const compat = ARCHETYPE_COMPAT[page.archetype];
+        if (!compat.includes(s.kind)) {
+          err(`${p}.archetype`, `archetype '${page.archetype}' is incompatible with subject kind '${s.kind}' (compatible: ${compat.join(', ')})`);
+        }
+      }
+    }
     const source = s.source;
     if ('source' in s || ['collection', 'detail', 'form'].includes(s.kind)) {
       if (!source || !(source in (spec.data ?? {}))) err(`${p}.subject.source`, `unknown collection '${source}' (data has: ${Object.keys(spec.data ?? {}).join(', ') || 'none'})`);
@@ -90,7 +137,7 @@ export function validateSpec(spec) {
     };
     const recordPage = s.kind === 'detail' || (s.kind === 'form' && s.mode === 'edit');
     const params = dynamicParams(page.route ?? '');
-    if (recordPage) {
+    if (recordPage && page.route !== '/' && s.param !== null) {
       const param = s.param ?? 'id';
       if (!params.includes(param)) err(`${p}.route`, `${s.kind} pages read the record from route param [${param}]; e.g. "/${source}/[${param}]"`);
     }
