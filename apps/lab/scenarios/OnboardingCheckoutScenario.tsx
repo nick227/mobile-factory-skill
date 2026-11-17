@@ -1,141 +1,35 @@
-import React, { useState } from 'react';
-import { View } from 'react-native';
+import React, { useEffect, useReducer } from 'react';
 import {
   Text,
   Stack,
+  Row,
   Surface,
   Button,
   TextField,
-  Badge,
   ScreenHeader,
   FocusWizard,
   ChoiceGallery,
   Select,
   StatusTracker,
-  useTheme,
 } from '@factory/ui';
+import { disciplines, plans } from '../demos/onboarding/fixtures';
+import { initialState, reducer, fieldErrors, stepValid, planById, disciplineById } from '../demos/onboarding/model';
+import { formatUSD } from '../demos/shared/money';
 
 export function OnboardingCheckoutScenario() {
-  const { colors } = useTheme();
-  const [currentStep, setCurrentStep] = useState(0);
-  const [name, setName] = useState('Ren Takahashi');
-  const [handle, setHandle] = useState('@ren_arch');
-  const [selectedDiscipline, setSelectedDiscipline] = useState<string | null>('architecture');
-  const [selectedTier, setSelectedTier] = useState('studio');
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isComplete, setIsComplete] = useState(false);
+  const [s, dispatch] = useReducer(reducer, initialState);
+  const errors = fieldErrors(s);
+  const plan = planById(s.plan);
+  const discipline = disciplineById(s.discipline);
 
-  const disciplineOptions = [
-    {
-      id: 'architecture',
-      title: 'Architectural Design',
-      subtitle: 'Pavilion, spatial, and interior scale',
-      badge: 'Popular',
-      badgeTone: 'accent' as const,
-      description: 'Access 3D model archives and CAD blueprints.',
-    },
-    {
-      id: 'ceramics',
-      title: 'Ceramic Arts',
-      subtitle: 'Wheel-thrown stoneware and glazing',
-      badge: 'Kiln Access',
-      badgeTone: 'neutral' as const,
-      description: 'Kiln scheduling and glaze formula database.',
-    },
-    {
-      id: 'printmaking',
-      title: 'Woodblock & Intaglio',
-      subtitle: 'Relief and lithographic printing',
-      badge: 'Studio Press',
-      badgeTone: 'neutral' as const,
-      description: 'Studio press bookings and archival paper supplies.',
-    },
-  ];
+  // Simulated provisioning: progress advances until the membership is active.
+  useEffect(() => {
+    if (s.phase !== 'submitting') return;
+    const t = setTimeout(() => dispatch({ type: 'tick' }), 450);
+    return () => clearTimeout(t);
+  }, [s.phase, s.progress]);
 
-  const tierOptions = [
-    { label: 'Studio Member ($49/mo)', value: 'studio' },
-    { label: 'Fellowship Resident ($120/mo)', value: 'fellow' },
-    { label: 'Guest Access ($19/mo)', value: 'guest' },
-  ];
-
-  const wizardSteps = [
-    {
-      id: 'step-identity',
-      title: 'Studio Identity',
-      subtitle: 'Residency Application · Set your profile name and handle',
-      isValid: name.trim().length > 0 && handle.trim().length > 0,
-      content: (
-        <Stack gap="md">
-          <TextField
-            label="Studio or Creator Name"
-            value={name}
-            onChangeText={setName}
-            placeholder="e.g. Ren Takahashi Studio"
-          />
-          <TextField
-            label="Studio Handle"
-            value={handle}
-            onChangeText={setHandle}
-            placeholder="e.g. @ren_arch"
-          />
-        </Stack>
-      ),
-    },
-    {
-      id: 'step-discipline',
-      title: 'Craft Discipline',
-      subtitle: 'Residency Application · Select facilities focus area',
-      isValid: Boolean(selectedDiscipline),
-      content: (
-        <ChoiceGallery
-          options={disciplineOptions}
-          mode="single"
-          selected={selectedDiscipline || ''}
-          onSelect={(id) => setSelectedDiscipline(id)}
-        />
-      ),
-    },
-    {
-      id: 'step-plan',
-      title: 'Membership Tier',
-      subtitle: 'Residency Application · Select access plan',
-      isValid: Boolean(selectedTier),
-      content: (
-        <Stack gap="md">
-          <Select
-            label="Membership Plan Tier"
-            value={selectedTier}
-            onValueChange={setSelectedTier}
-            options={tierOptions}
-          />
-          <Surface outlined>
-            <Stack gap="xs">
-              <Text variant="heading">Plan Inclusions</Text>
-              <Text muted variant="small">
-                ✓ 24/7 keycard access to Kyoto studio spaces
-              </Text>
-              <Text muted variant="small">
-                ✓ Shared darkroom and kiln access
-              </Text>
-              <Text muted variant="small">
-                ✓ High-speed gigabit fiber and lounge library
-              </Text>
-            </Stack>
-          </Surface>
-        </Stack>
-      ),
-    },
-  ];
-
-  const handleFinish = () => {
-    setIsSubmitting(true);
-    setTimeout(() => {
-      setIsSubmitting(false);
-      setIsComplete(true);
-    }, 1200);
-  };
-
-  if (isComplete) {
+  if (s.phase === 'complete') {
     return (
       <Stack gap="lg">
         <ScreenHeader title="Membership Active" />
@@ -144,21 +38,15 @@ export function OnboardingCheckoutScenario() {
           statusLabel="Provisioned"
           tone="success"
           progress={100}
-          description={`${name} (${handle}) is registered under the ${selectedTier.toUpperCase()} plan.`}
-          estimatedTime="Digital pass added to Apple Wallet"
-          primaryAction={{
-            label: 'Restart Onboarding Demo',
-            onPress: () => {
-              setIsComplete(false);
-              setCurrentStep(0);
-            },
-          }}
+          description={`${s.name.trim()} (${s.handle}) · ${discipline?.title} · ${plan.name} at ${formatUSD(plan.priceCents)}/mo. Receipt sent to ${s.email.trim()}.`}
+          estimatedTime="Digital pass ready in your wallet"
+          primaryAction={{ label: 'Start Over', onPress: () => dispatch({ type: 'restart' }) }}
         />
       </Stack>
     );
   }
 
-  if (isSubmitting) {
+  if (s.phase === 'submitting') {
     return (
       <Stack gap="lg">
         <ScreenHeader title="Activating Membership" />
@@ -166,22 +54,91 @@ export function OnboardingCheckoutScenario() {
           title="Provisioning Studio Credentials"
           statusLabel="Processing"
           tone="info"
-          progress={65}
-          description="Generating encrypted digital pass and allocating studio locker..."
-          estimatedTime="Takes ~5 seconds"
+          progress={s.progress}
+          description={`Setting up ${plan.name} access for ${s.handle}…`}
+          estimatedTime="A few seconds"
         />
       </Stack>
     );
   }
 
+  const show = (f: 'name' | 'handle' | 'email') => (s.touched[f] ? errors[f] : undefined);
+  const editRow = (label: string, value: string, step: number) => (
+    <Row style={{ justifyContent: 'space-between', alignItems: 'center' }}>
+      <Stack gap="xs" style={{ flex: 1 }}>
+        <Text muted variant="small">{label}</Text>
+        <Text>{value}</Text>
+      </Stack>
+      <Button label="Edit" variant="ghost" onPress={() => dispatch({ type: 'goTo', step })} accessibilityLabel={`Edit ${label}`} />
+    </Row>
+  );
+
+  const wizardSteps = [
+    {
+      id: 'step-identity',
+      title: 'Studio Identity',
+      subtitle: 'Residency Application · Set your profile name, handle and email',
+      isValid: stepValid(s, 0),
+      content: (
+        <Stack gap="md">
+          <TextField label="Studio or Creator Name" value={s.name} onChangeText={(value) => dispatch({ type: 'edit', field: 'name', value })} onBlur={() => dispatch({ type: 'blur', field: 'name' })} error={show('name')} placeholder="e.g. Ren Takahashi Studio" maxLength={40} />
+          <TextField label="Studio Handle" value={s.handle} onChangeText={(value) => dispatch({ type: 'edit', field: 'handle', value })} onBlur={() => dispatch({ type: 'blur', field: 'handle' })} error={show('handle')} hint="Lowercase letters, numbers and _" placeholder="@ren_arch" autoCapitalize="none" autoCorrect={false} />
+          <TextField label="Email" value={s.email} onChangeText={(value) => dispatch({ type: 'edit', field: 'email', value })} onBlur={() => dispatch({ type: 'blur', field: 'email' })} error={show('email')} placeholder="you@studio.com" keyboardType="email-address" autoCapitalize="none" autoCorrect={false} />
+        </Stack>
+      ),
+    },
+    {
+      id: 'step-discipline',
+      title: 'Craft Discipline',
+      subtitle: 'Residency Application · Select facilities focus area',
+      isValid: stepValid(s, 1),
+      content: (
+        <ChoiceGallery options={disciplines} mode="single" selected={s.discipline ?? ''} onSelect={(id) => dispatch({ type: 'chooseDiscipline', id })} />
+      ),
+    },
+    {
+      id: 'step-plan',
+      title: 'Membership Tier',
+      subtitle: 'Residency Application · Select access plan',
+      isValid: stepValid(s, 2),
+      content: (
+        <Stack gap="md">
+          <Select label="Membership Plan Tier" value={s.plan} onValueChange={(id) => dispatch({ type: 'choosePlan', id })} options={plans.map((p) => ({ label: `${p.name} (${formatUSD(p.priceCents)}/mo)`, value: p.id }))} />
+          <Surface outlined>
+            <Stack gap="xs">
+              <Text variant="heading">{plan.name} includes</Text>
+              {plan.inclusions.map((x) => <Text key={x} muted variant="small">✓ {x}</Text>)}
+            </Stack>
+          </Surface>
+        </Stack>
+      ),
+    },
+    {
+      id: 'step-review',
+      title: 'Review & Confirm',
+      subtitle: 'Check your details before activating. You can edit any section.',
+      isValid: true,
+      content: (
+        <Surface outlined>
+          <Stack gap="md">
+            {editRow('Profile', `${s.name.trim()} · ${s.handle} · ${s.email.trim()}`, 0)}
+            {editRow('Discipline', discipline?.title ?? '—', 1)}
+            {editRow('Plan', `${plan.name} · ${formatUSD(plan.priceCents)}/mo`, 2)}
+          </Stack>
+        </Surface>
+      ),
+    },
+  ];
+
   return (
     <FocusWizard
-      steps={wizardSteps}
-      activeStepIndex={currentStep}
-      onStepChange={(idx) => setCurrentStep(idx)}
-      onComplete={handleFinish}
-      completeLabel="Activate Residency"
-      style={{ minHeight: 520 }}
-    />
+        steps={wizardSteps}
+        activeStepIndex={s.step}
+        onStepChange={(idx) => dispatch({ type: 'goTo', step: idx })}
+        onComplete={() => dispatch({ type: 'activate' })}
+        completeLabel={`Activate · ${formatUSD(plan.priceCents)}/mo`}
+        validationError={s.step === 0 && Object.values(s.touched).some(Boolean) && !stepValid(s, 0) ? 'Fix the highlighted fields to continue.' : undefined}
+        style={{ minHeight: 520 }}
+      />
   );
 }

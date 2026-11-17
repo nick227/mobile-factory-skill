@@ -1,9 +1,7 @@
-import React, { useState } from 'react';
-import { View, ScrollView } from 'react-native';
+import React, { useEffect, useReducer } from 'react';
 import {
   Text,
   Stack,
-  Row,
   Surface,
   Button,
   Badge,
@@ -15,227 +13,162 @@ import {
   ImmersiveHero,
   PeopleStack,
   SchedulePicker,
+  SegmentedControl,
+  TextField,
+  EmptyState,
   Dialog,
-  useTheme,
-  tokens,
+  AlertDialog,
 } from '@factory/ui';
-
-type EventScreenState = 'discovery' | 'detail' | 'booking' | 'confirmed';
+import { bookingDays, people, peoplePhotos, slots, stories, imageUrl } from '../demos/event-discovery/fixtures';
+import {
+  initialState, reducer, visibleEvents, filterOptions, selectedFilterIds, eventById, bookingFor,
+  canConfirm, totalCents, seatsLeft, isDayOpen, slotLabel, dayLabel,
+} from '../demos/event-discovery/model';
+import { formatUSD, formatUSDShort } from '../demos/shared/money';
 
 export function EventDiscoveryScenario() {
-  const { colors } = useTheme();
-  const [state, setState] = useState<EventScreenState>('discovery');
-  const [selectedFilter, setSelectedFilter] = useState<string[]>(['all']);
-  const [selectedEventId, setSelectedEventId] = useState<string>('e1');
-  const [selectedDate, setSelectedDate] = useState('2026-11-20');
-  const [selectedSlot, setSelectedSlot] = useState<string | null>('slot-morning');
-  const [dialogOpen, setDialogOpen] = useState(false);
+  const [s, dispatch] = useReducer(reducer, initialState);
+  const [cancelRef, setCancelRef] = React.useState<string | null>(null);
+  const event = eventById(s.eventId);
 
-  const stories = [
-    { id: 's1', name: 'Kyoto Tea', avatarUri: 'https://images.unsplash.com/photo-1576092768241-dec231879fc3?auto=format&fit=crop&w=300&q=80', isLive: true },
-    { id: 's2', name: 'Bamboo Path', avatarUri: 'https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&w=300&q=80', hasUnread: true },
-    { id: 's3', name: 'Zen Garden', avatarUri: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=300&q=80', hasUnread: true },
-    { id: 's4', name: 'Kinkaku-ji', avatarUri: 'https://images.unsplash.com/photo-1578637387939-43c525550085?auto=format&fit=crop&w=300&q=80', hasUnread: false },
-    { id: 's5', name: 'Gion Walk', avatarUri: 'https://images.unsplash.com/photo-1528164344705-475426879c0d?auto=format&fit=crop&w=300&q=80', hasUnread: false },
-  ];
+  // Simulated payment round-trip so the pending state is visible.
+  useEffect(() => {
+    if (!s.submitting) return;
+    const t = setTimeout(() => dispatch({ type: 'submitted' }), 900);
+    return () => clearTimeout(t);
+  }, [s.submitting]);
 
-  const filterOptions = [
-    { id: 'all', label: 'All Experiences', count: 24 },
-    { id: 'temples', label: 'Heritage Temples', count: 8 },
-    { id: 'crafts', label: 'Artisan Crafts', count: 11 },
-    { id: 'culinary', label: 'Kaiseki Dining', count: 5 },
-  ];
-
-  const mosaicItems = [
-    {
-      id: 'e1',
-      title: 'Urasenke Tea Ceremony & Zen Garden',
-      subtitle: 'Central Kyoto',
-      image: 'https://images.unsplash.com/photo-1576092768241-dec231879fc3?auto=format&fit=crop&w=800&q=80',
-      badge: 'Heritage',
-      badgeTone: 'accent' as const,
-      aspectRatio: 3 / 4,
-      metadata: 'Master Soshitsu Sen · 2 hrs',
-    },
-    {
-      id: 'e2',
-      title: 'Bamboo Forest Dawn Walking Tour',
-      subtitle: 'Arashiyama',
-      image: 'https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&w=800&q=80',
-      badge: 'Popular',
-      badgeTone: 'neutral' as const,
-      aspectRatio: 1,
-      metadata: 'Early sunrise access',
-    },
-    {
-      id: 'e3',
-      title: 'Traditional Woodblock Printing Workshop',
-      subtitle: 'Higashiyama',
-      image: 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=800&q=80',
-      aspectRatio: 4 / 3,
-      metadata: 'Take home hand-pressed print',
-    },
-    {
-      id: 'e4',
-      title: 'Fushimi Sake Brewery & Tasting',
-      subtitle: 'Fushimi Ward',
-      image: 'https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&w=800&q=80',
-      aspectRatio: 3 / 4,
-      metadata: 'Historic cellar tour',
-    },
-  ];
-
-  const attendees = [
-    { id: 'a1', name: 'Yuki Tanaka', uri: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80' },
-    { id: 'a2', name: 'Clara Oswald', uri: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=200&q=80' },
-    { id: 'a3', name: 'Liam Davies', uri: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80' },
-    { id: 'a4', name: 'Sora Park', uri: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=200&q=80' },
-    { id: 'a5', name: 'Marc Dupont', uri: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80' },
-  ];
-
-  const bookingDays = [
-    { date: '2026-11-20', dayName: 'Fri', dayNumber: 20, monthName: 'Nov' },
-    { date: '2026-11-21', dayName: 'Sat', dayNumber: 21, monthName: 'Nov' },
-    { date: '2026-11-22', dayName: 'Sun', dayNumber: 22, monthName: 'Nov', isAvailable: false },
-    { date: '2026-11-23', dayName: 'Mon', dayNumber: 23, monthName: 'Nov' },
-  ];
-
-  const bookingSlots = [
-    { id: 'slot-morning', time: '10:00 AM', period: 'morning' as const, available: true, price: '$75' },
-    { id: 'slot-midday', time: '01:30 PM', period: 'afternoon' as const, available: true, price: '$75' },
-    { id: 'slot-evening', time: '04:30 PM', period: 'afternoon' as const, available: false, price: '$85' },
-  ];
-
-  // 1. Discovery State
-  if (state === 'discovery') {
+  // 1. Discovery
+  if (s.screen === 'discovery') {
+    const results = visibleEvents(s);
     return (
       <Stack gap="md">
-        <ScreenHeader
-          title="Kyoto Journeys"
-          subtitle="Curated cultural masterclasses and private heritage access"
-        />
-        <StoryRail
-          stories={stories}
-          onPressStory={(id) => console.log('Story opened', id)}
-        />
+        <ScreenHeader title="Kyoto Journeys" subtitle="Curated cultural masterclasses and private heritage access" />
+        <StoryRail stories={stories} onPressStory={(id) => { const st = stories.find((x) => x.id === id); if (st) dispatch({ type: 'open', eventId: st.eventId }); }} />
+        <TextField label="Search experiences" placeholder="Tea, sake, Gion…" value={s.query} onChangeText={(query) => dispatch({ type: 'search', query })} autoCorrect={false} returnKeyType="search" />
         <DiscoveryFilters
-          options={filterOptions}
-          selectedIds={selectedFilter}
-          onToggle={(id) =>
-            setSelectedFilter((prev) =>
-              prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
-            )
-          }
-          onClear={() => setSelectedFilter(['all'])}
+          options={filterOptions(s)}
+          selectedIds={selectedFilterIds(s)}
+          onToggle={(id) => dispatch({ type: 'toggleCategory', id })}
+          onClear={s.categories.length || s.query ? () => dispatch({ type: 'clearFilters' }) : undefined}
         />
-        <EditorialMosaic
-          items={mosaicItems}
-          columns={2}
-          onItemPress={(item) => {
-            setSelectedEventId(item.id);
-            setState('detail');
-          }}
-        />
+        {results.length === 0 ? (
+          <EmptyState title="No experiences match" description="Try another search or clear the filters." action={<Button label="Clear search and filters" variant="outline" onPress={() => dispatch({ type: 'clearFilters' })} />} />
+        ) : (
+          <EditorialMosaic
+            items={results.map((e) => {
+              const booked = bookingFor(s, e.id);
+              return { id: e.id, title: e.title, subtitle: e.area, image: imageUrl(e.imageId, 800), badge: booked ? 'Booked' : e.badge, badgeTone: booked ? ('accent' as const) : ('neutral' as const), aspectRatio: e.aspectRatio, metadata: `${e.host} · ${e.durationLabel} · ${formatUSDShort(e.priceCents)}` };
+            })}
+            columns={2}
+            onItemPress={(item) => dispatch({ type: 'open', eventId: item.id })}
+          />
+        )}
       </Stack>
     );
   }
 
-  // 2. Detail State
-  if (state === 'detail') {
+  // 2. Detail
+  if (s.screen === 'detail' && event) {
+    const booking = bookingFor(s, event.id);
+    const attendees = event.attendeeIds.map((id) => ({ id, name: people[id], uri: peoplePhotos[id] ? imageUrl(peoplePhotos[id], 200) : undefined }));
     return (
       <Stack gap="lg">
-        <ScreenHeader
-          title="Experience Detail"
-          backLabel="Back"
-          onBack={() => setState('discovery')}
-        />
+        <ScreenHeader title="Experience Detail" backLabel="Back" onBack={() => dispatch({ type: 'back' })} />
         <ImmersiveHero
-          title="Urasenke Private Tea Masterclass"
-          subtitle="Historic 16th century sukiya tea pavilion"
-          image="https://images.unsplash.com/photo-1576092768241-dec231879fc3?auto=format&fit=crop&w=1200&q=80"
-          tag="Limited to 6 guests"
-          primaryAction={{
-            label: 'Reserve Session ($75)',
-            onPress: () => setState('booking'),
-          }}
-          metadata="Includes hand-glazed matcha bowl to keep"
+          title={event.title}
+          image={imageUrl(event.imageId, 1200)}
+          subtitle={`${event.area} · ${event.durationLabel}`}
+          tag={booking ? 'You are booked' : `Limited to ${event.capacity} guests`}
+          metadata={event.highlight}
+          primaryAction={booking ? undefined : { label: `Reserve (${formatUSDShort(event.priceCents)} per guest)`, onPress: () => dispatch({ type: 'startBooking' }) }}
         />
-
+        <Text>{event.description}</Text>
         <Surface outlined>
           <Stack gap="sm">
             <Text variant="heading">Guest Community</Text>
-            <Text muted variant="small">
-              5 confirmed cultural fellows attending this week:
-            </Text>
-            <PeopleStack people={attendees} maxVisible={4} size={42} />
+            <Text muted variant="small">{attendees.length + (booking ? booking.guests : 0)} confirmed guests, hosted by {event.host}</Text>
+            <PeopleStack people={booking ? [{ id: 'me', name: 'You' }, ...attendees] : attendees} maxVisible={4} size={42} />
           </Stack>
         </Surface>
-
+        {booking ? (
+          <Surface outlined>
+            <Stack gap="xs">
+              <Badge label="Confirmed" tone="accent" />
+              <Text>{dayLabel(booking.date)} at {slotLabel(booking.slotId)} · {booking.guests} {booking.guests === 1 ? 'guest' : 'guests'} · {formatUSD(booking.totalCents)}</Text>
+              <Text muted variant="small">Reference {booking.ref}</Text>
+            </Stack>
+          </Surface>
+        ) : null}
         <ActionDock>
-          <Button
-            label="Book Time Slot"
-            fullWidth
-            onPress={() => setState('booking')}
-          />
+          {booking ? (
+            <Button label="Cancel Reservation" variant="outline" fullWidth onPress={() => setCancelRef(booking.ref)} />
+          ) : (
+            <Button label="Book Time Slot" fullWidth onPress={() => dispatch({ type: 'startBooking' })} />
+          )}
         </ActionDock>
+        <AlertDialog
+          open={cancelRef !== null}
+          onOpenChange={(open) => { if (!open) setCancelRef(null); }}
+          title="Cancel this reservation?"
+          description="Your seats will be released to other guests. You can book again while seats remain."
+          destructive
+          confirmLabel="Cancel Reservation"
+          cancelLabel="Keep"
+          onConfirm={() => { if (cancelRef) dispatch({ type: 'cancelBooking', ref: cancelRef }); setCancelRef(null); }}
+        />
       </Stack>
     );
   }
 
-  // 3. Booking State
-  if (state === 'booking') {
+  // 3. Booking
+  if (s.screen === 'booking' && event) {
+    const days = bookingDays.map((d) => ({ ...d, isAvailable: isDayOpen(event.id, d.date) }));
+    const daySlots = slots.map((sl) => {
+      const left = seatsLeft(event.id, s.date, sl.id);
+      return { id: sl.id, time: sl.time, period: sl.period, available: left > 0, price: left > 0 ? `${left} left` : 'Full' };
+    });
+    const maxGuests = s.slotId ? Math.min(4, seatsLeft(event.id, s.date, s.slotId)) : 4;
     return (
       <Stack gap="md">
-        <ScreenHeader
-          title="Choose Date & Time"
-          backLabel="Back"
-          onBack={() => setState('detail')}
-        />
+        <ScreenHeader title="Choose Date & Time" backLabel="Back" onBack={() => dispatch({ type: 'back' })} />
         <SchedulePicker
-          days={bookingDays}
-          slots={bookingSlots}
-          selectedDate={selectedDate}
-          onSelectDate={setSelectedDate}
-          selectedSlot={selectedSlot}
-          onSelectSlot={setSelectedSlot}
+          days={days}
+          slots={daySlots}
+          selectedDate={s.date}
+          onSelectDate={(date) => dispatch({ type: 'selectDate', date })}
+          selectedSlot={s.slotId}
+          onSelectSlot={(slotId) => dispatch({ type: 'selectSlot', slotId })}
           title="Available Sessions"
-          description="Master Soshitsu personally conducts all sessions."
+          description={`${event.host} hosts every session.`}
           timeZone="JST (UTC+9)"
         />
-
+        <SegmentedControl
+          label="Guests"
+          value={String(s.guests)}
+          onValueChange={(v) => dispatch({ type: 'setGuests', guests: Number(v) })}
+          options={[1, 2, 3, 4].filter((n) => n <= maxGuests).map((n) => ({ label: `${n} ${n === 1 ? 'guest' : 'guests'}`, value: String(n) }))}
+        />
+        <Text muted variant="small">{s.slotId ? `${dayLabel(s.date)} at ${slotLabel(s.slotId)} · total ${formatUSD(totalCents(s))}` : 'Select a time to continue.'}</Text>
         <ActionDock>
-          <Button
-            label="Confirm Reservation"
-            disabled={!selectedSlot}
-            fullWidth
-            onPress={() => setDialogOpen(true)}
-          />
+          <Button label={s.slotId ? `Confirm Reservation · ${formatUSD(totalCents(s))}` : 'Select a time'} disabled={!canConfirm(s)} fullWidth onPress={() => dispatch({ type: 'requestConfirm' })} />
         </ActionDock>
-
         <Dialog
-          open={dialogOpen}
-          onOpenChange={setDialogOpen}
+          open={s.confirming}
+          onOpenChange={(open) => { if (!open) dispatch({ type: 'cancelConfirm' }); }}
           title="Complete Booking"
-          description={`Reserve Urasenke Tea Ceremony on ${selectedDate} at ${
-            bookingSlots.find((s) => s.id === selectedSlot)?.time ?? ''
-          }?`}
-          primaryAction={{
-            label: 'Confirm & Charge ($75)',
-            onPress: () => {
-              setDialogOpen(false);
-              setState('confirmed');
-            },
-          }}
-          secondaryAction={{
-            label: 'Cancel',
-            onPress: () => setDialogOpen(false),
-          }}
+          description={`Reserve ${event.title} on ${dayLabel(s.date)} at ${slotLabel(s.slotId)} for ${s.guests} ${s.guests === 1 ? 'guest' : 'guests'}?`}
+          dismissible={!s.submitting}
+          primaryAction={{ label: s.submitting ? 'Processing…' : `Confirm & Pay ${formatUSD(totalCents(s))}`, loading: s.submitting, disabled: s.submitting, onPress: () => dispatch({ type: 'submit' }) }}
+          secondaryAction={{ label: 'Cancel', onPress: () => dispatch({ type: 'cancelConfirm' }) }}
         />
       </Stack>
     );
   }
 
-  // 4. Confirmed State
+  // 4. Confirmed
+  const booking = s.bookings.find((b) => b.ref === s.lastBookingRef);
+  const booked = eventById(booking?.eventId ?? null);
   return (
     <Stack gap="lg">
       <ScreenHeader title="Booking Confirmed" />
@@ -243,23 +176,20 @@ export function EventDiscoveryScenario() {
         <Stack gap="md">
           <Badge label="Confirmed Reservation" tone="accent" />
           <Text variant="title">You're going to Kyoto!</Text>
-          <Text>
-            Your slot for{' '}
-            <Text style={{ fontWeight: '700' }}>
-              Urasenke Tea Ceremony ({selectedDate})
-            </Text>{' '}
-            has been secured. A calendar invite and pavilion access directions have
-            been dispatched.
-          </Text>
+          {booking && booked ? (
+            <Stack gap="xs">
+              <Text style={{ fontWeight: '700' }}>{booked.title}</Text>
+              <Text>{dayLabel(booking.date)} at {slotLabel(booking.slotId)} · {booking.guests} {booking.guests === 1 ? 'guest' : 'guests'}</Text>
+              <Text>Paid {formatUSD(booking.totalCents)} · Reference {booking.ref}</Text>
+            </Stack>
+          ) : null}
         </Stack>
       </Surface>
       <ActionDock>
-        <Button
-          label="Explore More Experiences"
-          variant="outline"
-          fullWidth
-          onPress={() => setState('discovery')}
-        />
+        <Stack gap="sm">
+          <Button label="View Reservation" variant="outline" fullWidth onPress={() => booking && dispatch({ type: 'open', eventId: booking.eventId })} />
+          <Button label="Explore More Experiences" variant="ghost" fullWidth onPress={() => dispatch({ type: 'restart' })} />
+        </Stack>
       </ActionDock>
     </Stack>
   );
