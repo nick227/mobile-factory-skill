@@ -18,6 +18,30 @@ export const DIMENSION_WEIGHTS = {
   scopeDiscipline: 0.10,
 };
 
+/**
+ * Detect technical jargon with exact word-boundary matching.
+ * Avoids false positives on substrings (e.g. 'AST' inside 'roast' or 'tasting', 'ORM' inside 'normal').
+ * Supports multi-word phrases like 'REST endpoint' and 'SMS gateway API'.
+ *
+ * @param {string} text
+ * @param {string[]} terms
+ * @returns {string[]} matched jargon terms
+ */
+export function detectJargon(text, terms) {
+  if (!text || !Array.isArray(terms) || terms.length === 0) return [];
+  const matches = [];
+  for (const term of terms) {
+    if (!term || typeof term !== 'string') continue;
+    const escaped = term.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    if (!escaped) continue;
+    const regex = new RegExp(`(^|\\W)${escaped}(\\W|$)`, 'i');
+    if (regex.test(text)) {
+      matches.push(term);
+    }
+  }
+  return [...new Set(matches)];
+}
+
 export class InterviewEvaluator {
   scoreSession(sessionResult) {
     const { session, invariants } = sessionResult;
@@ -146,10 +170,11 @@ export class InterviewEvaluator {
 
     // Check for technical jargon leaks in conversation
     const assistantText = transcript.filter((t) => t.role === 'assistant').map((t) => t.content).join(' ');
-    const jargonMatches = assistantText.match(/\b(SQL|SQLite|AsyncStorage|schema|AST|ORM|REST|CRUD|Flexbox)\b/gi) || [];
+    const jargonTerms = ['SQL', 'SQLite', 'AsyncStorage', 'schema', 'AST', 'ORM', 'REST', 'CRUD', 'Flexbox'];
+    const jargonMatches = detectJargon(assistantText, jargonTerms);
     if (jargonMatches.length > 0) {
       score -= 0.8;
-      findings.push(`Introduced technical implementation jargon (${[...new Set(jargonMatches)].join(', ')}).`);
+      findings.push(`Introduced technical implementation jargon (${jargonMatches.join(', ')}).`);
     }
 
     return {

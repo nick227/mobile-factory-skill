@@ -4,14 +4,18 @@
 - **Role**: Coffee Roaster & Cafe Owner
 - **Literacy**: low
 - **Style**: casual, enthusiastic, ambiguous
-- **Score**: **4.5 / 5.0**
+- **Execution Mode**: `injected-trace-audit` (Synthetic Stress Test)
+- **Score**: **4.9 / 5.0**
+
+> [!NOTE]
+> This transcript evaluates pre-constructed synthetic stress traces to verify validator and guardrail enforcement. It does not represent live unscripted agent execution.
 
 ## Dimension Scorecard
 
 | Dimension | Weight | Score |
 | :--- | :---: | :---: |
 | artDirection | 30% | **4.7** / 5.0 |
-| conversationQuality | 25% | **3.5** / 5.0 |
+| conversationQuality | 25% | **5** / 5.0 |
 | tradeOffReasoning | 20% | **5** / 5.0 |
 | evidenceFidelity | 15% | **5** / 5.0 |
 | scopeDiscipline | 10% | **5** / 5.0 |
@@ -121,7 +125,6 @@ Project brief generated and decisions saved. Here is the summary of your Coffee 
 
 - Preserved action-led visual hierarchy.
 - Maintained focused flow with an average of 1.3 questions per turn.
-- Exposed technical jargon (AST, AST) to non-technical client.
 - Reasoned through user flows with zero unhandled contradictions.
 - 100% of recorded decisions carry verbatim user source quotes. Generated comprehensive BRIEF.md and DECISIONS.md.
 - Kept v1 scope tight and aligned with user goals.

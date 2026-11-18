@@ -4,7 +4,11 @@
 - **Role**: Design Principal
 - **Literacy**: high
 - **Style**: perfectionist, decisive, undergoes complete aesthetic pivot
+- **Execution Mode**: `injected-trace-audit` (Synthetic Stress Test)
 - **Score**: **5 / 5.0**
+
+> [!NOTE]
+> This transcript evaluates pre-constructed synthetic stress traces to verify validator and guardrail enforcement. It does not represent live unscripted agent execution.
 
 ## Dimension Scorecard
 

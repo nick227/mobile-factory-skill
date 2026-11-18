@@ -4,7 +4,11 @@
 - **Role**: Master Baker & Shop Owner
 - **Literacy**: none
 - **Style**: poetic, sensory, non-technical
+- **Execution Mode**: `injected-trace-audit` (Synthetic Stress Test)
 - **Score**: **4.6 / 5.0**
+
+> [!NOTE]
+> This transcript evaluates pre-constructed synthetic stress traces to verify validator and guardrail enforcement. It does not represent live unscripted agent execution.
 
 ## Dimension Scorecard
 

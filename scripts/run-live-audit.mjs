@@ -7,7 +7,7 @@ import * as plan from '../factory-v1/planner.mjs';
 import * as orch from '../factory-v1/orchestrator.mjs';
 import { validateResponse, RESPONSE_TYPES } from '../factory-v1/response-registry.mjs';
 import { appendTranscript, applyGuardedResponse, verifyQuoteProvenance } from '../factory-v1/state-guard.mjs';
-import { DIMENSION_WEIGHTS } from '../bench/interview/evaluator.mjs';
+import { DIMENSION_WEIGHTS, detectJargon } from '../bench/interview/evaluator.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const resultsDir = path.join(root, 'bench/results');
@@ -16,12 +16,15 @@ const transcriptsDir = path.join(resultsDir, 'live-transcripts');
 fs.mkdirSync(transcriptsDir, { recursive: true });
 
 /**
- * Live agent simulation data representing authentic, unscripted LLM behavior
- * across the 8 benchmark personas when executing skill/SKILL.md.
- * Captures real-world failure modes: jargon exposure, question bunching,
- * scope expansion, aesthetic drift, missed contradictions, and schema violations.
+ * Injected synthetic simulation traces designed to stress-test the Response Registry
+ * and State Guard across all 8 benchmark personas.
+ *
+ * NOTE: These are NOT authentic outputs observed from a live AI agent execution.
+ * They are injected test scenarios with constructed failure modes (jargon exposure,
+ * question density, scope creep, aesthetic drift, and schema violations) to verify
+ * that the factory validators catch these failures at the system boundary before display or persistence.
  */
-const LIVE_SIMULATION_TRACES = {
+const INJECTED_SIMULATION_TRACES = {
   'vague-visionary': {
     turns: [
       {
@@ -576,7 +579,7 @@ export async function runAudit() {
 
     plan.initProject(projectDir, persona.title.split('(')[0].trim(), persona.mode || 'standard');
 
-    const trace = LIVE_SIMULATION_TRACES[persona.id];
+    const trace = INJECTED_SIMULATION_TRACES[persona.id];
     const transcript = [];
     const commandsExecuted = [];
     const schemaFailures = [];
@@ -626,12 +629,11 @@ export async function runAudit() {
       questionsAskedTotal += qCount;
       turnCount++;
 
-      // 4. Check Jargon violations
-      if (persona.expectations?.avoidJargon) {
-        for (const jargon of persona.expectations.avoidJargon) {
-          if (turnTrace?.agentResponse?.toLowerCase().includes(jargon.toLowerCase())) {
-            jargonViolations.push({ turn: step.turn, jargon, text: turnTrace.agentResponse });
-          }
+      // 4. Check Jargon violations with word-boundary matching
+      if (persona.expectations?.avoidJargon && turnTrace?.agentResponse) {
+        const matches = detectJargon(turnTrace.agentResponse, persona.expectations.avoidJargon);
+        for (const jargon of matches) {
+          jargonViolations.push({ turn: step.turn, jargon, text: turnTrace.agentResponse });
         }
       }
 
@@ -775,12 +777,22 @@ export async function runAudit() {
   const count = scoredResults.length;
   const avg = (fn) => Number((scoredResults.reduce((sum, r) => sum + fn(r), 0) / count).toFixed(1));
 
+  const injectedStressScore = avg((r) => r.compositeScore);
+
   const benchmarkReport = {
     generatedAt: new Date().toISOString(),
-    benchmarkType: 'Live-Agent Simulation & Quality Audit',
-    runnerMode: 'live-simulation-audit',
+    benchmarkType: 'Injected-Trace Audit & Guardrail Verification',
+    runnerMode: 'injected-trace-audit',
+    description: 'Replay of constructed synthetic stress traces through Response Registry and State Guard to verify contract enforcement against simulated failure modes. Genuine unscripted live LLM execution is pending authenticated agent session.',
     personasTested: count,
-    overallScore: avg((r) => r.compositeScore),
+    scores: {
+      liveExecutionScore: null,
+      liveExecutionStatus: 'pending_agent_authentication',
+      scriptedBaselineScore: 4.9,
+      injectedStressScore: injectedStressScore,
+    },
+    liveExecutionScore: null,
+    injectedStressScore: injectedStressScore,
     scriptedBaselineScore: 4.9,
     dimensionAverages: {
       artDirection: avg((r) => r.dimensions.artDirection),
@@ -814,7 +826,9 @@ function generatePersonaTranscriptMarkdown(persona, transcript, record) {
   md += `- **Role**: ${persona.userProfile.role}\n`;
   md += `- **Literacy**: ${persona.userProfile.technicalLiteracy}\n`;
   md += `- **Style**: ${persona.userProfile.style}\n`;
+  md += `- **Execution Mode**: \`injected-trace-audit\` (Synthetic Stress Test)\n`;
   md += `- **Score**: **${record.compositeScore} / 5.0**\n\n`;
+  md += `> [!NOTE]\n> This transcript evaluates pre-constructed synthetic stress traces to verify validator and guardrail enforcement. It does not represent live unscripted agent execution.\n\n`;
   md += `## Dimension Scorecard\n\n`;
   md += `| Dimension | Weight | Score |\n| :--- | :---: | :---: |\n`;
   for (const [dim, weight] of Object.entries(DIMENSION_WEIGHTS)) {
@@ -844,24 +858,31 @@ function generatePersonaTranscriptMarkdown(persona, transcript, record) {
 }
 
 function generateLiveBenchmarkMarkdown(report) {
-  return `# Live-Agent Interview Simulation & Quality Benchmark
+  return `# Injected-Trace Audit & Guardrail Verification (Synthetic Stress Test)
 
-> **Audit Type**: \`${report.benchmarkType}\`  
+> **Audit Mode**: \`injected-trace-audit\`  
+> **Evaluation Type**: Synthetic Stress-Test Replay (Verifying Validator & Guardrail Enforcement)  
+> **Live Agent Execution Score**: **\`null\`** *(Authentic execution pending CLI / OAuth authentication)*  
 > **Scripted Baseline**: \`${report.scriptedBaselineScore} / 5.0\`  
-> **Live Overall Score**: **${report.overallScore} / 5.0**  
+> **Injected Stress-Test Score**: **${report.injectedStressScore} / 5.0**  
 > **Personas Tested**: ${report.personasTested} (6 core benchmark + 2 unseen generalization scenarios)
+
+> [!IMPORTANT]
+> **Methodological Disclosure**:
+> The results below reflect synthetic failure traces injected into the Response Registry and State Guard to stress-test schema rejection, question limits, verbatim quote provenance, and state rollback.
+> **They do not represent observed outputs from a live agent execution.**
 
 ---
 
 ## 1. Executive Summary & Comparison
 
-| Dimension | Weight | Live Score | Scripted Baseline | Delta | Status |
-| :--- | :---: | :---: | :---: | :---: | :--- |
-| **Art-Direction Translation & Preservation** | 30% | **${report.dimensionAverages.artDirection}** / 5.0 | 4.8 / 5.0 | -0.1 | 🟢 Strong Preservation |
-| **Product Understanding & Conversation** | 25% | **${report.dimensionAverages.conversationQuality}** / 5.0 | 5.0 / 5.0 | -0.6 | 🟡 Jargon & Question Density |
-| **Trade-Off Reasoning & Contradictions** | 20% | **${report.dimensionAverages.tradeOffReasoning}** / 5.0 | 5.0 / 5.0 | 0.0 | 🟢 Pristine Conflict Detection |
-| **Documentation & Evidence Fidelity** | 15% | **${report.dimensionAverages.evidenceFidelity}** / 5.0 | 5.0 / 5.0 | 0.0 | 🟢 100% Verbatim Quote Backing |
-| **Scope Discipline** | 10% | **${report.dimensionAverages.scopeDiscipline}** / 5.0 | 5.0 / 5.0 | -0.1 | 🟡 Feature Creep Vulnerability |
+| Dimension | Weight | Injected Stress Score | Scripted Baseline | Status |
+| :--- | :---: | :---: | :---: | :--- |
+| **Art-Direction Translation & Preservation** | 30% | **${report.dimensionAverages.artDirection}** / 5.0 | 4.8 / 5.0 | 🟢 Multi-axis alignment preserved |
+| **Product Understanding & Conversation** | 25% | **${report.dimensionAverages.conversationQuality}** / 5.0 | 5.0 / 5.0 | 🟡 Injected jargon & question density flagged |
+| **Trade-Off Reasoning & Contradictions** | 20% | **${report.dimensionAverages.tradeOffReasoning}** / 5.0 | 5.0 / 5.0 | 🟢 CONFLICT envelopes handled |
+| **Documentation & Evidence Fidelity** | 15% | **${report.dimensionAverages.evidenceFidelity}** / 5.0 | 5.0 / 5.0 | 🟢 100% Verbatim Quote Provenance |
+| **Scope Discipline** | 10% | **${report.dimensionAverages.scopeDiscipline}** / 5.0 | 5.0 / 5.0 | 🟡 Injected feature creep intercepted |
 
 ---
 
@@ -884,41 +905,46 @@ ${report.results.map((r) => `| **${r.title}** | \`${r.archetype}\` | **${r.compo
 }
 
 function generateLiveFindingsMarkdown(report) {
-  return `# Live-Agent Interview Simulation: Findings & Audit Report
+  return `# Injected-Trace Audit: Guardrail Stress-Test Findings
 
-## 1. Five Most Serious Discovery-Quality Problems Identified in Live Testing
+> [!IMPORTANT]
+> **Test Scope & Provenance Disclosure**:
+> This report evaluates how the factory's Response Registry and State Guard handle **injected failure scenarios**. The traces replayed below are synthetic test cases specifically constructed to verify that invalid AI behaviors (jargon leakage, multi-barreled questioning, scope creep accommodation, paraphrased quotes, and unauthorized approvals) are intercepted and rejected at the system boundary before display or persistence.
+> **These are NOT observed outputs from a live model.** Actual live agent evaluation requires active agent CLI authentication and will be executed separately once session auth is available.
 
-1. **Premature Solutioning & Technical Jargon Exposure**
-   - *Observed*: In the Non-Technical Founder persona, the unconstrained AI opened by suggesting *"an SQLite local database schema with an asynchronous persistence layer and CRUD operations"*.
-   - *Impact*: Confuses non-technical founders, breaks psychological safety, and contradicts Focus-First Native design principles.
-   - *Implicated Rule*: \`skill/SKILL.md\` §6 and \`references/02-discovery.md\` §5 ("Speak the user's language; avoid architectural jargon before requirements are established").
+## 1. Five Injected Failure Scenarios Tested Against Guardrails
 
-2. **Question Density & Multi-Barreled Prompting**
-   - *Observed*: In the Vague Visionary persona, the agent bundled 3 distinct inquiries into turn 1 (discovery feed vs private log, roast variables, photo filters).
-   - *Impact*: Overwhelms non-technical clients and causes selective answering where crucial constraints get skipped.
-   - *Implicated Contract*: \`factory-v1/response-registry.mjs\` strictly flags question arrays $> 2$. The skill instruction must reinforce the 1–2 question hard limit.
+1. **Injected Technical Jargon in Non-Technical Context**
+   - *Injected Scenario*: In the Non-Technical Founder persona, the test trace injected: *"an SQLite local database schema with an asynchronous persistence layer and CRUD operations"*.
+   - *Guardrail Response*: Caught by the jargon detector (exact word-boundary match on \`\\bSQLite\\b\` and \`\\bCRUD\\b\`) and flagged for conversation-quality deduction.
+   - *Implicated Contract*: \`skill/SKILL.md\` §6 and \`references/02-discovery.md\` §5 ("Speak the user's language; avoid architectural jargon before requirements are established").
 
-3. **Agreeable Assistant Syndrome (Feature Creep Accommodation)**
-   - *Observed*: When the Feature Creeper requested live GPS tracking, in-app crypto tipping, video streaming, and background checks, the live model's initial impulse was to enthusiastically accommodate all four into the roadmap.
-   - *Impact*: Scope explosion and project abandonment.
-   - *Implicated Rule*: \`skill/SKILL.md\` §6 ("The decision changes scope, data ownership, accounts, money, privacy... Stop that task, ask the one question, record boundaries in product.excluded").
+2. **Injected Question Density & Multi-Barreled Interrogation**
+   - *Injected Scenario*: In the Vague Visionary persona, the test trace injected a 3-question bundle into Turn 1 (feed scope, roast variables, photo filters).
+   - *Guardrail Response*: Flagged by \`factory-v1/response-registry.mjs\` against the 1–2 question limit.
+   - *Implicated Contract*: \`QUESTION\` response envelope schema.
 
-4. **Residual Preference Bleed During Design Pivots**
-   - *Observed*: During aesthetic pivots (Changing-Mind Client), unconstrained models occasionally retain dark-mode variables or compact padding tokens in downstream facts when the user explicitly switched to spacious luxury white.
-   - *Impact*: Frankenstein UI where typography and colors contradict each other.
-   - *Implicated Engine*: \`factory-v1/planner.mjs\` invalidation rules cleanly invalidate stale design tasks, but the agent must explicitly emit a fresh \`DESIGN\` envelope clearing previous preset tokens.
+3. **Injected Scope Creep Accommodation**
+   - *Injected Scenario*: In the Feature Creeper persona, the client requested live GPS tracking, in-app crypto tipping, video streaming, and background checks.
+   - *Guardrail Response*: Tested whether the agent stops and gates scope via \`product.excluded\` or allows runaway expansion.
+   - *Implicated Rule*: \`skill/SKILL.md\` §6 (\`product.excluded\` recording).
 
-5. **Lack of Quote Provenance in Unenforced LLM Outputs**
-   - *Observed*: Without the State Guard and Response Registry, the live model regularly paraphrased user statements into pseudo-quotes rather than extracting exact verbatim substrings.
-   - *Impact*: Provenance gap where hallucinated requirements could be marked as "user confirmed".
-   - *Implicated Guard*: \`factory-v1/state-guard.mjs\` \`verifyQuoteProvenance()\` prevents manufactured evidence from contaminating \`.factory/project.json\`.
+4. **Injected Design Pivot (Residual State Invalidation)**
+   - *Injected Scenario*: In the Changing-Mind Client persona, the client pivoted mid-interview from dark minimal to bright luxury editorial.
+   - *Guardrail Response*: Tested whether \`planner.mjs\` invalidation cleanly purges subordinate design tokens without leaving contradictory residue.
+   - *Implicated Engine*: \`factory-v1/planner.mjs\` invalidation rules.
+
+5. **Injected Paraphrased / Manufactured Quote**
+   - *Injected Scenario*: Injected a \`CONFIRM\` envelope containing a paraphrased quote not present in the user transcript.
+   - *Guardrail Response*: \`factory-v1/state-guard.mjs\` \`verifyQuoteProvenance()\` rejected the quote with exact substring checking, preventing state mutation.
+   - *Implicated Guard*: \`factory-v1/state-guard.mjs\`.
 
 ---
 
 ## 2. Does the Response Registry Improve Behavior or Merely Reject Bad Output?
 
 **Dual Value Demonstrated**:
-1. **At the Boundary**: The Response Registry acts as a strict firewall. When the agent attempts to ask 3 questions or proposes a design without authentic user aesthetic evidence, the response envelope is rejected before client display or persistence.
+1. **At the Boundary**: The Response Registry acts as a strict firewall. When an injected response attempts to ask 3 questions or proposes a design without authentic user aesthetic evidence, the response envelope is rejected before client display or persistence.
 2. **Structural Guiding**: By enforcing discriminated schemas (\`QUESTION\`, \`CONFIRM\`, \`CONFLICT\`, \`DESIGN\`, \`PROGRESS\`, \`APPROVAL\`), the agent's internal reasoning is anchored to concrete state transitions rather than free-form conversational drift.
 3. **Internal vs External Separation**: Crucially, keeping the JSON envelope internal while displaying the natural language \`message\` provides the business client with calm, human conversation without leaking JSON syntax.
 

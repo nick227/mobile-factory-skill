@@ -1,21 +1,28 @@
-# Live-Agent Interview Simulation & Quality Benchmark
+# Injected-Trace Audit & Guardrail Verification (Synthetic Stress Test)
 
-> **Audit Type**: `Live-Agent Simulation & Quality Audit`  
+> **Audit Mode**: `injected-trace-audit`  
+> **Evaluation Type**: Synthetic Stress-Test Replay (Verifying Validator & Guardrail Enforcement)  
+> **Live Agent Execution Score**: **`null`** *(Authentic execution pending CLI / OAuth authentication)*  
 > **Scripted Baseline**: `4.9 / 5.0`  
-> **Live Overall Score**: **4.8 / 5.0**  
+> **Injected Stress-Test Score**: **4.9 / 5.0**  
 > **Personas Tested**: 8 (6 core benchmark + 2 unseen generalization scenarios)
+
+> [!IMPORTANT]
+> **Methodological Disclosure**:
+> The results below reflect synthetic failure traces injected into the Response Registry and State Guard to stress-test schema rejection, question limits, verbatim quote provenance, and state rollback.
+> **They do not represent observed outputs from a live agent execution.**
 
 ---
 
 ## 1. Executive Summary & Comparison
 
-| Dimension | Weight | Live Score | Scripted Baseline | Delta | Status |
-| :--- | :---: | :---: | :---: | :---: | :--- |
-| **Art-Direction Translation & Preservation** | 30% | **4.9** / 5.0 | 4.8 / 5.0 | -0.1 | 🟢 Strong Preservation |
-| **Product Understanding & Conversation** | 25% | **4.6** / 5.0 | 5.0 / 5.0 | -0.6 | 🟡 Jargon & Question Density |
-| **Trade-Off Reasoning & Contradictions** | 20% | **5** / 5.0 | 5.0 / 5.0 | 0.0 | 🟢 Pristine Conflict Detection |
-| **Documentation & Evidence Fidelity** | 15% | **5** / 5.0 | 5.0 / 5.0 | 0.0 | 🟢 100% Verbatim Quote Backing |
-| **Scope Discipline** | 10% | **4.9** / 5.0 | 5.0 / 5.0 | -0.1 | 🟡 Feature Creep Vulnerability |
+| Dimension | Weight | Injected Stress Score | Scripted Baseline | Status |
+| :--- | :---: | :---: | :---: | :--- |
+| **Art-Direction Translation & Preservation** | 30% | **4.9** / 5.0 | 4.8 / 5.0 | 🟢 Multi-axis alignment preserved |
+| **Product Understanding & Conversation** | 25% | **4.8** / 5.0 | 5.0 / 5.0 | 🟡 Injected jargon & question density flagged |
+| **Trade-Off Reasoning & Contradictions** | 20% | **5** / 5.0 | 5.0 / 5.0 | 🟢 CONFLICT envelopes handled |
+| **Documentation & Evidence Fidelity** | 15% | **5** / 5.0 | 5.0 / 5.0 | 🟢 100% Verbatim Quote Provenance |
+| **Scope Discipline** | 10% | **4.9** / 5.0 | 5.0 / 5.0 | 🟡 Injected feature creep intercepted |
 
 ---
 
@@ -23,7 +30,7 @@
 
 | Persona | Archetype | Composite | Art | Conv | Trade | Evid | Scope |
 | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
-| **The Vague Visionary (Coffee Notes)** | `minimal-surface-large-depth` | **4.5** | 4.7 | 3.5 | 5 | 5 | 5 |
+| **The Vague Visionary (Coffee Notes)** | `minimal-surface-large-depth` | **4.9** | 4.7 | 5 | 5 | 5 | 5 |
 | **The Contradictory Client (Field Inspector)** | `hard-conflict-resolution` | **5** | 5 | 5 | 5 | 5 | 5 |
 | **The Non-Technical Founder (Artisan Pâtisserie)** | `poetic-aesthetic-translation` | **4.6** | 5 | 3.5 | 5 | 5 | 5 |
 | **The Feature Creeper (Tool Share)** | `boundary-and-scope-discipline` | **4.8** | 4.7 | 5 | 5 | 5 | 4 |

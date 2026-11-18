@@ -4,7 +4,11 @@
 - **Role**: Community Organizer
 - **Literacy**: low
 - **Style**: enthusiastic, unfocused, additive
+- **Execution Mode**: `injected-trace-audit` (Synthetic Stress Test)
 - **Score**: **4.8 / 5.0**
+
+> [!NOTE]
+> This transcript evaluates pre-constructed synthetic stress traces to verify validator and guardrail enforcement. It does not represent live unscripted agent execution.
 
 ## Dimension Scorecard
 
