@@ -1,0 +1,287 @@
+{
+  "overall": 4.9,
+  "averages": {
+    "artDirection": 4.8,
+    "conversationQuality": 5,
+    "tradeOffReasoning": 5,
+    "evidenceFidelity": 5,
+    "scopeDiscipline": 5
+  },
+  "metadata": {
+    "runnerMode": "scripted-deterministic",
+    "isLiveAgent": false,
+    "model": "deterministic-engine",
+    "warning": "SCRIPTED DETERMINISTIC RUN: Replayed through real factory API without live LLM. Not a live model benchmark."
+  },
+  "results": [
+    {
+      "persona": "vague-visionary",
+      "title": "The Vague Visionary (Coffee Notes)",
+      "compositeScore": 4.8,
+      "dimensions": {
+        "artDirection": 4.5,
+        "conversationQuality": 5,
+        "tradeOffReasoning": 5,
+        "evidenceFidelity": 5,
+        "scopeDiscipline": 5
+      },
+      "findings": [
+        "Preserved action-led hierarchy.",
+        "Maintained focused flow with an average of 0.7 questions per turn.",
+        "Reasoned through user flows with zero unhandled contradictions.",
+        "100% of recorded decisions carry verbatim user source quotes (11/11). Generated comprehensive BRIEF.md and DECISIONS.md.",
+        "Kept v1 scope tight and aligned with user goals."
+      ],
+      "evidence": {
+        "artDirection": [
+          {
+            "hierarchy": "action-led"
+          }
+        ],
+        "conversation": [
+          {
+            "avgQuestionsPerTurn": 0.7,
+            "maxPerTurn": 1
+          }
+        ],
+        "tradeOffs": [],
+        "documentation": {
+          "totalQuotes": 11,
+          "validQuotes": 11,
+          "briefLength": 1395
+        },
+        "scope": {
+          "excluded": []
+        }
+      }
+    },
+    {
+      "persona": "contradictory-client",
+      "title": "The Contradictory Client (Field Inspector)",
+      "compositeScore": 5,
+      "dimensions": {
+        "artDirection": 5,
+        "conversationQuality": 5,
+        "tradeOffReasoning": 5,
+        "evidenceFidelity": 5,
+        "scopeDiscipline": 5
+      },
+      "findings": [
+        "Preserved action-led hierarchy. Matched design preset fintech-midnight. Applied dense visual pacing.",
+        "Maintained focused flow with an average of 0.7 questions per turn.",
+        "Detected conflicting constraints and guided user to a pragmatic offline-first resolution.",
+        "100% of recorded decisions carry verbatim user source quotes (8/8). Generated comprehensive BRIEF.md and DECISIONS.md.",
+        "Kept v1 scope tight and aligned with user goals."
+      ],
+      "evidence": {
+        "artDirection": [
+          {
+            "hierarchy": "action-led",
+            "preset": "fintech-midnight",
+            "pacing": "dense"
+          }
+        ],
+        "conversation": [
+          {
+            "avgQuestionsPerTurn": 0.7,
+            "maxPerTurn": 1
+          }
+        ],
+        "tradeOffs": [
+          {
+            "conflictHandled": true
+          }
+        ],
+        "documentation": {
+          "totalQuotes": 8,
+          "validQuotes": 8,
+          "briefLength": 1374
+        },
+        "scope": {
+          "excluded": []
+        }
+      }
+    },
+    {
+      "persona": "non-technical-founder",
+      "title": "The Non-Technical Founder (Artisan Pâtisserie)",
+      "compositeScore": 5,
+      "dimensions": {
+        "artDirection": 5,
+        "conversationQuality": 5,
+        "tradeOffReasoning": 5,
+        "evidenceFidelity": 5,
+        "scopeDiscipline": 5
+      },
+      "findings": [
+        "Preserved editorial hierarchy. Matched design preset wellness-botanical. Applied spacious visual pacing.",
+        "Maintained focused flow with an average of 0.3 questions per turn.",
+        "Reasoned through user flows with zero unhandled contradictions.",
+        "100% of recorded decisions carry verbatim user source quotes (12/12). Generated comprehensive BRIEF.md and DECISIONS.md.",
+        "Kept v1 scope tight and aligned with user goals."
+      ],
+      "evidence": {
+        "artDirection": [
+          {
+            "hierarchy": "editorial",
+            "preset": "wellness-botanical",
+            "pacing": "spacious",
+            "motion": "subtle"
+          }
+        ],
+        "conversation": [
+          {
+            "avgQuestionsPerTurn": 0.3,
+            "maxPerTurn": 1
+          }
+        ],
+        "tradeOffs": [],
+        "documentation": {
+          "totalQuotes": 12,
+          "validQuotes": 12,
+          "briefLength": 1309
+        },
+        "scope": {
+          "excluded": []
+        }
+      }
+    },
+    {
+      "persona": "feature-creeper",
+      "title": "The Feature Creeper (Tool Share)",
+      "compositeScore": 4.8,
+      "dimensions": {
+        "artDirection": 4.5,
+        "conversationQuality": 5,
+        "tradeOffReasoning": 5,
+        "evidenceFidelity": 5,
+        "scopeDiscipline": 5
+      },
+      "findings": [
+        "Preserved action-led hierarchy.",
+        "Maintained focused flow with an average of 0.7 questions per turn.",
+        "Reasoned through user flows with zero unhandled contradictions.",
+        "100% of recorded decisions carry verbatim user source quotes (5/5). Generated comprehensive BRIEF.md and DECISIONS.md.",
+        "Demonstrated strong scope discipline by recording out-of-scope boundaries: [live-gps-tracking, crypto-tipping, video-streaming-tutorials, background-checks]."
+      ],
+      "evidence": {
+        "artDirection": [
+          {
+            "hierarchy": "action-led"
+          }
+        ],
+        "conversation": [
+          {
+            "avgQuestionsPerTurn": 0.7,
+            "maxPerTurn": 1
+          }
+        ],
+        "tradeOffs": [],
+        "documentation": {
+          "totalQuotes": 5,
+          "validQuotes": 5,
+          "briefLength": 1186
+        },
+        "scope": {
+          "excluded": [
+            "live-gps-tracking",
+            "crypto-tipping",
+            "video-streaming-tutorials",
+            "background-checks"
+          ]
+        }
+      }
+    },
+    {
+      "persona": "changing-mind",
+      "title": "The Changing-Mind Client (Architectural Gallery)",
+      "compositeScore": 5,
+      "dimensions": {
+        "artDirection": 5,
+        "conversationQuality": 5,
+        "tradeOffReasoning": 5,
+        "evidenceFidelity": 5,
+        "scopeDiscipline": 5
+      },
+      "findings": [
+        "Preserved media-led hierarchy. Matched design preset editorial-luxury. Applied spacious visual pacing. Successfully purged stale dark-mode styling and adopted spacious luxury editorial direction.",
+        "Maintained focused flow with an average of 0.3 questions per turn.",
+        "Reasoned through user flows with zero unhandled contradictions.",
+        "100% of recorded decisions carry verbatim user source quotes (6/6). Generated comprehensive BRIEF.md and DECISIONS.md.",
+        "Kept v1 scope tight and aligned with user goals."
+      ],
+      "evidence": {
+        "artDirection": [
+          {
+            "hierarchy": "media-led",
+            "preset": "editorial-luxury",
+            "pacing": "spacious",
+            "motion": "subtle"
+          }
+        ],
+        "conversation": [
+          {
+            "avgQuestionsPerTurn": 0.3,
+            "maxPerTurn": 1
+          }
+        ],
+        "tradeOffs": [],
+        "documentation": {
+          "totalQuotes": 6,
+          "validQuotes": 6,
+          "briefLength": 1223
+        },
+        "scope": {
+          "excluded": []
+        }
+      }
+    },
+    {
+      "persona": "hidden-complexity",
+      "title": "The Business Owner With Hidden Complexity (Barber Studio)",
+      "compositeScore": 4.8,
+      "dimensions": {
+        "artDirection": 4.5,
+        "conversationQuality": 5,
+        "tradeOffReasoning": 5,
+        "evidenceFidelity": 5,
+        "scopeDiscipline": 5
+      },
+      "findings": [
+        "Preserved action-led hierarchy. Applied comfortable visual pacing.",
+        "Maintained focused flow with an average of 0.3 questions per turn.",
+        "Successfully uncovered latent operational booking constraints without overwhelming client.",
+        "100% of recorded decisions carry verbatim user source quotes (7/7). Generated comprehensive BRIEF.md and DECISIONS.md.",
+        "Kept v1 scope tight and aligned with user goals."
+      ],
+      "evidence": {
+        "artDirection": [
+          {
+            "hierarchy": "action-led",
+            "pacing": "comfortable"
+          }
+        ],
+        "conversation": [
+          {
+            "avgQuestionsPerTurn": 0.3,
+            "maxPerTurn": 1
+          }
+        ],
+        "tradeOffs": [
+          {
+            "latentNeedsCaptured": true
+          }
+        ],
+        "documentation": {
+          "totalQuotes": 7,
+          "validQuotes": 7,
+          "briefLength": 1249
+        },
+        "scope": {
+          "excluded": []
+        }
+      }
+    }
+  ],
+  "markdown": "# Interview Quality Benchmark\n\n> **Execution Mode**: `scripted-deterministic` (deterministic-engine)\n> [!NOTE]\n> SCRIPTED DETERMINISTIC RUN: Replayed through real factory API without live LLM. Not a live model benchmark.\n\n\n## Overall Score: **4.9 / 5.0**\n\n### Dimension Scorecard\n\n| Dimension | Weight | Score | Target | Rating |\n| :--- | :---: | :---: | :---: | :--- |\n| **Art-Direction Translation & Preservation** | 30% | **4.8** / 5.0 | $\\ge 4.5$ | 🟢 **Exceptional** |\n| **Product Understanding & Conversation** | 25% | **5.0** / 5.0 | $\\ge 4.0$ | 🟢 **Exceptional** |\n| **Trade-Off Reasoning & Contradictions** | 20% | **5.0** / 5.0 | $\\ge 4.0$ | 🟢 **Exceptional** |\n| **Documentation & Evidence Fidelity** | 15% | **5.0** / 5.0 | $\\ge 4.5$ | 🟢 **Exceptional** |\n| **Scope Discipline** | 10% | **5.0** / 5.0 | $\\ge 4.0$ | 🟢 **Exceptional** |\n\n---\n\n### Persona Findings & Evidence Summary\n\n#### The Vague Visionary (Coffee Notes) — **4.8 / 5.0**\n\n- **Art Direction**: 4.5/5.0\n- **Conversation**: 5.0/5.0\n- **Trade-Offs**: 5.0/5.0\n- **Evidence**: 5.0/5.0\n- **Scope**: 5.0/5.0\n\n**Evaluator Findings:**\n- Preserved action-led hierarchy.\n- Maintained focused flow with an average of 0.7 questions per turn.\n- Reasoned through user flows with zero unhandled contradictions.\n- 100% of recorded decisions carry verbatim user source quotes (11/11). Generated comprehensive BRIEF.md and DECISIONS.md.\n- Kept v1 scope tight and aligned with user goals.\n\n#### The Contradictory Client (Field Inspector) — **5.0 / 5.0**\n\n- **Art Direction**: 5.0/5.0\n- **Conversation**: 5.0/5.0\n- **Trade-Offs**: 5.0/5.0\n- **Evidence**: 5.0/5.0\n- **Scope**: 5.0/5.0\n\n**Evaluator Findings:**\n- Preserved action-led hierarchy. Matched design preset fintech-midnight. Applied dense visual pacing.\n- Maintained focused flow with an average of 0.7 questions per turn.\n- Detected conflicting constraints and guided user to a pragmatic offline-first resolution.\n- 100% of recorded decisions carry verbatim user source quotes (8/8). Generated comprehensive BRIEF.md and DECISIONS.md.\n- Kept v1 scope tight and aligned with user goals.\n\n#### The Non-Technical Founder (Artisan Pâtisserie) — **5.0 / 5.0**\n\n- **Art Direction**: 5.0/5.0\n- **Conversation**: 5.0/5.0\n- **Trade-Offs**: 5.0/5.0\n- **Evidence**: 5.0/5.0\n- **Scope**: 5.0/5.0\n\n**Evaluator Findings:**\n- Preserved editorial hierarchy. Matched design preset wellness-botanical. Applied spacious visual pacing.\n- Maintained focused flow with an average of 0.3 questions per turn.\n- Reasoned through user flows with zero unhandled contradictions.\n- 100% of recorded decisions carry verbatim user source quotes (12/12). Generated comprehensive BRIEF.md and DECISIONS.md.\n- Kept v1 scope tight and aligned with user goals.\n\n#### The Feature Creeper (Tool Share) — **4.8 / 5.0**\n\n- **Art Direction**: 4.5/5.0\n- **Conversation**: 5.0/5.0\n- **Trade-Offs**: 5.0/5.0\n- **Evidence**: 5.0/5.0\n- **Scope**: 5.0/5.0\n\n**Evaluator Findings:**\n- Preserved action-led hierarchy.\n- Maintained focused flow with an average of 0.7 questions per turn.\n- Reasoned through user flows with zero unhandled contradictions.\n- 100% of recorded decisions carry verbatim user source quotes (5/5). Generated comprehensive BRIEF.md and DECISIONS.md.\n- Demonstrated strong scope discipline by recording out-of-scope boundaries: [live-gps-tracking, crypto-tipping, video-streaming-tutorials, background-checks].\n\n#### The Changing-Mind Client (Architectural Gallery) — **5.0 / 5.0**\n\n- **Art Direction**: 5.0/5.0\n- **Conversation**: 5.0/5.0\n- **Trade-Offs**: 5.0/5.0\n- **Evidence**: 5.0/5.0\n- **Scope**: 5.0/5.0\n\n**Evaluator Findings:**\n- Preserved media-led hierarchy. Matched design preset editorial-luxury. Applied spacious visual pacing. Successfully purged stale dark-mode styling and adopted spacious luxury editorial direction.\n- Maintained focused flow with an average of 0.3 questions per turn.\n- Reasoned through user flows with zero unhandled contradictions.\n- 100% of recorded decisions carry verbatim user source quotes (6/6). Generated comprehensive BRIEF.md and DECISIONS.md.\n- Kept v1 scope tight and aligned with user goals.\n\n#### The Business Owner With Hidden Complexity (Barber Studio) — **4.8 / 5.0**\n\n- **Art Direction**: 4.5/5.0\n- **Conversation**: 5.0/5.0\n- **Trade-Offs**: 5.0/5.0\n- **Evidence**: 5.0/5.0\n- **Scope**: 5.0/5.0\n\n**Evaluator Findings:**\n- Preserved action-led hierarchy. Applied comfortable visual pacing.\n- Maintained focused flow with an average of 0.3 questions per turn.\n- Successfully uncovered latent operational booking constraints without overwhelming client.\n- 100% of recorded decisions carry verbatim user source quotes (7/7). Generated comprehensive BRIEF.md and DECISIONS.md.\n- Kept v1 scope tight and aligned with user goals.\n\n"
+}
