@@ -93,17 +93,46 @@ export type PageArchetype =
   | 'content-canvas'
   | 'system-settings';
 
+export type GlanceLayoutVariant = 'radial-hero' | 'metric-split' | 'summary-stack';
+export type ContentCanvasLayoutVariant = 'editorial-feature' | 'immersive-bleed' | 'card-canvas';
+export type BentoOverviewLayoutVariant = 'asymmetric-hero' | 'uniform-grid' | 'priority-feed';
+export type HeroDecisionLayoutVariant = 'monumental-prompt' | 'split-choice' | 'action-sheet';
+export type FocusWizardLayoutVariant = 'stage-stepper' | 'calm-single-input' | 'card-stack';
+export type SystemSettingsLayoutVariant = 'grouped-cards' | 'inset-grouped' | 'minimal-divider';
+
+export type ArchetypeLayoutVariant =
+  | GlanceLayoutVariant
+  | ContentCanvasLayoutVariant
+  | BentoOverviewLayoutVariant
+  | HeroDecisionLayoutVariant
+  | FocusWizardLayoutVariant
+  | SystemSettingsLayoutVariant;
+
+export interface PageCompositionSpec {
+  focalPoint?: 'hero' | 'telemetry' | 'action' | 'canvas' | 'balanced';
+  layoutVariant?: ArchetypeLayoutVariant | string;
+  mediaPlacement?: 'masthead' | 'inset-card' | 'ambient-background' | 'hidden';
+  actionPlacement?: 'docked-bottom' | 'inline' | 'floating-bar' | 'header';
+}
+
 export interface PageSpec {
   route: string;
   title: Template;
   subtitle?: Template;
   archetype?: PageArchetype;
+  composition?: PageCompositionSpec;
   back?: boolean;
   headerAction?: { label: string; event: EventRef };
   subject: Subject;
   primary?: { label: string; event: EventRef; tone?: 'default' | 'danger' };
   events?: Record<EventRef, Action[]>;
   empty?: { title: string; description?: string; action?: { label: string; event: EventRef } };
+}
+
+export interface ExperienceSpec {
+  hierarchy?: 'media-led' | 'typography-led' | 'data-led' | 'task-led';
+  motion?: 'subtle' | 'expressive' | 'none';
+  pacing?: 'compact' | 'relaxed' | 'monumental';
 }
 
 export interface AppDesignSpec {
@@ -116,6 +145,7 @@ export interface AppDesignSpec {
   surface?: 'flat' | 'outlined' | 'elevated';
   layout?: 'standard' | 'editorial' | 'immersive';
   media?: 'contained' | 'edge-to-edge' | 'mosaic';
+  experience?: ExperienceSpec;
 }
 
 export interface AppSpec {

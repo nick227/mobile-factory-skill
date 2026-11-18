@@ -1,0 +1,106 @@
+{
+  "name": "Flora Sanctuary",
+  "design": {
+    "preset": "wellness-botanical",
+    "palette": "emerald",
+    "radius": "curved",
+    "density": "spacious",
+    "surface": "flat",
+    "colorMode": "light",
+    "experience": {
+      "hierarchy": "media-led",
+      "motion": "subtle",
+      "pacing": "monumental"
+    }
+  },
+  "mock": { "latencyMs": 0 },
+  "data": {
+    "specimens": [
+      {
+        "id": "monstera-obliqua",
+        "name": "Monstera Obliqua",
+        "habitat": "Peruvian Amazonian Basin",
+        "rarity": "Critically Rare",
+        "light": "Dappled Canopy Shade",
+        "humidity": "85-95%",
+        "notes": "Fragile fenestrations require stable atmospheric misting and calm negative space.",
+        "mediaUrl": "https://images.unsplash.com/photo-1614594975525-e45190c55d0b?w=800"
+      },
+      {
+        "id": "anthurium-clarinervium",
+        "name": "Anthurium Clarinervium",
+        "habitat": "Chiapas Cloud Forest",
+        "rarity": "Heritage Specimen",
+        "light": "Bright Indirect",
+        "humidity": "70-80%",
+        "notes": "Velvety heart-shaped foliage characterized by luminous white venation.",
+        "mediaUrl": "https://images.unsplash.com/photo-1596547609652-9cf5d8d76921?w=800"
+      }
+    ]
+  },
+  "pages": {
+    "sanctuary": {
+      "route": "/",
+      "title": "Living Archive",
+      "subtitle": "Botanical conservation index",
+      "archetype": "bento-overview",
+      "composition": {
+        "layoutVariant": "priority-feed",
+        "focalPoint": "hero"
+      },
+      "headerAction": { "label": "Record", "event": "goLog" },
+      "subject": {
+        "kind": "collection",
+        "source": "specimens",
+        "title": "{name}",
+        "description": "{habitat} · {rarity}",
+        "media": { "field": "mediaUrl", "ratio": 1.5 },
+        "onSelect": "openSpecimen"
+      },
+      "events": {
+        "goLog": [{ "navigate": "/log" }],
+        "openSpecimen": [{ "navigate": "/specimens/[id]", "params": { "id": "{id}" } }]
+      }
+    },
+    "specimen": {
+      "route": "/specimens/[id]",
+      "title": "{name}",
+      "archetype": "content-canvas",
+      "composition": {
+        "layoutVariant": "immersive-bleed",
+        "focalPoint": "hero"
+      },
+      "subject": {
+        "kind": "detail",
+        "source": "specimens",
+        "media": { "field": "mediaUrl", "ratio": 1.6 },
+        "heading": "{name}",
+        "badge": { "label": "{rarity}", "tone": "accent" },
+        "facts": [
+          { "label": "Origin", "value": "{habitat}" },
+          { "label": "Light Envelope", "value": "{light}" },
+          { "label": "Target Humidity", "value": "{humidity}" }
+        ],
+        "body": "{notes}"
+      }
+    },
+    "log": {
+      "route": "/log",
+      "title": "Catalog Discovery",
+      "archetype": "hero-decision",
+      "composition": {
+        "layoutVariant": "action-sheet",
+        "focalPoint": "action"
+      },
+      "subject": {
+        "kind": "message",
+        "heading": "Record Rare Specimen",
+        "body": "Authenticate photographic evidence and habitat coordinates before entry into the permanent botanical sanctuary archive."
+      },
+      "primary": { "label": "Confirm Documentation", "event": "confirmLog" },
+      "events": {
+        "confirmLog": [{ "notice": "Specimen logged to sanctuary reserve", "tone": "success" }, { "back": true }]
+      }
+    }
+  }
+}

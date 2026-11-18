@@ -7,7 +7,12 @@
     "density": "comfortable",
     "typography": "default",
     "surface": "flat",
-    "colorMode": "system"
+    "colorMode": "system",
+    "experience": {
+      "hierarchy": "typography-led",
+      "motion": "subtle",
+      "pacing": "relaxed"
+    }
   },
   "mock": { "latencyMs": 400 },
   "data": {
@@ -45,6 +50,10 @@
       "route": "/items/[id]",
       "title": "{name}",
       "archetype": "content-canvas",
+      "composition": {
+        "layoutVariant": "editorial-feature",
+        "focalPoint": "canvas"
+      },
       "subject": {
         "kind": "detail",
         "source": "items",
@@ -63,12 +72,26 @@
       "events": {
         "use": [{ "update": "items", "set": { "usedUp": true } }, { "notice": "{name} marked as used up", "tone": "success" }],
         "edit": [{ "navigate": "/items/[id]/edit", "params": { "id": "{id}" } }],
-        "delete": [{ "confirm": { "title": "Delete {name}?", "description": "This removes it from your pantry.", "confirmLabel": "Delete", "destructive": true }, "then": [{ "remove": "items" }, { "back": true }] }]
+        "delete": [
+          {
+            "confirm": {
+              "title": "Delete {name}?",
+              "description": "This removes it from your pantry.",
+              "confirmLabel": "Delete",
+              "destructive": true
+            },
+            "then": [
+              { "remove": "items" },
+              { "back": true }
+            ]
+          }
+        ]
       }
     },
     "item-new": {
       "route": "/items/new",
       "title": "Add item",
+      "primary": { "label": "Save", "event": "save" },
       "subject": {
         "kind": "form",
         "source": "items",
@@ -80,12 +103,17 @@
           { "key": "notes", "label": "Notes", "type": "multiline" }
         ]
       },
-      "primary": { "label": "Save", "event": "save" },
-      "events": { "save": [{ "create": "items", "from": "form" }, { "back": true }] }
+      "events": {
+        "save": [
+          { "create": "items", "from": "form" },
+          { "back": true }
+        ]
+      }
     },
     "item-edit": {
       "route": "/items/[id]/edit",
       "title": "Edit {name}",
+      "primary": { "label": "Save changes", "event": "save" },
       "subject": {
         "kind": "form",
         "source": "items",
@@ -98,8 +126,12 @@
           { "key": "usedUp", "label": "Used up", "type": "toggle" }
         ]
       },
-      "primary": { "label": "Save changes", "event": "save" },
-      "events": { "save": [{ "update": "items", "from": "form" }, { "back": true }] }
+      "events": {
+        "save": [
+          { "update": "items", "from": "form" },
+          { "back": true }
+        ]
+      }
     }
   }
 }

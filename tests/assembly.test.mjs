@@ -21,8 +21,8 @@ function newApp() {
   return app;
 }
 
-test('the example specs (pantry, fitness, finance) are valid', () => {
-  for (const name of ['pantry', 'fitness', 'finance']) {
+test('all five flagship specs (pantry, fitness, finance, botanical, dispatch) are valid', () => {
+  for (const name of ['pantry', 'fitness', 'finance', 'botanical', 'dispatch']) {
     const file = path.join(root, `packages/assembly/examples/${name}.spec.json`);
     const s = JSON.parse(fs.readFileSync(file, 'utf8'));
     const r = asm.validateSpec(s);
@@ -52,6 +52,47 @@ test('validator reports agent mistakes with a JSON path and the fix', () => {
   assert.match(errorsOf((s) => { s.design.density = 'ultra-compact'; }), /design\.density: compact \| comfortable \| spacious/);
   assert.match(errorsOf((s) => { s.design.surface = 'glass'; }), /design\.surface: flat \| outlined \| elevated/);
   assert.match(errorsOf((s) => { s.design.shadow = 'heavy'; }), /design\.shadow: unknown key/);
+  // Experience Direction mistakes
+  assert.match(errorsOf((s) => { s.design.experience = 'tactile'; }), /design\.experience: must be an object/);
+  assert.match(errorsOf((s) => { s.design.experience = { hierarchy: 'chaotic' }; }), /design\.experience\.hierarchy: media-led \| typography-led \| data-led \| task-led/);
+  assert.match(errorsOf((s) => { s.design.experience = { motion: 'hyper' }; }), /design\.experience\.motion: subtle \| expressive \| none/);
+  assert.match(errorsOf((s) => { s.design.experience = { pacing: 'frantic' }; }), /design\.experience\.pacing: compact \| relaxed \| monumental/);
+  assert.match(errorsOf((s) => { s.design.experience = { mood: 'happy' }; }), /design\.experience\.mood: unknown key/);
+  // Page-level Composition Directives mistakes
+  assert.match(errorsOf((s) => { s.pages.pantry.composition = 'custom'; }), /pages\.pantry\.composition: must be an object/);
+  assert.match(errorsOf((s) => { s.pages.pantry.composition = { focalPoint: 'laser' }; }), /pages\.pantry\.composition\.focalPoint: hero \| telemetry \| action \| canvas \| balanced/);
+  assert.match(errorsOf((s) => { s.pages.pantry.composition = { mediaPlacement: 'everywhere' }; }), /pages\.pantry\.composition\.mediaPlacement: masthead \| inset-card \| ambient-background \| hidden/);
+  assert.match(errorsOf((s) => { s.pages.pantry.composition = { actionPlacement: 'orbit' }; }), /pages\.pantry\.composition\.actionPlacement: docked-bottom \| inline \| floating-bar \| header/);
+  assert.match(errorsOf((s) => {
+    s.pages.pantry.archetype = 'glance-dashboard';
+    s.pages.pantry.composition = { layoutVariant: 'editorial-feature' };
+  }), /pages\.pantry\.composition\.layoutVariant: variant 'editorial-feature' is unsupported for archetype 'glance-dashboard'/);
+  assert.match(errorsOf((s) => {
+    s.pages.pantry.primary = { label: 'Go', event: 'open' };
+    s.pages.pantry.headerAction = { label: 'Top', event: 'open' };
+    s.pages.pantry.composition = { actionPlacement: 'header' };
+  }), /pages\.pantry\.composition: competing primary CTA: actionPlacement is header while both primary and headerAction are defined/);
+});
+
+test('valid experience direction and page composition directives pass validation', () => {
+  const s = spec();
+  s.design.experience = {
+    hierarchy: 'media-led',
+    motion: 'subtle',
+    pacing: 'relaxed',
+  };
+  s.pages.pantry.composition = {
+    focalPoint: 'hero',
+    mediaPlacement: 'inset-card',
+    actionPlacement: 'docked-bottom',
+  };
+  s.pages.item.archetype = 'content-canvas';
+  s.pages.item.composition = {
+    focalPoint: 'canvas',
+    layoutVariant: 'editorial-feature',
+  };
+  const r = asm.validateSpec(s);
+  assert.deepEqual(r.errors, []);
 });
 
 test('emission is deterministic and maps routes to Expo Router files', () => {

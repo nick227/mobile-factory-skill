@@ -16,6 +16,7 @@
     "test:governance": "node --test tests/*.test.mjs",
     "lab:scenario": "pnpm lab",
     "test:taxonomy": "node scripts/check.mjs",
+    "design:lint": "node scripts/design-lint.mjs",
     "lab:typecheck": "pnpm --filter @factory/lab typecheck",
     "factory": "node scripts/factory.mjs",
     "test:factory-v1": "node --test tests/factory-v1.test.mjs"

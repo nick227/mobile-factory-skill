@@ -1,0 +1,136 @@
+{
+  "name": "Civic Dispatch",
+  "design": {
+    "preset": "minimal-pro",
+    "palette": "default",
+    "radius": "sharp",
+    "density": "comfortable",
+    "surface": "outlined",
+    "colorMode": "system",
+    "experience": {
+      "hierarchy": "task-led",
+      "motion": "subtle",
+      "pacing": "relaxed"
+    }
+  },
+  "mock": { "latencyMs": 0 },
+  "data": {
+    "metrics": [
+      {
+        "id": "status-today",
+        "title": "District Status",
+        "metric": "98.4%",
+        "unit": "operational",
+        "progress": 98,
+        "status": "calm",
+        "body": "All municipal service sectors operating within target dispatch thresholds",
+        "activeUnits": "14 Units",
+        "avgResponseTime": "4.2 mins"
+      }
+    ],
+    "incidents": [
+      {
+        "id": "inc-402",
+        "title": "Water Main Stabilization",
+        "sector": "Sector 4B (Maple Corridor)",
+        "priority": "Standard Priority",
+        "assigned": "Unit 09",
+        "status": "In Progress",
+        "notes": "Emergency valve bypass established. Pressure equalized across residential lines.",
+        "mediaUrl": "https://images.unsplash.com/photo-1541888946425-d0fbb186c5f7?w=800"
+      },
+      {
+        "id": "inc-403",
+        "title": "Grid Signal Inspection",
+        "sector": "Sector 1A (Central Plaza)",
+        "priority": "Resolved",
+        "assigned": "Unit 03",
+        "status": "Clear",
+        "notes": "Optical fiber telemetry reconnected and synced to city monitoring hub.",
+        "mediaUrl": "https://images.unsplash.com/photo-1508873696983-2df5293cb395?w=800"
+      }
+    ]
+  },
+  "pages": {
+    "operations": {
+      "route": "/",
+      "title": "Operations",
+      "subtitle": "Municipal Dispatch Telemetry",
+      "archetype": "glance-dashboard",
+      "composition": {
+        "layoutVariant": "summary-stack",
+        "focalPoint": "telemetry"
+      },
+      "headerAction": { "label": "Report", "event": "goReport" },
+      "subject": {
+        "kind": "detail",
+        "source": "metrics",
+        "heading": "Grid Telemetry",
+        "facts": [
+          { "label": "Active Crews", "value": "{activeUnits}" },
+          { "label": "Response Mean", "value": "{avgResponseTime}" }
+        ],
+        "body": "{body}",
+        "actions": [
+          { "label": "Sector Incident Log", "event": "goIncident" }
+        ]
+      },
+      "primary": { "label": "Deploy Municipal Alert", "event": "goReport" },
+      "events": {
+        "goReport": [{ "navigate": "/report" }],
+        "goIncident": [{ "navigate": "/incidents/[id]", "params": { "id": "inc-402" } }]
+      }
+    },
+    "incident": {
+      "route": "/incidents/[id]",
+      "title": "{title}",
+      "archetype": "content-canvas",
+      "composition": {
+        "layoutVariant": "card-canvas",
+        "focalPoint": "canvas"
+      },
+      "subject": {
+        "kind": "detail",
+        "source": "incidents",
+        "media": { "field": "mediaUrl", "ratio": 1.6 },
+        "heading": "{title}",
+        "badge": { "label": "{priority}", "tone": "accent" },
+        "facts": [
+          { "label": "Sector", "value": "{sector}" },
+          { "label": "Crew Assignment", "value": "{assigned}" },
+          { "label": "Field Status", "value": "{status}" }
+        ],
+        "body": "{notes}"
+      }
+    },
+    "report": {
+      "route": "/report",
+      "title": "File Dispatch Report",
+      "subtitle": "Municipal telemetry log",
+      "archetype": "focus-wizard",
+      "composition": {
+        "layoutVariant": "stage-stepper",
+        "focalPoint": "action"
+      },
+      "primary": { "label": "Submit Incident", "event": "submit" },
+      "subject": {
+        "kind": "form",
+        "source": "incidents",
+        "mode": "create",
+        "fields": [
+          { "key": "title", "label": "Incident Summary", "type": "text", "required": true, "placeholder": "e.g. Signal Relay Disruption" },
+          { "key": "sector", "label": "Sector Zone", "type": "text", "required": true, "placeholder": "e.g. Sector 2C" },
+          { "key": "assigned", "label": "Unit Code", "type": "text", "placeholder": "e.g. Unit 12" },
+          { "key": "notes", "label": "Field Notes", "type": "multiline", "placeholder": "Operational details..." }
+        ]
+      },
+      "events": {
+        "submit": [
+          { "create": "incidents", "from": "form" },
+          { "back": true },
+          { "notice": "Incident filed to dispatch queue", "tone": "success" }
+        ]
+      }
+    }
+  }
+}

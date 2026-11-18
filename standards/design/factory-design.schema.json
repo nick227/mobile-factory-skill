@@ -58,6 +58,28 @@
       "type": "string",
       "enum": ["light", "dark", "system"],
       "description": "Color appearance mode."
+    },
+    "experience": {
+      "type": "object",
+      "description": "Concrete art direction and interaction choreography directives.",
+      "properties": {
+        "hierarchy": {
+          "type": "string",
+          "enum": ["media-led", "typography-led", "data-led", "task-led"],
+          "description": "Primary visual prominence and section ordering."
+        },
+        "motion": {
+          "type": "string",
+          "enum": ["subtle", "expressive", "none"],
+          "description": "Motion curves, spring physics, and reduced-motion adherence."
+        },
+        "pacing": {
+          "type": "string",
+          "enum": ["compact", "relaxed", "monumental"],
+          "description": "Vertical rhythm, negative space allocation, and spacing cadence."
+        }
+      },
+      "additionalProperties": false
     }
   },
   "additionalProperties": false

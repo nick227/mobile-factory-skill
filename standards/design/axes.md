@@ -25,9 +25,19 @@ Presets provide proven starting configurations:
 5. **`editorial-luxury`**: Bold fashion/lifestyle magazine aesthetic. Crimson palette, sharp corners, editorial typography, edge-to-edge full-bleed imagery.
 6. **`playful-consumer`**: Friendly, approachable consumer experience. Amber warm palette, curved corners, comfortable density, elevated surfaces.
 
-## 3. Factory Design Artifact (`factory-design.json`)
+## 3. Experience Direction Contract (`spec.design.experience`)
 
-To configure an application, Claude or the AI agent selects an archetype and adds any specific axis overrides into a single `factory-design.json` artifact at the root of the app:
+Beyond static design tokens, applications declare an executable **Experience Direction** that governs global art direction, section ordering, and interaction physics without multiplying page archetypes:
+
+| Dimension | Registered Choices | Deterministic Rendering Behavior |
+| :--- | :--- | :--- |
+| **`hierarchy`** | `media-led`, `typography-led`, `data-led`, `task-led` | • `media-led`: Hero media anchors top at full-width/prominent ratios; narrative subordinate.<br>• `typography-led`: High-contrast display typography anchors view; media inset/contained.<br>• `data-led`: Monumental metrics and status rings lead before narrative body.<br>• `task-led`: Interactive inputs and primary action affordances take top precedence. |
+| **`motion`** | `subtle`, `expressive`, `none` | • `subtle`: Minimal displacement (4–8pt) alpha fades; strictly honors reduced-motion.<br>• `expressive`: Staggered item reveals, natural spring physics on press (`scale: 0.98`), fluid sheets.<br>• `none`: Zero transition latency, instant state swaps (low-power/accessibility). |
+| **`pacing`** | `compact`, `relaxed`, `monumental` | • `compact`: Tight vertical rhythm, high-density listing, subtle hairlines between sections.<br>• `relaxed`: Generous whitespace budgeting between cards, comfortable reading rhythm.<br>• `monumental`: Expansive negative space, single-focus hero moments, serene breathing room. |
+
+## 4. Factory Design Artifact (`factory-design.json`)
+
+To configure an application, Claude or the AI agent selects an archetype preset, sets axis overrides, and specifies the experience direction into a single `factory-design.json` artifact at the root of the app:
 
 ```json
 {
@@ -36,7 +46,12 @@ To configure an application, Claude or the AI agent selects an archetype and add
   "radius": "sharp",
   "density": "spacious",
   "media": "edge-to-edge",
-  "mode": "system"
+  "mode": "system",
+  "experience": {
+    "hierarchy": "typography-led",
+    "motion": "subtle",
+    "pacing": "relaxed"
+  }
 }
 ```
 

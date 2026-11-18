@@ -6,7 +6,12 @@
     "radius": "curved",
     "density": "spacious",
     "surface": "elevated",
-    "colorMode": "light"
+    "colorMode": "light",
+    "experience": {
+      "hierarchy": "task-led",
+      "motion": "expressive",
+      "pacing": "compact"
+    }
   },
   "mock": { "latencyMs": 0 },
   "data": {
@@ -53,6 +58,10 @@
       "title": "Today",
       "subtitle": "Daily mindful activity",
       "archetype": "glance-dashboard",
+      "composition": {
+        "layoutVariant": "radial-hero",
+        "focalPoint": "telemetry"
+      },
       "headerAction": { "label": "Workouts", "event": "goWorkouts" },
       "subject": {
         "kind": "detail",
@@ -75,6 +84,9 @@
       "title": "Workouts",
       "subtitle": "Mind & body rituals",
       "archetype": "bento-overview",
+      "composition": {
+        "layoutVariant": "uniform-grid"
+      },
       "subject": {
         "kind": "collection",
         "source": "workouts",
@@ -91,6 +103,10 @@
       "title": "Log Activity",
       "subtitle": "Record your movement",
       "archetype": "focus-wizard",
+      "composition": {
+        "layoutVariant": "stage-stepper",
+        "focalPoint": "action"
+      },
       "subject": {
         "kind": "form",
         "source": "workouts",

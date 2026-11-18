@@ -197,6 +197,252 @@ test('Archetype content-canvas renders media frame and editorial rhythm', () => 
   assert.ok(t.includes('Whole milk, opened Sunday'), 'editorial body');
 });
 
+test('Expressive Archetypes: glance-dashboard layout variants render distinct structures', () => {
+  const baseApp = instant();
+  const store = createStore(baseApp);
+  __setParams({ id: 'milk' });
+
+  // 1. metric-split variant: side-by-side metric containers
+  const splitApp: AppSpec = {
+    ...baseApp,
+    design: { ...baseApp.design, experience: { hierarchy: 'data-led', pacing: 'compact' } },
+    pages: {
+      ...baseApp.pages,
+      item: {
+        ...baseApp.pages.item,
+        archetype: 'glance-dashboard',
+        composition: { layoutVariant: 'metric-split' },
+      },
+    },
+  };
+  let splitRoot!: renderer.ReactTestRenderer;
+  act(() => { splitRoot = renderer.create(<MonadPage app={splitApp} page="item" store={store} />); });
+  const splitTexts = texts(splitRoot);
+  assert.ok(splitTexts.includes('Progress') || splitTexts.includes('Status') || splitTexts.includes('Quantity'), 'metric-split renders dual metrics/status');
+
+  // 2. summary-stack variant: stacked executive summary with progress bar
+  const stackApp: AppSpec = {
+    ...baseApp,
+    design: { ...baseApp.design, experience: { hierarchy: 'typography-led', pacing: 'relaxed' } },
+    pages: {
+      ...baseApp.pages,
+      item: {
+        ...baseApp.pages.item,
+        archetype: 'glance-dashboard',
+        composition: { layoutVariant: 'summary-stack' },
+      },
+    },
+  };
+  let stackRoot!: renderer.ReactTestRenderer;
+  act(() => { stackRoot = renderer.create(<MonadPage app={stackApp} page="item" store={store} />); });
+  const stackTexts = texts(stackRoot);
+  assert.ok(stackTexts.includes('Whole milk, opened Sunday'), 'summary-stack renders body within summary card');
+});
+
+test('Expressive Archetypes: content-canvas layout variants render distinct structures', () => {
+  const baseApp = instant();
+  const store = createStore(baseApp);
+  __setParams({ id: 'milk' });
+
+  // 1. immersive-bleed: renders ImmersiveHero
+  const bleedApp: AppSpec = {
+    ...baseApp,
+    pages: {
+      ...baseApp.pages,
+      item: {
+        ...baseApp.pages.item,
+        composition: { layoutVariant: 'immersive-bleed' },
+      },
+    },
+  };
+  let bleedRoot!: renderer.ReactTestRenderer;
+  act(() => { bleedRoot = renderer.create(<MonadPage app={bleedApp} page="item" store={store} />); });
+  assert.ok(texts(bleedRoot).includes('Milk'), 'immersive-bleed renders title');
+
+  // 2. card-canvas: renders contained showcase card
+  const cardApp: AppSpec = {
+    ...baseApp,
+    pages: {
+      ...baseApp.pages,
+      item: {
+        ...baseApp.pages.item,
+        composition: { layoutVariant: 'card-canvas' },
+      },
+    },
+  };
+  let cardRoot!: renderer.ReactTestRenderer;
+  act(() => { cardRoot = renderer.create(<MonadPage app={cardApp} page="item" store={store} />); });
+  assert.ok(texts(cardRoot).includes('Milk'), 'card-canvas renders title inside card');
+});
+
+test('Expressive Archetypes: bento-overview layout variants render distinct tile distributions', () => {
+  const baseApp = instant();
+  const store = createStore(baseApp);
+
+  // 1. asymmetric-hero: first tile is full-width (aspect: 'wide')
+  const asymApp: AppSpec = {
+    ...baseApp,
+    pages: {
+      ...baseApp.pages,
+      pantry: {
+        ...baseApp.pages.pantry,
+        archetype: 'bento-overview',
+        composition: { layoutVariant: 'asymmetric-hero' },
+      },
+    },
+  };
+  let asymRoot!: renderer.ReactTestRenderer;
+  act(() => { asymRoot = renderer.create(<MonadPage app={asymApp} page="pantry" store={store} />); });
+  const asymWideTiles = asymRoot.root.findAll((n) => n.props?.aspect === 'wide');
+  assert.equal(asymWideTiles.length, 1, 'asymmetric-hero creates exactly one wide span-2 hero tile');
+
+  // 2. uniform-grid: all tiles have aspect: 'square' and zero wide tiles
+  const uniformApp: AppSpec = {
+    ...baseApp,
+    pages: {
+      ...baseApp.pages,
+      pantry: {
+        ...baseApp.pages.pantry,
+        archetype: 'bento-overview',
+        composition: { layoutVariant: 'uniform-grid' },
+      },
+    },
+  };
+  let uniformRoot!: renderer.ReactTestRenderer;
+  act(() => { uniformRoot = renderer.create(<MonadPage app={uniformApp} page="pantry" store={store} />); });
+  const uniformWideTiles = uniformRoot.root.findAll((n) => n.props?.aspect === 'wide');
+  assert.equal(uniformWideTiles.length, 0, 'uniform-grid has zero wide tiles');
+
+  // 3. priority-feed: top item gets distinct Open Focus action card
+  const priorityApp: AppSpec = {
+    ...baseApp,
+    pages: {
+      ...baseApp.pages,
+      pantry: {
+        ...baseApp.pages.pantry,
+        archetype: 'bento-overview',
+        composition: { layoutVariant: 'priority-feed' },
+      },
+    },
+  };
+  let priorityRoot!: renderer.ReactTestRenderer;
+  act(() => { priorityRoot = renderer.create(<MonadPage app={priorityApp} page="pantry" store={store} />); });
+  assert.ok(texts(priorityRoot).includes('Open Focus'), 'priority-feed renders prominent hero action CTA');
+});
+
+test('Design Variation Test: same application generated across 3 contrasting Experience Directions produces visibly distinct structures', () => {
+  const baseApp = instant();
+  const store = createStore(baseApp);
+  __setParams({ id: 'milk' });
+
+  // Direction A: Editorial / Relaxed / Typography-led
+  const directionA: AppSpec = {
+    ...baseApp,
+    design: {
+      preset: 'kyoto-craft',
+      experience: { hierarchy: 'typography-led', motion: 'subtle', pacing: 'relaxed' },
+    },
+    pages: {
+      ...baseApp.pages,
+      pantry: {
+        ...baseApp.pages.pantry,
+        archetype: 'bento-overview',
+        composition: { layoutVariant: 'asymmetric-hero' },
+      },
+      item: {
+        ...baseApp.pages.item,
+        archetype: 'content-canvas',
+        composition: { layoutVariant: 'editorial-feature' },
+      },
+    },
+  };
+
+  // Direction B: High-Velocity / Compact / Data-led
+  const directionB: AppSpec = {
+    ...baseApp,
+    design: {
+      preset: 'fintech-midnight',
+      experience: { hierarchy: 'data-led', motion: 'expressive', pacing: 'compact' },
+    },
+    pages: {
+      ...baseApp.pages,
+      pantry: {
+        ...baseApp.pages.pantry,
+        archetype: 'bento-overview',
+        composition: { layoutVariant: 'uniform-grid' },
+      },
+      item: {
+        ...baseApp.pages.item,
+        archetype: 'glance-dashboard',
+        composition: { layoutVariant: 'metric-split' },
+      },
+    },
+  };
+
+  // Direction C: Media-Immersion / Monumental / Media-led
+  const directionC: AppSpec = {
+    ...baseApp,
+    design: {
+      preset: 'wellness-botanical',
+      experience: { hierarchy: 'media-led', motion: 'subtle', pacing: 'monumental' },
+    },
+    pages: {
+      ...baseApp.pages,
+      pantry: {
+        ...baseApp.pages.pantry,
+        archetype: 'bento-overview',
+        composition: { layoutVariant: 'priority-feed' },
+      },
+      item: {
+        ...baseApp.pages.item,
+        archetype: 'content-canvas',
+        composition: { layoutVariant: 'immersive-bleed' },
+      },
+    },
+  };
+
+  let rootA!: renderer.ReactTestRenderer;
+  let rootB!: renderer.ReactTestRenderer;
+  let rootC!: renderer.ReactTestRenderer;
+
+  act(() => {
+    rootA = renderer.create(<MonadPage app={directionA} page="item" store={store} />);
+    rootB = renderer.create(<MonadPage app={directionB} page="item" store={store} />);
+    rootC = renderer.create(<MonadPage app={directionC} page="item" store={store} />);
+  });
+
+  const jsonA = JSON.stringify(rootA.toJSON());
+  const jsonB = JSON.stringify(rootB.toJSON());
+  const jsonC = JSON.stringify(rootC.toJSON());
+
+  // Structural distinctiveness verification: tree representations must not be identical
+  assert.notEqual(jsonA, jsonB, 'Direction A and Direction B must have visibly distinct component trees');
+  assert.notEqual(jsonB, jsonC, 'Direction B and Direction C must have visibly distinct component trees');
+  assert.notEqual(jsonA, jsonC, 'Direction A and Direction C must have visibly distinct component trees');
+
+  // Verify Direction B has metric-split specific structure
+  assert.ok(texts(rootB).includes('Quantity') || texts(rootB).includes('Status'), 'Direction B features split telemetry metrics');
+
+  // Verify Bento overview distinctiveness across directions
+  let bentoA!: renderer.ReactTestRenderer;
+  let bentoB!: renderer.ReactTestRenderer;
+  let bentoC!: renderer.ReactTestRenderer;
+
+  act(() => {
+    bentoA = renderer.create(<MonadPage app={directionA} page="pantry" store={store} />);
+    bentoB = renderer.create(<MonadPage app={directionB} page="pantry" store={store} />);
+    bentoC = renderer.create(<MonadPage app={directionC} page="pantry" store={store} />);
+  });
+
+  const bentoAJson = JSON.stringify(bentoA.toJSON());
+  const bentoBJson = JSON.stringify(bentoB.toJSON());
+  const bentoCJson = JSON.stringify(bentoC.toJSON());
+
+  assert.notEqual(bentoAJson, bentoBJson, 'Bento in Direction A (asymmetric) differs from Direction B (uniform)');
+  assert.notEqual(bentoBJson, bentoCJson, 'Bento in Direction B (uniform) differs from Direction C (priority-feed)');
+  assert.ok(texts(bentoC).includes('Open Focus'), 'Direction C prioritizes action CTA in priority-feed');
+});
+
 test('AppShell initializes with multi-axis design config from app.design', () => {
   let root!: renderer.ReactTestRenderer;
   act(() => { root = renderer.create(<AppShell app={fitnessSpec} />); });

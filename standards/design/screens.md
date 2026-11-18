@@ -36,6 +36,11 @@ In `app.spec.json`, an agent simply declares:
   "route": "/today",
   "title": "Today",
   "archetype": "glance-dashboard",
+  "composition": {
+    "focalPoint": "telemetry",
+    "layoutVariant": "radial-hero",
+    "actionPlacement": "docked-bottom"
+  },
   "subject": {
     "kind": "detail",
     "source": "progress"
@@ -44,6 +49,29 @@ In `app.spec.json`, an agent simply declares:
 ```
 
 The factory assembler deterministically constructs the route, binds data actions, and applies the global design configuration with zero hand-written screen code.
+
+## Page Composition Directives (`page.composition`)
+
+Global Experience Direction establishes coherence across the application, but individual screens require specific focal points and structural arrangements.
+
+Rather than authoring arbitrary JSX or proliferating archetype variants, each Monad archetype provides **exactly three registered layout variants**, configurable alongside explicit focal point, media placement, and action placement directives:
+
+### Registered Layout Variants per Archetype
+
+| Archetype | Registered Variants | Structural Behavior |
+| :--- | :--- | :--- |
+| **`glance-dashboard`** | `radial-hero`<br>`metric-split`<br>`summary-stack` | • Monumental radial progress ring with centered hero metric and aura.<br>• Side-by-side key metrics paired with secondary trend facts.<br>• Vertically stacked summary cards highlighting operational status. |
+| **`content-canvas`** | `editorial-feature`<br>`immersive-bleed`<br>`card-canvas` | • Featured masthead media with high-contrast editorial typography.<br>• Full-bleed edge-to-edge photography with docked title overlay.<br>• Framed inset media card followed by structured fact sections. |
+| **`bento-overview`** | `asymmetric-hero`<br>`uniform-grid`<br>`priority-feed` | • 1 dominant span-2 focal card paired with 1×1 compact companions.<br>• Balanced 2-column square grid of equal-weight feature tiles.<br>• Prominent top hero banner followed by a horizontal action rail. |
+| **`hero-decision`** | `monumental-prompt`<br>`split-choice`<br>`action-sheet` | • Massive statement (36–48pt) with thumb-docked primary action.<br>• Two equal-weight visual cards representing divergent choices.<br>• Inset focal card with staged confirmation trigger. |
+| **`focus-wizard`** | `stage-stepper`<br>`calm-single-input`<br>`card-stack` | • Segmented step progress spine above active input stage.<br>• Minimalist single question with immediate auto-advance.<br>• Contained card step container with navigation controls. |
+| **`system-settings`** | `grouped-cards`<br>`inset-grouped`<br>`minimal-divider` | • Rounded elevated cards grouping related preference toggles.<br>• Native inset grouped rows with subtle dividers.<br>• Edge-to-edge listing separated by clean hairlines. |
+
+### Composition Dimensions
+
+- **`focalPoint`**: `hero` | `telemetry` | `action` | `canvas` | `balanced`
+- **`mediaPlacement`**: `masthead` | `inset-card` | `ambient-background` | `hidden`
+- **`actionPlacement`**: `docked-bottom` | `inline` | `floating-bar` | `header`
 
 ## The Dependable Fallback: HeroPrompt
 

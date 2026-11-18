@@ -6,7 +6,12 @@
     "radius": "sharp",
     "density": "compact",
     "surface": "outlined",
-    "colorMode": "dark"
+    "colorMode": "dark",
+    "experience": {
+      "hierarchy": "data-led",
+      "motion": "expressive",
+      "pacing": "compact"
+    }
   },
   "mock": { "latencyMs": 0 },
   "data": {
@@ -48,6 +53,10 @@
       "title": "Portfolio",
       "subtitle": "Apex Institutional",
       "archetype": "glance-dashboard",
+      "composition": {
+        "layoutVariant": "metric-split",
+        "focalPoint": "telemetry"
+      },
       "headerAction": { "label": "Settings", "event": "goSettings" },
       "subject": {
         "kind": "detail",
@@ -70,6 +79,10 @@
       "title": "Instant Wire",
       "subtitle": "Direct vault settlement",
       "archetype": "hero-decision",
+      "composition": {
+        "layoutVariant": "monumental-prompt",
+        "focalPoint": "action"
+      },
       "subject": {
         "kind": "message",
         "heading": "Authorize $5,000 Transfer",
@@ -84,6 +97,9 @@
       "route": "/settings",
       "title": "Security & Controls",
       "archetype": "system-settings",
+      "composition": {
+        "layoutVariant": "inset-grouped"
+      },
       "subject": {
         "kind": "settings",
         "groups": [

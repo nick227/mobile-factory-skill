@@ -7,8 +7,8 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   ActionDock, AlertDialog, Badge, Button, CalmSkeleton, ControlTile, EmptyState,
-  GlanceHero, HeroPrompt, ListItem, MediaFrame, NoticeBanner,
-  Row, ScreenHeader, SearchBar, SegmentedControl, SettingsGroup,
+  GlanceHero, HeroPrompt, ImmersiveHero, ListItem, MediaFrame, NoticeBanner,
+  ProgressBar, Row, ScreenHeader, SearchBar, SegmentedControl, SettingsGroup,
   Stack, StepProgress, Surface, Text, TextField, Toggle, useTheme,
   type GlanceStatus,
 } from '@/src/ui';
@@ -218,18 +218,26 @@ function HeroDecisionComposition({
 
 /** glance-dashboard: Metrics, progress and status indicators for high-frequency consumption */
 function GlanceDashboardComposition({
+  app,
   page,
   record,
   store,
   fire,
 }: {
+  app: AppSpec;
   page: PageSpec;
   record?: Rec;
   store: Store;
   fire: Fire;
 }) {
   const subject = page.subject;
-  const { colors } = useTheme();
+  const { colors, tokens } = useTheme();
+  const experience = app.design?.experience;
+  const composition = page.composition;
+  const variant = composition?.layoutVariant || 'radial-hero';
+  const pacing = experience?.pacing || 'relaxed';
+  const gutter = pacing === 'compact' ? 14 : pacing === 'monumental' ? 26 : GUTTER;
+  const sectionGap = pacing === 'compact' ? 12 : pacing === 'monumental' ? 24 : 16;
 
   if (subject.kind === 'detail') {
     const status = store.status(subject.source);
@@ -244,8 +252,114 @@ function GlanceDashboardComposition({
     const ringVal = subject.glance?.progressField ? Number(record[subject.glance.progressField]) : typeof record.progress === 'number' ? record.progress : typeof record.percent === 'number' ? record.percent : undefined;
     const glanceStatus = (record.status as GlanceStatus) || 'calm';
 
+    const renderMedia = (
+      subject.media ? (
+        <MediaFrame
+          ratio={composition?.mediaPlacement === 'masthead' ? 2.2 : subject.media.ratio}
+          source={record[subject.media.field] as string}
+          radius={tokens.radius.md}
+        />
+      ) : null
+    );
+
+    // VARIANT: metric-split (High-velocity telemetry with dual focal metrics)
+    if (variant === 'metric-split') {
+      const secondaryFact = remainingFacts?.[0];
+      const otherFacts = remainingFacts && remainingFacts.length > 1 ? remainingFacts.slice(1) : [];
+      return (
+        <ScrollView contentContainerStyle={{ padding: gutter, gap: sectionGap }}>
+          {composition?.mediaPlacement === 'masthead' ? renderMedia : null}
+          <View style={{ flexDirection: 'row', gap: 12 }}>
+            <Surface style={{ flex: 1, padding: 16, borderRadius: tokens.radius.md, gap: 6 }}>
+              <Text muted variant="caption">{heroLabel}</Text>
+              <Text style={{ fontSize: 28, fontWeight: '800', letterSpacing: -0.5, color: colors.text }}>
+                {heroVal}{subject.glance?.unit ? ' ' + fill(subject.glance.unit, record) : ''}
+              </Text>
+              {subject.body ? <Text muted variant="caption">{fill(subject.body, record)}</Text> : null}
+            </Surface>
+            <Surface style={{ flex: 1, padding: 16, borderRadius: tokens.radius.md, gap: 6 }}>
+              <Text muted variant="caption">{secondaryFact?.label ?? 'Status'}</Text>
+              <Text style={{ fontSize: 28, fontWeight: '800', letterSpacing: -0.5, color: colors.primary }}>
+                {secondaryFact ? fill(secondaryFact.value, record) : ringVal !== undefined ? `${ringVal}%` : glanceStatus.toUpperCase()}
+              </Text>
+              <Badge label={glanceStatus.toUpperCase()} tone={glanceStatus === 'calm' ? 'success' : glanceStatus === 'warning' ? 'warning' : 'neutral'} style={{ alignSelf: 'flex-start', marginTop: 4 }} />
+            </Surface>
+          </View>
+          {ringVal !== undefined && Number.isFinite(ringVal) ? (
+            <Surface style={{ padding: 14, borderRadius: tokens.radius.md, gap: 8 }}>
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Text muted variant="caption">Progress</Text>
+                <Text variant="caption" style={{ fontWeight: '700' }}>{ringVal}%</Text>
+              </View>
+              <ProgressBar value={ringVal} max={100} label="Progress" />
+            </Surface>
+          ) : null}
+          {composition?.mediaPlacement !== 'masthead' && composition?.mediaPlacement !== 'hidden' ? renderMedia : null}
+          {otherFacts.length > 0 ? (
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10 }}>
+              {otherFacts.map((f) => (
+                <Surface key={f.label} style={{ flexBasis: '47%', flexGrow: 1, padding: 12, borderRadius: tokens.radius.sm }}>
+                  <Text muted variant="caption">{f.label}</Text>
+                  <Text variant="heading" style={{ marginTop: 4 }}>{fill(f.value, record)}</Text>
+                </Surface>
+              ))}
+            </View>
+          ) : null}
+          {subject.actions?.length ? (
+            <Stack gap="sm">
+              {subject.actions.map((a) => <Button key={a.label} label={a.label} variant="outline" tone={a.tone ?? 'default'} onPress={() => fire(a.event, record)} />)}
+            </Stack>
+          ) : null}
+        </ScrollView>
+      );
+    }
+
+    // VARIANT: summary-stack (Structured, stacked executive cards)
+    if (variant === 'summary-stack') {
+      return (
+        <ScrollView contentContainerStyle={{ padding: gutter, gap: sectionGap }}>
+          {composition?.mediaPlacement === 'masthead' ? renderMedia : null}
+          <Surface style={{ padding: 18, borderRadius: tokens.radius.lg, gap: 12 }}>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+              <View style={{ flex: 1 }}>
+                <Text muted variant="caption">{heroLabel}</Text>
+                <Text style={{ fontSize: 32, fontWeight: '800', letterSpacing: -0.6, color: colors.text }}>
+                  {heroVal}{subject.glance?.unit ? ' ' + fill(subject.glance.unit, record) : ''}
+                </Text>
+              </View>
+              <Badge label={glanceStatus.toUpperCase()} tone={glanceStatus === 'calm' ? 'success' : glanceStatus === 'warning' ? 'warning' : 'neutral'} />
+            </View>
+            {ringVal !== undefined && Number.isFinite(ringVal) ? (
+              <ProgressBar value={ringVal} max={100} label="Completion" />
+            ) : null}
+            {subject.body ? <Text muted>{fill(subject.body, record)}</Text> : null}
+          </Surface>
+          {composition?.mediaPlacement !== 'masthead' && composition?.mediaPlacement !== 'hidden' ? renderMedia : null}
+          {remainingFacts && remainingFacts.length > 0 ? (
+            <Surface style={{ borderRadius: tokens.radius.md, overflow: 'hidden' }}>
+              {remainingFacts.map((f, i) => (
+                <View key={f.label} style={{ padding: 14, borderBottomWidth: i < remainingFacts.length - 1 ? 1 : 0, borderBottomColor: colors.border }}>
+                  <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Text muted>{f.label}</Text>
+                    <Text style={{ fontWeight: '600' }}>{fill(f.value, record)}</Text>
+                  </View>
+                </View>
+              ))}
+            </Surface>
+          ) : null}
+          {subject.actions?.length ? (
+            <Stack gap="sm">
+              {subject.actions.map((a) => <Button key={a.label} label={a.label} variant="outline" tone={a.tone ?? 'default'} onPress={() => fire(a.event, record)} />)}
+            </Stack>
+          ) : null}
+        </ScrollView>
+      );
+    }
+
+    // DEFAULT VARIANT: radial-hero (Monumental circular telemetry)
     return (
-      <ScrollView contentContainerStyle={{ padding: GUTTER, gap: 16 }}>
+      <ScrollView contentContainerStyle={{ padding: gutter, gap: sectionGap }}>
+        {experience?.hierarchy === 'media-led' || composition?.mediaPlacement === 'masthead' ? renderMedia : null}
         <GlanceHero
           value={heroVal}
           label={heroLabel}
@@ -254,11 +368,11 @@ function GlanceDashboardComposition({
           statusText={subject.body ? fill(subject.body, record) : undefined}
           radialRing={ringVal !== undefined && Number.isFinite(ringVal) ? { value: ringVal, max: 100 } : undefined}
         />
-        {subject.media ? <MediaFrame ratio={subject.media.ratio} source={record[subject.media.field] as string} radius={12} /> : null}
+        {experience?.hierarchy !== 'media-led' && composition?.mediaPlacement !== 'masthead' && composition?.mediaPlacement !== 'hidden' ? renderMedia : null}
         {remainingFacts && remainingFacts.length > 0 ? (
-          <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginTop: 8 }}>
+          <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginTop: 4 }}>
             {remainingFacts.map((f) => (
-              <Surface key={f.label} style={{ flexBasis: '47%', flexGrow: 1, padding: 12, borderRadius: 12 }}>
+              <Surface key={f.label} style={{ flexBasis: '47%', flexGrow: 1, padding: 12, borderRadius: tokens.radius.md }}>
                 <Text muted variant="caption">{f.label}</Text>
                 <Text variant="heading" style={{ marginTop: 4 }}>{fill(f.value, record)}</Text>
               </Surface>
@@ -266,7 +380,7 @@ function GlanceDashboardComposition({
           </View>
         ) : null}
         {subject.actions?.length ? (
-          <Stack gap="sm" style={{ marginTop: 8 }}>
+          <Stack gap="sm" style={{ marginTop: 4 }}>
             {subject.actions.map((a) => <Button key={a.label} label={a.label} variant="outline" tone={a.tone ?? 'default'} onPress={() => fire(a.event, record)} />)}
           </Stack>
         ) : null}
@@ -280,7 +394,7 @@ function GlanceDashboardComposition({
     if (status === 'error') return <LoadError onRetry={() => store.retry(subject.source)} />;
     return (
       <View style={{ flex: 1 }}>
-        <View style={{ paddingHorizontal: GUTTER, paddingBottom: 8 }}>
+        <View style={{ paddingHorizontal: gutter, paddingBottom: 8 }}>
           <GlanceHero
             value={rows.length}
             label={fill(page.title, undefined)}
@@ -371,18 +485,25 @@ function FocusWizardComposition({
 
 /** bento-overview: Compact overview arranged in squircle bento tiles */
 function BentoOverviewComposition({
+  app,
   page,
   record,
   store,
   fire,
 }: {
+  app: AppSpec;
   page: PageSpec;
   record?: Rec;
   store: Store;
   fire: Fire;
 }) {
   const subject = page.subject;
-  const { colors } = useTheme();
+  const { colors, tokens } = useTheme();
+  const experience = app.design?.experience;
+  const composition = page.composition;
+  const variant = composition?.layoutVariant || 'asymmetric-hero';
+  const pacing = experience?.pacing || 'relaxed';
+  const gutter = pacing === 'compact' ? 14 : pacing === 'monumental' ? 26 : GUTTER;
 
   if (subject.kind === 'collection') {
     const status = store.status(subject.source);
@@ -391,22 +512,86 @@ function BentoOverviewComposition({
     if (status !== 'ready') return <Loading rows={4} height={88} />;
     if (rows.length === 0) return <EmptyState title={page.empty?.title ?? 'No items'} description={page.empty?.description} />;
 
-    return (
-      <ScrollView contentContainerStyle={{ padding: GUTTER, paddingBottom: 32 }}>
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12 }}>
-          {rows.map((item, idx) => (
-            <View key={item.id ?? idx} style={{ width: '48%' }}>
-              <ControlTile
-                label={fill(subject.title, item)}
-                subtitle={subject.description ? fill(subject.description, item) : undefined}
-                badge={subject.badge && holds(subject.badge.when, item) ? fill(subject.badge.label, item) : undefined}
-                active={Boolean(item.active || item.selected || item.inStock)}
-                icon={<View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: colors.primary }} />}
-                aspect="square"
-                onPress={subject.onSelect ? () => fire(subject.onSelect, item) : () => {}}
-              />
+    // VARIANT: priority-feed (Featured highlight banner + companion action cards)
+    if (variant === 'priority-feed') {
+      const heroItem = rows[0];
+      const remainingItems = rows.slice(1);
+      return (
+        <ScrollView contentContainerStyle={{ padding: gutter, gap: 16, paddingBottom: 32 }}>
+          {heroItem ? (
+            <Surface style={{ borderRadius: tokens.radius.lg, overflow: 'hidden', padding: 18 }}>
+              {subject.badge && holds(subject.badge.when, heroItem) ? (
+                <Badge label={fill(subject.badge.label, heroItem)} tone={subject.badge.tone} style={{ alignSelf: 'flex-start', marginBottom: 8 }} />
+              ) : null}
+              <Text variant="title">{fill(subject.title, heroItem)}</Text>
+              {subject.description ? <Text muted style={{ marginTop: 4, marginBottom: 12 }}>{fill(subject.description, heroItem)}</Text> : null}
+              {subject.onSelect ? <Button label="Open Focus" onPress={() => fire(subject.onSelect, heroItem)} /> : null}
+            </Surface>
+          ) : null}
+          {remainingItems.length > 0 ? (
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12 }}>
+              {remainingItems.map((item, idx) => (
+                <View key={item.id ?? idx} style={{ width: '48%' }}>
+                  <ControlTile
+                    label={fill(subject.title, item)}
+                    subtitle={subject.description ? fill(subject.description, item) : undefined}
+                    badge={subject.badge && holds(subject.badge.when, item) ? fill(subject.badge.label, item) : undefined}
+                    active={Boolean(item.active || item.selected || item.inStock)}
+                    icon={<View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: colors.primary }} />}
+                    aspect="square"
+                    onPress={subject.onSelect ? () => fire(subject.onSelect, item) : () => {}}
+                  />
+                </View>
+              ))}
             </View>
-          ))}
+          ) : null}
+        </ScrollView>
+      );
+    }
+
+    // VARIANT: uniform-grid (Classic balanced 2x2 grid)
+    if (variant === 'uniform-grid') {
+      return (
+        <ScrollView contentContainerStyle={{ padding: gutter, paddingBottom: 32 }}>
+          <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12 }}>
+            {rows.map((item, idx) => (
+              <View key={item.id ?? idx} style={{ width: '48%' }}>
+                <ControlTile
+                  label={fill(subject.title, item)}
+                  subtitle={subject.description ? fill(subject.description, item) : undefined}
+                  badge={subject.badge && holds(subject.badge.when, item) ? fill(subject.badge.label, item) : undefined}
+                  active={Boolean(item.active || item.selected || item.inStock)}
+                  icon={<View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: colors.primary }} />}
+                  aspect="square"
+                  onPress={subject.onSelect ? () => fire(subject.onSelect, item) : () => {}}
+                />
+              </View>
+            ))}
+          </View>
+        </ScrollView>
+      );
+    }
+
+    // DEFAULT VARIANT: asymmetric-hero (First item is span-2 full width hero, rest are 2-column)
+    return (
+      <ScrollView contentContainerStyle={{ padding: gutter, paddingBottom: 32 }}>
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12 }}>
+          {rows.map((item, idx) => {
+            const isHero = idx === 0;
+            return (
+              <View key={item.id ?? idx} style={{ width: isHero ? '100%' : '48%' }}>
+                <ControlTile
+                  label={fill(subject.title, item)}
+                  subtitle={subject.description ? fill(subject.description, item) : undefined}
+                  badge={subject.badge && holds(subject.badge.when, item) ? fill(subject.badge.label, item) : undefined}
+                  active={Boolean(item.active || item.selected || item.inStock)}
+                  icon={<View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: colors.primary }} />}
+                  aspect={isHero ? 'wide' : 'square'}
+                  onPress={subject.onSelect ? () => fire(subject.onSelect, item) : () => {}}
+                />
+              </View>
+            );
+          })}
         </View>
       </ScrollView>
     );
@@ -419,23 +604,26 @@ function BentoOverviewComposition({
     if (!record) return <EmptyState title="Not found" description="This item no longer exists." />;
 
     return (
-      <ScrollView contentContainerStyle={{ padding: GUTTER, gap: 16 }}>
-        {subject.media ? <MediaFrame ratio={subject.media.ratio} source={record[subject.media.field] as string} radius={14} /> : null}
+      <ScrollView contentContainerStyle={{ padding: gutter, gap: 16 }}>
+        {subject.media ? <MediaFrame ratio={subject.media.ratio} source={record[subject.media.field] as string} radius={tokens.radius.md} /> : null}
         {subject.heading ? <Text variant="title">{fill(subject.heading, record)}</Text> : null}
         {subject.body ? <Text muted>{fill(subject.body, record)}</Text> : null}
         {subject.facts?.length ? (
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12, marginTop: 8 }}>
-            {subject.facts.map((f) => (
-              <View key={f.label} style={{ width: '48%' }}>
-                <ControlTile
-                  label={f.label}
-                  subtitle={fill(f.value, record)}
-                  icon={<View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: colors.primary }} />}
-                  aspect="square"
-                  onPress={() => {}}
-                />
-              </View>
-            ))}
+            {subject.facts.map((f, idx) => {
+              const isSpanHero = variant === 'asymmetric-hero' && idx === 0;
+              return (
+                <View key={f.label} style={{ width: isSpanHero ? '100%' : '48%' }}>
+                  <ControlTile
+                    label={f.label}
+                    subtitle={fill(f.value, record)}
+                    icon={<View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: colors.primary }} />}
+                    aspect={isSpanHero ? 'wide' : 'square'}
+                    onPress={() => {}}
+                  />
+                </View>
+              );
+            })}
           </View>
         ) : null}
       </ScrollView>
@@ -447,11 +635,13 @@ function BentoOverviewComposition({
 
 /** content-canvas: Media-led content presentation with high-ratio frames and editorial typography */
 function ContentCanvasComposition({
+  app,
   page,
   record,
   store,
   fire,
 }: {
+  app: AppSpec;
   page: PageSpec;
   record?: Rec;
   store: Store;
@@ -459,6 +649,12 @@ function ContentCanvasComposition({
 }) {
   const subject = page.subject;
   const { colors, tokens } = useTheme();
+  const experience = app.design?.experience;
+  const composition = page.composition;
+  const variant = composition?.layoutVariant || 'editorial-feature';
+  const pacing = experience?.pacing || 'relaxed';
+  const gutter = pacing === 'compact' ? 14 : pacing === 'monumental' ? 28 : GUTTER;
+  const sectionGap = pacing === 'compact' ? 14 : pacing === 'monumental' ? 28 : 20;
 
   if (subject.kind === 'detail') {
     const status = store.status(subject.source);
@@ -466,22 +662,117 @@ function ContentCanvasComposition({
     if (status !== 'ready') return <Loading rows={3} height={48} />;
     if (!record) return <EmptyState title="Not found" description="This item no longer exists." />;
 
-    return (
-      <ScrollView contentContainerStyle={{ padding: GUTTER, gap: 20 }}>
-        {subject.media ? (
-          <MediaFrame ratio={subject.media.ratio || 16 / 9} source={record[subject.media.field] as string} radius={tokens.radius.lg} />
-        ) : null}
-        <View style={{ gap: 8 }}>
-          {subject.badge && holds(subject.badge.when, record) ? (
-            <Badge label={fill(subject.badge.label, record)} tone={subject.badge.tone} style={{ alignSelf: 'flex-start' }} />
+    const titleText = fill(subject.heading ?? page.title, record);
+    const subtitleText = page.subtitle ? fill(page.subtitle, record) : undefined;
+    const bodyText = subject.body ? fill(subject.body, record) : undefined;
+    const mediaSource = subject.media ? (record[subject.media.field] as string) : undefined;
+
+    // VARIANT: immersive-bleed (Cinematic edge-to-edge media with overlay typography)
+    if (variant === 'immersive-bleed') {
+      return (
+        <ScrollView contentContainerStyle={{ paddingBottom: 36 }}>
+          {mediaSource ? (
+            <ImmersiveHero
+              title={titleText}
+              subtitle={subtitleText}
+              tag={subject.badge && holds(subject.badge.when, record) ? fill(subject.badge.label, record) : undefined}
+              image={mediaSource}
+              aspectRatio={16 / 10}
+              overlayOpacity={0.5}
+            />
+          ) : (
+            <View style={{ padding: gutter, paddingTop: 16 }}>
+              <Text style={{ fontSize: tokens.typography.display, fontWeight: '800', letterSpacing: -0.8, color: colors.text }}>
+                {titleText}
+              </Text>
+              {subtitleText ? <Text muted style={{ fontSize: 16, marginTop: 4 }}>{subtitleText}</Text> : null}
+            </View>
+          )}
+          <View style={{ padding: gutter, gap: sectionGap }}>
+            {bodyText ? (
+              <Text style={{ fontSize: 17, lineHeight: 28, color: colors.text }}>{bodyText}</Text>
+            ) : null}
+            {subject.facts?.length ? (
+              <Surface style={{ padding: 16, borderRadius: tokens.radius.md, gap: 12 }}>
+                {subject.facts.map((f) => (
+                  <Row key={f.label} gap="md" align="flex-start">
+                    <View style={{ width: 120 }}><Text muted>{f.label}</Text></View>
+                    <View style={{ flex: 1 }}><Text style={{ fontWeight: '600' }}>{fill(f.value, record)}</Text></View>
+                  </Row>
+                ))}
+              </Surface>
+            ) : null}
+            {subject.actions?.length ? (
+              <Stack gap="sm">
+                {subject.actions.map((a) => <Button key={a.label} label={a.label} variant="outline" tone={a.tone ?? 'default'} onPress={() => fire(a.event, record)} />)}
+              </Stack>
+            ) : null}
+          </View>
+        </ScrollView>
+      );
+    }
+
+    // VARIANT: card-canvas (Tactile contained showcase card + structured metadata)
+    if (variant === 'card-canvas') {
+      return (
+        <ScrollView contentContainerStyle={{ padding: gutter, gap: sectionGap }}>
+          <Surface style={{ borderRadius: tokens.radius.lg, overflow: 'hidden' }}>
+            {mediaSource ? (
+              <MediaFrame ratio={subject.media?.ratio || 16 / 10} source={mediaSource} />
+            ) : null}
+            <View style={{ padding: 18, gap: 8 }}>
+              {subject.badge && holds(subject.badge.when, record) ? (
+                <Badge label={fill(subject.badge.label, record)} tone={subject.badge.tone} style={{ alignSelf: 'flex-start' }} />
+              ) : null}
+              <Text variant="title">{titleText}</Text>
+              {subtitleText ? <Text muted>{subtitleText}</Text> : null}
+            </View>
+          </Surface>
+          {bodyText ? (
+            <Text style={{ fontSize: 16, lineHeight: 26, color: colors.text }}>{bodyText}</Text>
           ) : null}
-          <Text style={{ fontSize: tokens.typography.display * 0.9, fontWeight: '800', letterSpacing: -0.8, color: colors.text }}>
-            {fill(subject.heading ?? page.title, record)}
-          </Text>
-          {page.subtitle ? <Text muted style={{ fontSize: 16 }}>{fill(page.subtitle, record)}</Text> : null}
-        </View>
-        {subject.body ? (
-          <Text style={{ fontSize: 16, lineHeight: 26, color: colors.text }}>{fill(subject.body, record)}</Text>
+          {subject.facts?.length ? (
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10 }}>
+              {subject.facts.map((f) => (
+                <Surface key={f.label} style={{ flexBasis: '47%', flexGrow: 1, padding: 14, borderRadius: tokens.radius.sm }}>
+                  <Text muted variant="caption">{f.label}</Text>
+                  <Text style={{ fontWeight: '600', marginTop: 4 }}>{fill(f.value, record)}</Text>
+                </Surface>
+              ))}
+            </View>
+          ) : null}
+          {subject.actions?.length ? (
+            <Stack gap="sm">
+              {subject.actions.map((a) => <Button key={a.label} label={a.label} variant="outline" tone={a.tone ?? 'default'} onPress={() => fire(a.event, record)} />)}
+            </Stack>
+          ) : null}
+        </ScrollView>
+      );
+    }
+
+    // DEFAULT VARIANT: editorial-feature (High-contrast typography + framed media)
+    const isTypographyLed = experience?.hierarchy === 'typography-led';
+    const headerBlock = (
+      <View style={{ gap: 8 }}>
+        {subject.badge && holds(subject.badge.when, record) ? (
+          <Badge label={fill(subject.badge.label, record)} tone={subject.badge.tone} style={{ alignSelf: 'flex-start' }} />
+        ) : null}
+        <Text style={{ fontSize: tokens.typography.display * 0.9, fontWeight: '800', letterSpacing: -0.8, color: colors.text }}>
+          {titleText}
+        </Text>
+        {subtitleText ? <Text muted style={{ fontSize: 16 }}>{subtitleText}</Text> : null}
+      </View>
+    );
+
+    return (
+      <ScrollView contentContainerStyle={{ padding: gutter, gap: sectionGap }}>
+        {isTypographyLed ? headerBlock : null}
+        {mediaSource ? (
+          <MediaFrame ratio={subject.media?.ratio || 16 / 9} source={mediaSource} radius={tokens.radius.lg} />
+        ) : null}
+        {!isTypographyLed ? headerBlock : null}
+        {bodyText ? (
+          <Text style={{ fontSize: 16, lineHeight: 26, color: colors.text }}>{bodyText}</Text>
         ) : null}
         {subject.facts?.length ? (
           <Surface style={{ padding: 16, borderRadius: tokens.radius.md, gap: 12 }}>
@@ -513,7 +804,7 @@ function ContentCanvasComposition({
       <FlatList
         data={rows}
         keyExtractor={(r) => r.id}
-        contentContainerStyle={{ padding: GUTTER, gap: 16 }}
+        contentContainerStyle={{ padding: gutter, gap: 16 }}
         renderItem={({ item }) => (
           <Surface style={{ borderRadius: tokens.radius.lg, overflow: 'hidden', paddingBottom: 16 }}>
             {subject.media ? <MediaFrame ratio={subject.media.ratio || 16 / 9} source={item[subject.media.field] as string} /> : null}
@@ -605,7 +896,7 @@ export function MonadPage({ app, page: pageId, store: rawStore, customComponents
     body = <HeroDecisionComposition page={page} record={record} fire={fire} deps={deps} />;
     hasHandledPrimary = true;
   } else if (archetype === 'glance-dashboard') {
-    body = <GlanceDashboardComposition page={page} record={record} store={store} fire={fire} />;
+    body = <GlanceDashboardComposition app={app} page={page} record={record} store={store} fire={fire} />;
   } else if (archetype === 'focus-wizard' && isForm) {
     body = (
       <FocusWizardComposition
@@ -619,9 +910,9 @@ export function MonadPage({ app, page: pageId, store: rawStore, customComponents
     );
     hasHandledPrimary = true;
   } else if (archetype === 'bento-overview') {
-    body = <BentoOverviewComposition page={page} record={record} store={store} fire={fire} />;
+    body = <BentoOverviewComposition app={app} page={page} record={record} store={store} fire={fire} />;
   } else if (archetype === 'content-canvas') {
-    body = <ContentCanvasComposition page={page} record={record} store={store} fire={fire} />;
+    body = <ContentCanvasComposition app={app} page={page} record={record} store={store} fire={fire} />;
   } else if (archetype === 'system-settings' || subject.kind === 'settings') {
     body = <SettingsView subject={subject as SettingsSubject} store={store} fire={fire} />;
   } else if (subject.kind === 'custom') {

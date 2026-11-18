@@ -20,7 +20,7 @@ const KIND_KEYS = {
   message: ['kind', 'heading', 'body'],
   custom: ['kind', 'source', 'component', 'props'],
 };
-const PAGE_KEYS = ['route', 'title', 'subtitle', 'archetype', 'back', 'headerAction', 'subject', 'primary', 'events', 'empty'];
+const PAGE_KEYS = ['route', 'title', 'subtitle', 'archetype', 'composition', 'back', 'headerAction', 'subject', 'primary', 'events', 'empty'];
 const APP_KEYS = ['$schema', 'name', 'blueprintRevision', 'blueprintHash', 'design', 'mock', 'data', 'settings', 'pages'];
 const FIELD_KEYS = ['key', 'label', 'type', 'required', 'min', 'max', 'placeholder', 'hint', 'default'];
 const FIELD_TYPES = ['text', 'multiline', 'number', 'date', 'email', 'toggle'];
@@ -44,6 +44,29 @@ export const ARCHETYPE_COMPAT = {
   'bento-overview': ['collection', 'detail'],
   'content-canvas': ['detail', 'collection'],
   'system-settings': ['settings'],
+};
+
+export const EXPERIENCE_AXES = {
+  hierarchy: ['media-led', 'typography-led', 'data-led', 'task-led'],
+  motion: ['subtle', 'expressive', 'none'],
+  pacing: ['compact', 'relaxed', 'monumental'],
+};
+
+export const COMPOSITION_KEYS = ['focalPoint', 'layoutVariant', 'mediaPlacement', 'actionPlacement'];
+
+export const COMPOSITION_OPTIONS = {
+  focalPoint: ['hero', 'telemetry', 'action', 'canvas', 'balanced'],
+  mediaPlacement: ['masthead', 'inset-card', 'ambient-background', 'hidden'],
+  actionPlacement: ['docked-bottom', 'inline', 'floating-bar', 'header'],
+};
+
+export const ARCHETYPE_VARIANTS = {
+  'glance-dashboard': ['radial-hero', 'metric-split', 'summary-stack'],
+  'content-canvas': ['editorial-feature', 'immersive-bleed', 'card-canvas'],
+  'bento-overview': ['asymmetric-hero', 'uniform-grid', 'priority-feed'],
+  'hero-decision': ['monumental-prompt', 'split-choice', 'action-sheet'],
+  'focus-wizard': ['stage-stepper', 'calm-single-input', 'card-stack'],
+  'system-settings': ['grouped-cards', 'inset-grouped', 'minimal-divider'],
 };
 
 const DESIGN_AXES = {
@@ -71,10 +94,22 @@ export function validateSpec(spec, { project = null } = {}) {
   unknownKeys(spec, APP_KEYS, '$');
   if (!spec.name || typeof spec.name !== 'string') err('$.name', 'required string');
   if (spec.design !== undefined) {
-    unknownKeys(spec.design, Object.keys(DESIGN_AXES), '$.design');
+    unknownKeys(spec.design, [...Object.keys(DESIGN_AXES), 'experience'], '$.design');
     for (const [axis, allowed] of Object.entries(DESIGN_AXES)) {
       if (spec.design[axis] !== undefined && !allowed.includes(spec.design[axis])) {
         err(`$.design.${axis}`, allowed.join(' | '));
+      }
+    }
+    if (spec.design.experience !== undefined) {
+      if (!isObj(spec.design.experience)) {
+        err('$.design.experience', 'must be an object');
+      } else {
+        unknownKeys(spec.design.experience, Object.keys(EXPERIENCE_AXES), '$.design.experience');
+        for (const [axis, allowed] of Object.entries(EXPERIENCE_AXES)) {
+          if (spec.design.experience[axis] !== undefined && !allowed.includes(spec.design.experience[axis])) {
+            err(`$.design.experience.${axis}`, allowed.join(' | '));
+          }
+        }
       }
     }
   }
@@ -145,6 +180,33 @@ export function validateSpec(spec, { project = null } = {}) {
         const compat = ARCHETYPE_COMPAT[page.archetype];
         if (!compat.includes(s.kind)) {
           err(`${p}.archetype`, `archetype '${page.archetype}' is incompatible with subject kind '${s.kind}' (compatible: ${compat.join(', ')})`);
+        }
+      }
+    }
+    if (page.composition !== undefined) {
+      const compPath = `${p}.composition`;
+      if (!isObj(page.composition)) {
+        err(compPath, 'must be an object');
+      } else {
+        unknownKeys(page.composition, COMPOSITION_KEYS, compPath);
+        for (const [opt, allowed] of Object.entries(COMPOSITION_OPTIONS)) {
+          if (page.composition[opt] !== undefined && !allowed.includes(page.composition[opt])) {
+            err(`${compPath}.${opt}`, allowed.join(' | '));
+          }
+        }
+        if (page.composition.layoutVariant !== undefined) {
+          const variant = page.composition.layoutVariant;
+          if (page.archetype && ARCHETYPE_VARIANTS[page.archetype]) {
+            const allowedVariants = ARCHETYPE_VARIANTS[page.archetype];
+            if (!allowedVariants.includes(variant)) {
+              err(`${compPath}.layoutVariant`, `variant '${variant}' is unsupported for archetype '${page.archetype}' (supported: ${allowedVariants.join(', ')})`);
+            }
+          } else if (!page.archetype) {
+            warnings.push(`${compPath}.layoutVariant: layoutVariant declared without an explicit page archetype`);
+          }
+        }
+        if (page.composition.actionPlacement === 'header' && page.headerAction && page.primary) {
+          err(compPath, 'competing primary CTA: actionPlacement is header while both primary and headerAction are defined');
         }
       }
     }
