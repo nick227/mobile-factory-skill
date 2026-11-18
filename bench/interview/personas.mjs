@@ -110,6 +110,10 @@ export const PERSONAS = [
         turn: 3,
         userMessage: 'That captures our kitchen perfectly. Please document this and show me the plan.',
       },
+      {
+        turn: 4,
+        userMessage: 'The botanical field journal plan and screens look wonderful. I approve this blueprint—go ahead and build our bakery app.',
+      },
     ],
     expectedArtDirection: {
       hierarchy: 'editorial',

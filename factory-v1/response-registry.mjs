@@ -167,10 +167,31 @@ function validatePayload(type, payload, evidence, errors) {
     }
 
     case 'DESIGN': {
-      checkUnknown(['direction', 'rationale', 'visualChoices', 'previewReference']);
+      checkUnknown(['direction', 'rationale', 'visualChoices', 'previewReference', 'blueprint']);
       if (!isNonEmptyStr(payload.direction)) errors.push('$.payload.direction: non-empty string required');
       if (!isNonEmptyStr(payload.rationale)) errors.push('$.payload.rationale: non-empty string required');
       if (!isNonEmptyStr(payload.previewReference)) errors.push('$.payload.previewReference: non-empty string required');
+
+      if (payload.blueprint !== undefined) {
+        if (!isObj(payload.blueprint)) {
+          errors.push('$.payload.blueprint: object required');
+        } else {
+          for (const k of Object.keys(payload.blueprint)) {
+            if (!['classification', 'objects', 'functionality', 'pages', 'composition', 'content'].includes(k)) {
+              errors.push(`$.payload.blueprint.${k}: unknown key`);
+            }
+          }
+          if (payload.blueprint.classification !== undefined && !isObj(payload.blueprint.classification)) {
+            errors.push('$.payload.blueprint.classification: object required');
+          }
+          if (payload.blueprint.objects !== undefined && !Array.isArray(payload.blueprint.objects)) {
+            errors.push('$.payload.blueprint.objects: array of object IDs required');
+          }
+          if (payload.blueprint.pages !== undefined && !Array.isArray(payload.blueprint.pages)) {
+            errors.push('$.payload.blueprint.pages: array of page pattern IDs required');
+          }
+        }
+      }
 
       if (!isObj(payload.visualChoices)) {
         errors.push('$.payload.visualChoices: object required');
@@ -243,7 +264,7 @@ function validatePayload(type, payload, evidence, errors) {
     }
 
     case 'APPROVAL': {
-      checkUnknown(['blueprintHash', 'revision', 'summary', 'approvalGate']);
+      checkUnknown(['blueprintHash', 'revision', 'summary', 'approvalGate', 'blueprint']);
       if (!isNonEmptyStr(payload.blueprintHash)) errors.push('$.payload.blueprintHash: non-empty string required');
       if (typeof payload.revision !== 'number' || payload.revision < 1 || !Number.isInteger(payload.revision)) {
         errors.push('$.payload.revision: positive integer required');

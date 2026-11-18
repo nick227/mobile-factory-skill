@@ -40,13 +40,16 @@ async function main() {
       }
     }
 
+    console.log(`\n=== Runner Metadata ===`);
+    console.log(JSON.stringify(result.metadata, null, 2));
+
     console.log(`\n=== Persisted Factory Decisions (.factory/project.json) ===`);
     console.log(JSON.stringify(result.projectState?.project?.classification || result.projectState?.batches?.selections?.classification || {}, null, 2));
 
-    if (result.commandsExecuted?.length) {
-      console.log(`\n=== Factory CLI Operations Executed ===`);
-      for (const cmd of result.commandsExecuted) {
-        console.log(`  > ${cmd}`);
+    if (result.apiOperations?.length) {
+      console.log(`\n=== Factory API Operations Executed ===`);
+      for (const op of result.apiOperations) {
+        console.log(`  > ${op.operation}${op.stage ? ' [' + op.stage + ']' : ''} ${JSON.stringify(op.value || op.keys || op.quote || '')}`);
       }
     }
 
@@ -59,6 +62,7 @@ async function main() {
       console.log(`  - src/factory/app.ts: ${result.generated.files.appTsExists ? 'EXISTS' : 'MISSING'}`);
       console.log(`  - src/assembly/MonadPage.tsx: ${result.generated.files.monadPageExists ? 'EXISTS' : 'MISSING'}`);
       console.log(`Preserved Visual Tokens:`, result.generated.verifiedVisuals);
+      console.log(`Visual Verification (Rule 7):`, result.generated.visualVerification);
     }
 
     // Save single live interview record to bench/results/single-live-audit.json

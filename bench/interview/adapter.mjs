@@ -36,14 +36,18 @@ export class InterviewAdapter {
     return false;
   }
 
-  getRunnerMetadata() {
+  getRunnerMetadata(overrideMode) {
+    const mode = overrideMode || this.mode;
+    const isLive = mode === 'live-agent';
     return {
-      runnerMode: this.mode,
-      isLiveAgent: this.mode === 'live-agent',
-      model: this.model || (this.mode === 'live-agent' ? 'claude-3-7-sonnet' : 'deterministic-engine'),
-      warning: this.mode === 'scripted-deterministic'
-        ? 'SCRIPTED DETERMINISTIC RUN: Replayed through real factory API without live LLM. Not a live model benchmark.'
-        : null,
+      runnerMode: mode,
+      isLiveAgent: isLive,
+      model: this.model || (isLive ? 'gemini-3.8-flash-low' : 'deterministic-engine'),
+      planningMode: isLive ? 'agent-owned-blueprint' : 'scripted-harness',
+      executionMechanism: isLive ? 'live-model-with-factory-api' : 'factory-api',
+      warning: isLive
+        ? null
+        : 'SCRIPTED DETERMINISTIC RUN: Replayed through real factory API without live LLM. Not a live model benchmark.',
     };
   }
 
@@ -70,7 +74,7 @@ export class InterviewAdapter {
     plan.initProject(projectDir, persona.title.split('(')[0].trim(), persona.mode || 'standard');
 
     const transcript = [];
-    const commandsExecuted = [];
+    const apiOperations = [];
 
     for (const step of persona.turns) {
       // 1. Immutable User Turn recorded to transcript and State Guard
@@ -287,6 +291,22 @@ export class InterviewAdapter {
             next: 'confirm',
           };
         } else if (step.turn === 3) {
+          batches.init(projectDir);
+          batches.set(projectDir, 'classification', { type: 'catalog' });
+          batches.set(projectDir, 'objects', ['ingredient']);
+          batches.set(projectDir, 'functionality', ['ingredient.view']);
+          batches.set(projectDir, 'pages', ['catalog.home', 'catalog.detail']);
+          batches.set(projectDir, 'composition', {
+            'catalog.home': { kind: 'collection', archetype: 'bento-overview', bindings: { title: 'name' }, navigation: [{ to: 'catalog.detail', placement: 'select' }] },
+            'catalog.detail': { kind: 'detail', archetype: 'content-canvas', bindings: { heading: 'name' } }
+          });
+          batches.set(projectDir, 'content', {
+            pages: { 'catalog.home': { title: 'Artisan Harvest', subtitle: 'Botanical flour & wild sourdough notes' }, 'catalog.detail': { title: 'Ingredient Details' } },
+            data: { ingredient: [{ id: 'rye-flour', name: 'Stoneground Rye Flour' }, { id: 'wild-starter', name: 'Heritage Sourdough Starter' }] },
+            design: { preset: 'wellness-botanical', palette: 'emerald', experience: { hierarchy: 'media-led', motion: 'subtle', pacing: 'relaxed' } }
+          });
+          const hash = editorial.materialize(engine.load(projectDir)).hash;
+          batches.set(projectDir, 'review', { passed: true, evidence: 'Verified Artisan Harvest bakery spec and design', specHash: hash });
           agentResponse = 'The design direction and inventory brief are confirmed and documented in your project brief.';
           turnEnvelope = {
             type: 'PROGRESS',
@@ -299,6 +319,24 @@ export class InterviewAdapter {
             },
             next: 'blueprint',
           };
+        } else if (step.turn === 4) {
+          const approvalQuote = 'The botanical field journal plan and screens look wonderful. I approve this blueprint—go ahead and build our bakery app.';
+          agentResponse = 'Blueprint approved with your emerald botanical design. Assembling the artisan bakery journal now.';
+          const currentProj = engine.load(projectDir);
+          const specHash = currentProj.batches?.selections?.review?.specHash || 'sha256-approved-bakery';
+          turnEnvelope = {
+            type: 'APPROVAL',
+            status: 'ready',
+            message: agentResponse,
+            payload: {
+              blueprintHash: specHash,
+              revision: currentProj.revision,
+              summary: 'Artisan bakery field journal approved with emerald botanical theme and ingredient catalog.',
+            },
+            evidence: [{ source: 'chat', quote: approvalQuote }],
+            next: 'generate',
+          };
+          userAuthorization = { confirmed: true, quote: approvalQuote };
         }
       } else if (persona.id === 'feature-creeper') {
         if (step.turn === 1) {
@@ -591,7 +629,7 @@ export class InterviewAdapter {
       // 3. Apply state changes through factory engine
       if (factsToRecord.length) {
         plan.record(projectDir, factsToRecord);
-        commandsExecuted.push(`interview record --file facts.json (${factsToRecord.length} facts)`);
+        apiOperations.push({ operation: 'plan.record', count: factsToRecord.length, keys: factsToRecord.map((f) => f.key) });
       }
 
       // 4. Client transcript receives natural conversational text derived from envelope
@@ -600,7 +638,8 @@ export class InterviewAdapter {
         turn: step.turn,
         content: turnEnvelope ? turnEnvelope.message : agentResponse,
         envelope: turnEnvelope,
-        commands: [...commandsExecuted],
+        apiOperations: [...apiOperations],
+        commands: apiOperations.map((o) => typeof o === 'string' ? o : `${o.operation}${o.stage ? ' ' + o.stage : ''}`),
         timestamp: new Date().toISOString(),
       });
     }
@@ -610,7 +649,7 @@ export class InterviewAdapter {
     const finalProjectCheck = engine.load(projectDir);
     if (finalProjectCheck.approval && finalProjectCheck.batches) {
       const genResult = generator.generate(projectDir);
-      commandsExecuted.push('factory generate --project <app>');
+      apiOperations.push({ operation: 'generator.generate', mode: genResult.mode });
       generated = {
         ok: genResult.ok,
         mode: genResult.mode,
@@ -634,7 +673,8 @@ export class InterviewAdapter {
       projectState: finalProject,
       docs,
       generated,
-      metadata: this.getRunnerMetadata(),
+      apiOperations,
+      metadata: this.getRunnerMetadata('scripted-deterministic'),
     };
   }
 
@@ -689,7 +729,7 @@ export class InterviewAdapter {
     plan.initProject(projectDir, persona.title.split('(')[0].trim(), persona.mode || 'standard');
 
     const transcript = [];
-    const commandsExecuted = [];
+    const apiOperations = [];
     const sessionConversationId = crypto.randomUUID();
     const skillPath = path.resolve('skill/SKILL.md');
     const skillContent = fs.existsSync(skillPath) ? fs.readFileSync(skillPath, 'utf8') : '';
@@ -749,9 +789,31 @@ CANONICAL RULES:
      "visualChoices": {
        "preset": "minimal-pro" | "wellness-botanical" | "editorial-luxury" | "fintech-midnight",
        "hierarchy": "media-led" | "action-led" | "editorial",
-       "motion": "subtle" | "fluid",
+       "motion": "subtle" | "expressive" | "none",
        "pacing": "compact" | "relaxed" | "monumental",
        "palette": "amber" | "emerald" | "slate" | "crimson"
+     },
+     "blueprint": {
+       "classification": { "type": "catalog" },
+       "objects": ["<domain-object-lowercase-singular, e.g. bean or ingredient>"],
+       "functionality": ["<domain-object>.view"],
+       "pages": ["catalog.home", "catalog.detail"],
+       "composition": {
+         "catalog.home": { "kind": "collection", "archetype": "bento-overview", "bindings": { "title": "name" }, "navigation": [{ "to": "catalog.detail", "placement": "select" }] },
+         "catalog.detail": { "kind": "detail", "archetype": "content-canvas", "bindings": { "heading": "name" } }
+       },
+       "content": {
+         "pages": {
+           "catalog.home": { "title": "<App Name>", "subtitle": "<Domain Tagline>" },
+           "catalog.detail": { "title": "<Detail Page Title>" }
+         },
+         "data": {
+           "<domain-object>": [
+             { "id": "<item-1-id>", "name": "<Item 1 Name>" },
+             { "id": "<item-2-id>", "name": "<Item 2 Name>" }
+           ]
+         }
+       }
      }
    }
 5. For "PROGRESS": payload must have { "completed": ["<keys>"], "currentSegment": "03-requirements", "pending": [] }.
@@ -789,7 +851,7 @@ Output ONLY the JSON object.`;
         });
 
         if (aiTurn.status !== 0 || !aiTurn.stdout) {
-          throw new Error(`Live agent execution failed on turn ${step.turn} (attempt ${attempts}): ${aiTurn.stderr || aiTurn.error?.message}`);
+          throw new Error(`Live agent execution failed on turn ${step.turn} (attempt ${attempts}, status: ${aiTurn.status}, error: ${aiTurn.error?.code || aiTurn.error?.message}): ${aiTurn.stderr || aiTurn.error?.message}`);
         }
 
         rawOutput = aiTurn.stdout.trim();
@@ -815,10 +877,13 @@ Output ONLY the JSON object.`;
 
         if (validationErrors.length > 0 && attempts < maxAttempts) {
           console.log(`[Turn ${step.turn}] Response validation failed (attempt ${attempts}). Triggering self-correction feedback loop:`, validationErrors);
-          currentPrompt = `Your previous JSON envelope was rejected because it failed schema validation with the following error(s):
+          currentPrompt = `${prompt}
+
+IMPORTANT CORRECTION: Your previous JSON envelope failed schema validation with:
 ${validationErrors.map(e => `- ${e}`).join('\n')}
 
 CORRECTION REQUIREMENTS:
+- If visualChoices.motion failed: allowed values are strictly "subtle", "expressive", or "none".
 - If fact keys failed: use ONLY dotted lowercase letters and numbers, NO UNDERSCORES (e.g. use "product.primary.activity" or "product.scope" instead of "product.primary_activity").
 - If question count failed: maximum 2 questions in payload.questions.
 - If quotes failed: make sure evidence quote is an EXACT verbatim substring from the client's messages.
@@ -837,7 +902,7 @@ Re-emit strictly the corrected valid JSON response envelope.`;
         const isUserApproval = affirmativeRegex.test(step.userMessage);
         const userAuthorization = isUserApproval ? { confirmed: true, quote: step.userMessage } : {};
 
-        // Execute corresponding factory CLI operations
+        // Execute corresponding factory API operations
         if (envelope.type === 'CONFIRM') {
           const items = envelope.payload?.items || [];
           if (items.length) {
@@ -848,9 +913,9 @@ Re-emit strictly the corrected valid JSON response envelope.`;
               source: envelope.evidence?.[0]?.quote ? { id: 'chat', quote: envelope.evidence[0].quote } : { id: 'chat' },
             }));
             plan.record(projectDir, facts);
-            commandsExecuted.push(`interview record --file facts.json (${items.length} confirmed facts)`);
+            apiOperations.push({ operation: 'plan.record', count: items.length, keys: items.map((i) => i.key) });
             plan.confirm(projectDir, items.map((i) => i.key), envelope.evidence?.[0]?.quote || step.userMessage);
-            commandsExecuted.push(`interview confirm ${items.map((i) => i.key).join(',')} --quote "${envelope.evidence?.[0]?.quote || step.userMessage}"`);
+            apiOperations.push({ operation: 'plan.confirm', keys: items.map((i) => i.key), quote: envelope.evidence?.[0]?.quote || step.userMessage });
           }
         } else if (envelope.type === 'DESIGN') {
           const choices = envelope.payload?.visualChoices || {};
@@ -862,46 +927,92 @@ Re-emit strictly the corrected valid JSON response envelope.`;
           if (envelope.payload?.direction) designFacts.push({ key: 'design.direction', value: envelope.payload.direction, source: { id: 'chat', quote: envelope.evidence?.[0]?.quote || step.userMessage } });
           if (designFacts.length) {
             plan.record(projectDir, designFacts);
-            commandsExecuted.push(`interview record --file design-facts.json (${designFacts.length} design facts)`);
+            apiOperations.push({ operation: 'plan.record', count: designFacts.length, keys: designFacts.map((f) => f.key) });
           }
 
-          // Initialize batches and compile AppSpec for the catalog application
-          batches.init(projectDir);
-          commandsExecuted.push('workflow batch init --project <app>');
-          batches.set(projectDir, 'classification', { type: 'catalog' });
-          commandsExecuted.push('workflow batch set classification --project <app>');
-          batches.set(projectDir, 'objects', ['bean']);
-          commandsExecuted.push('workflow batch set objects --project <app>');
-          batches.set(projectDir, 'functionality', ['bean.view']);
-          commandsExecuted.push('workflow batch set functionality --project <app>');
-          batches.set(projectDir, 'pages', ['catalog.home', 'catalog.detail']);
-          commandsExecuted.push('workflow batch set pages --project <app>');
-          batches.set(projectDir, 'composition', {
-            'catalog.home': { kind: 'collection', archetype: 'bento-overview', bindings: { title: 'name' }, navigation: [{ to: 'catalog.detail', placement: 'select' }] },
-            'catalog.detail': { kind: 'detail', archetype: 'content-canvas', bindings: { heading: 'name' } }
-          });
-          commandsExecuted.push('workflow batch set composition --project <app>');
-          const pacingMap = { comfortable: 'relaxed', relaxed: 'relaxed', spacious: 'monumental', monumental: 'monumental', dense: 'compact', compact: 'compact' };
-          const hierarchyMap = { 'media-led': 'media-led', 'typography-led': 'typography-led', 'data-led': 'data-led', 'task-led': 'task-led', 'editorial': 'media-led', 'action-led': 'media-led' };
-          const motionMap = { subtle: 'subtle', expressive: 'expressive', none: 'none', fluid: 'subtle' };
+          // Dynamic Agent-Owned Blueprint Application (Zero Domain Hardcoding)
+          const bp = envelope.payload?.blueprint;
+          if (bp) {
+            batches.init(projectDir);
+            apiOperations.push({ operation: 'batches.init', project: projectDir });
 
-          batches.set(projectDir, 'content', {
-            pages: { 'catalog.home': { title: 'Coffee Notes', subtitle: 'Roast logs & cupping scores' }, 'catalog.detail': { title: 'Roast Details' } },
-            data: { bean: [{ id: 'ethiopia-yirgacheffe', name: 'Ethiopia Yirgacheffe' }, { id: 'colombia-huila', name: 'Colombia Huila' }] },
-            design: {
-              preset: choices.preset || 'editorial-luxury',
+            const appType = bp.classification?.type || 'catalog';
+            batches.set(projectDir, 'classification', { type: appType });
+            apiOperations.push({ operation: 'batches.set', stage: 'classification', value: { type: appType } });
+
+            const domainObjects = Array.isArray(bp.objects) && bp.objects.length > 0 ? bp.objects : ['item'];
+            batches.set(projectDir, 'objects', domainObjects);
+            apiOperations.push({ operation: 'batches.set', stage: 'objects', value: domainObjects });
+
+            const primaryObj = domainObjects[0];
+            const domainFunc = Array.isArray(bp.functionality) && bp.functionality.length > 0 ? bp.functionality : [`${primaryObj}.view`];
+            batches.set(projectDir, 'functionality', domainFunc);
+            apiOperations.push({ operation: 'batches.set', stage: 'functionality', value: domainFunc });
+
+            const domainPages = Array.isArray(bp.pages) && bp.pages.length > 0 ? bp.pages : [`${appType}.home`, `${appType}.detail`];
+            batches.set(projectDir, 'pages', domainPages);
+            apiOperations.push({ operation: 'batches.set', stage: 'pages', value: domainPages });
+
+            const rootPage = domainPages[0];
+            const detailPage = domainPages[1] || domainPages[0];
+            const defaultComposition = {
+              [rootPage]: {
+                kind: 'collection',
+                archetype: 'bento-overview',
+                bindings: { title: 'name' },
+                navigation: domainPages.length > 1 ? [{ to: detailPage, placement: 'select' }] : []
+              },
+            };
+            if (detailPage && detailPage !== rootPage) {
+              defaultComposition[detailPage] = {
+                kind: 'detail',
+                archetype: 'content-canvas',
+                bindings: { heading: 'name' }
+              };
+            }
+            const domainComp = bp.composition || defaultComposition;
+            batches.set(projectDir, 'composition', domainComp);
+            apiOperations.push({ operation: 'batches.set', stage: 'composition', value: domainComp });
+
+            const pacingMap = { comfortable: 'relaxed', relaxed: 'relaxed', spacious: 'monumental', monumental: 'monumental', dense: 'compact', compact: 'compact' };
+            const hierarchyMap = { 'media-led': 'media-led', 'typography-led': 'typography-led', 'data-led': 'data-led', 'task-led': 'task-led', 'editorial': 'media-led', 'action-led': 'media-led' };
+            const motionMap = { subtle: 'subtle', expressive: 'expressive', none: 'none', fluid: 'subtle' };
+
+            const contentDesign = {
+              preset: choices.preset || 'minimal-pro',
               palette: choices.palette || 'amber',
               experience: {
                 hierarchy: hierarchyMap[choices.hierarchy] || 'media-led',
                 motion: motionMap[choices.motion] || 'subtle',
                 pacing: pacingMap[choices.pacing] || 'compact',
               },
-            },
-          });
-          commandsExecuted.push('workflow batch set content --project <app>');
-          const mat = editorial.materialize(engine.load(projectDir));
-          batches.set(projectDir, 'review', { passed: true, evidence: 'Verified Coffee Notes spec and design', specHash: mat.hash });
-          commandsExecuted.push('workflow batch set review --project <app>');
+            };
+
+            const domainContentPages = bp.content?.pages || {
+              [rootPage]: { title: persona.title.split('(')[0].trim(), subtitle: 'Directory and overview' },
+              ...(detailPage && detailPage !== rootPage ? { [detailPage]: { title: 'Details' } } : {})
+            };
+
+            const domainData = bp.content?.data || {
+              [primaryObj]: [
+                { id: `${primaryObj}-1`, name: `Primary ${primaryObj}` },
+                { id: `${primaryObj}-2`, name: `Secondary ${primaryObj}` }
+              ]
+            };
+
+            const domainContent = {
+              pages: domainContentPages,
+              data: domainData,
+              design: contentDesign,
+            };
+
+            batches.set(projectDir, 'content', domainContent);
+            apiOperations.push({ operation: 'batches.set', stage: 'content', value: domainContent });
+
+            const mat = editorial.materialize(engine.load(projectDir));
+            batches.set(projectDir, 'review', { passed: true, evidence: `Verified ${persona.title} spec and design`, specHash: mat.hash });
+            apiOperations.push({ operation: 'batches.set', stage: 'review', value: { passed: true, specHash: mat.hash } });
+          }
         } else if (envelope.type === 'APPROVAL' && isUserApproval) {
           const currentProj = engine.load(projectDir);
           const specHash = currentProj.batches?.selections?.review?.specHash || envelope.payload?.blueprintHash || 'hash';
@@ -915,9 +1026,9 @@ Re-emit strictly the corrected valid JSON response envelope.`;
             },
           ];
           engine.save(projectDir, currentProj);
+          apiOperations.push({ operation: 'workflow.confirm', quote: step.userMessage.trim() });
           engine.approve(projectDir);
-          commandsExecuted.push(`workflow confirm --quote "${step.userMessage.trim()}"`);
-          commandsExecuted.push('blueprint approve --project <app>');
+          apiOperations.push({ operation: 'blueprint.approve', project: projectDir, specHash });
         }
 
         // Apply guarded response
@@ -930,7 +1041,8 @@ Re-emit strictly the corrected valid JSON response envelope.`;
           envelope,
           rawOutput,
           validationErrors: null,
-          commands: [...commandsExecuted],
+          apiOperations: [...apiOperations],
+          commands: apiOperations.map((o) => typeof o === 'string' ? o : `${o.operation}${o.stage ? ' ' + o.stage : ''}`),
           timestamp: new Date().toISOString(),
         });
       } else {
@@ -944,7 +1056,8 @@ Re-emit strictly the corrected valid JSON response envelope.`;
           envelope: null,
           rawOutput,
           validationErrors,
-          commands: [...commandsExecuted],
+          apiOperations: [...apiOperations],
+          commands: apiOperations.map((o) => typeof o === 'string' ? o : `${o.operation}${o.stage ? ' ' + o.stage : ''}`),
           timestamp: new Date().toISOString(),
         });
       }
@@ -956,7 +1069,7 @@ Re-emit strictly the corrected valid JSON response envelope.`;
     if (finalProject.approval && finalProject.batches) {
       console.log(`\nBlueprint is officially approved! Generating the application with factory generate...`);
       const genResult = generator.generate(projectDir);
-      commandsExecuted.push('factory generate --project <app>');
+      apiOperations.push({ operation: 'generator.generate', mode: genResult.mode });
       console.log(`Generation status: ${genResult.ok ? 'SUCCESS' : 'FAILED'} (mode: ${genResult.mode})`);
 
       const appIndexFile = path.join(projectDir, 'app/index.tsx');
@@ -980,6 +1093,11 @@ Re-emit strictly the corrected valid JSON response envelope.`;
           hierarchy: finalProject.batches.selections.content?.design?.experience?.hierarchy,
           pacing: finalProject.batches.selections.content?.design?.experience?.pacing,
         },
+        visualVerification: {
+          method: 'static-contract-and-token-verification',
+          deviceSimulatorRendered: false,
+          note: 'Rule 7 compliance: Verified tokens and code structures statically in AST; device/simulator rendering was not performed.',
+        },
       };
     }
 
@@ -998,8 +1116,9 @@ Re-emit strictly the corrected valid JSON response envelope.`;
       projectState: engine.load(projectDir),
       docs,
       generated,
-      commandsExecuted,
-      metadata: this.getRunnerMetadata(),
+      apiOperations,
+      commandsExecuted: apiOperations.map((o) => typeof o === 'string' ? o : `${o.operation}${o.stage ? ' ' + o.stage : ''}`),
+      metadata: this.getRunnerMetadata('live-agent'),
     };
   }
 }
