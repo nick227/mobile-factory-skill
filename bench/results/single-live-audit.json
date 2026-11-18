@@ -1,140 +1,101 @@
 {
   "persona": {
-    "id": "vague-visionary",
-    "title": "The Vague Visionary (Coffee Notes)",
-    "archetype": "minimal-surface-large-depth",
+    "id": "non-technical-founder",
+    "title": "The Non-Technical Founder (Artisan Pâtisserie)",
+    "archetype": "poetic-aesthetic-translation",
     "mode": "lite",
     "userProfile": {
-      "role": "Coffee Roaster & Cafe Owner",
-      "technicalLiteracy": "low",
-      "style": "casual, enthusiastic, ambiguous"
+      "role": "Master Baker & Shop Owner",
+      "technicalLiteracy": "none",
+      "style": "poetic, sensory, non-technical"
     },
     "turns": [
       {
         "turn": 1,
-        "userMessage": "I want an app like Instagram but for coffee beans. Really sleek and quick so baristas can log roast profiles between shifts."
+        "userMessage": "I run an artisan pastry kitchen. I need an inventory book for our daily flour, wild yeast, and seasonal fruit. I want something warm, botanical, earthy, like a personal field journal. Nothing corporate or cold."
       },
       {
         "turn": 2,
-        "userMessage": "Mostly browsing roast logs and seeing which beans scored highest. No accounts needed right now, just local on the iPad at the shop."
+        "userMessage": "My bakers have flour on their hands, so large readable cards, calm pacing, and very few buttons. We track batches twice a day."
       },
       {
         "turn": 3,
-        "userMessage": "Yeah exactly, simple single list pushing to roast details. The Focus-First native defaults are great. Go ahead and generate the brief."
+        "userMessage": "That captures our kitchen perfectly. Please document this and show me the plan."
       },
       {
         "turn": 4,
-        "userMessage": "The brief, screens, and amber design look great. I approve this blueprint—go ahead and build the app."
+        "userMessage": "The botanical field journal plan and screens look wonderful. I approve this blueprint—go ahead and build our bakery app."
       }
     ],
     "expectedArtDirection": {
-      "hierarchy": "action-led",
-      "motion": "fluid",
-      "pacing": "comfortable",
-      "preset": "minimal-pro",
-      "palette": "amber"
+      "hierarchy": "editorial",
+      "motion": "subtle",
+      "pacing": "spacious",
+      "preset": "wellness-botanical",
+      "palette": "emerald",
+      "layoutVariant": "editorial-feature"
     },
     "expectations": {
       "primaryExperience": "browse-collection",
       "avoidJargon": [
-        "SQL",
-        "schema",
-        "routing",
-        "AST",
-        "ORM"
+        "SQLite",
+        "REST",
+        "CRUD",
+        "AsyncStorage",
+        "Flexbox"
       ],
       "scriptedConflict": false,
-      "expectedEntities": [
-        "roast",
-        "bean"
-      ],
-      "scopeExclusionExpected": false
+      "artDirectionPreservation": true
     }
   },
   "transcript": [
     {
       "role": "user",
       "turn": 1,
-      "content": "I want an app like Instagram but for coffee beans. Really sleek and quick so baristas can log roast profiles between shifts.",
-      "timestamp": "2026-11-18T19:22:37.265Z"
+      "content": "I run an artisan pastry kitchen. I need an inventory book for our daily flour, wild yeast, and seasonal fruit. I want something warm, botanical, earthy, like a personal field journal. Nothing corporate or cold.",
+      "timestamp": "2026-11-18T19:49:25.294Z"
     },
     {
       "role": "assistant",
       "turn": 1,
-      "content": "Love that vision! A sleek, photo-first space for beans where baristas can quickly log roasts sounds fantastic. To make sure we shape this just right for the baristas, who should be able to see the posts—is this an open community feed for coffee lovers everywhere, or primarily a private workspace for your cafe's team?",
-      "envelope": {
-        "type": "QUESTION",
-        "status": "pending",
-        "message": "Love that vision! A sleek, photo-first space for beans where baristas can quickly log roasts sounds fantastic. To make sure we shape this just right for the baristas, who should be able to see the posts—is this an open community feed for coffee lovers everywhere, or primarily a private workspace for your cafe's team?",
-        "payload": {
-          "questions": [
-            {
-              "id": "audience.visibility",
-              "prompt": "Will the roast feed be public for any coffee lover to browse, or kept private just for your cafe team?"
-            }
-          ]
-        },
-        "evidence": [
-          {
-            "source": "chat",
-            "quote": "I want an app like Instagram but for coffee beans. Really sleek and quick so baristas can log roast profiles between shifts."
-          }
-        ],
-        "next": "await-user-response"
-      },
-      "rawOutput": "{\n  \"type\": \"QUESTION\",\n  \"status\": \"pending\",\n  \"message\": \"Love that vision! A sleek, photo-first space for beans where baristas can quickly log roasts sounds fantastic. To make sure we shape this just right for the baristas, who should be able to see the posts—is this an open community feed for coffee lovers everywhere, or primarily a private workspace for your cafe's team?\",\n  \"payload\": {\n    \"questions\": [\n      {\n        \"id\": \"audience.visibility\",\n        \"prompt\": \"Will the roast feed be public for any coffee lover to browse, or kept private just for your cafe team?\"\n      }\n    ]\n  },\n  \"evidence\": [\n    {\n      \"source\": \"chat\",\n      \"quote\": \"I want an app like Instagram but for coffee beans. Really sleek and quick so baristas can log roast profiles between shifts.\"\n    }\n  ],\n  \"next\": \"await-user-response\"\n}",
-      "validationErrors": null,
-      "apiOperations": [],
-      "commands": [],
-      "timestamp": "2026-11-18T19:23:29.032Z"
-    },
-    {
-      "role": "user",
-      "turn": 2,
-      "content": "Mostly browsing roast logs and seeing which beans scored highest. No accounts needed right now, just local on the iPad at the shop.",
-      "timestamp": "2026-11-18T19:23:29.033Z"
-    },
-    {
-      "role": "assistant",
-      "turn": 2,
-      "content": "That gives us such clear direction! Keeping it simple on the shop iPad with no logins will make it super snappy for baristas to check scores and flip through roast logs between rushes. Take a quick peek at what I've noted down to make sure we've captured your vision accurately.",
+      "content": "A handwritten field journal for the kitchen sounds lovely—grounded in flour-dusted mornings and the rhythm of your bakes. Let us make sure we have captured the spirit and purpose of your notebook before we turn the page.",
       "envelope": {
         "type": "CONFIRM",
         "status": "proposed",
-        "message": "That gives us such clear direction! Keeping it simple on the shop iPad with no logins will make it super snappy for baristas to check scores and flip through roast logs between rushes. Take a quick peek at what I've noted down to make sure we've captured your vision accurately.",
+        "message": "A handwritten field journal for the kitchen sounds lovely—grounded in flour-dusted mornings and the rhythm of your bakes. Let us make sure we have captured the spirit and purpose of your notebook before we turn the page.",
         "payload": {
           "items": [
             {
               "key": "product.outcome",
-              "value": "Browse roast logs and review highest-scoring coffee beans",
-              "inference": "Directly stated purpose to browse roasts and see top scores"
+              "value": "An earthy digital field journal to lovingly track wild yeasts, pantry grains, and fresh harvest arrivals",
+              "inference": "The user seeks an intimate, non-corporate kitchen log rather than a sterile spreadsheet"
             },
             {
               "key": "target.audience",
-              "value": "Shop baristas and roastery staff",
-              "inference": "Intended for baristas to use between shifts at the cafe"
+              "value": "Artisan pastry chefs and baker-owners working hands-on in the kitchen",
+              "inference": "Crafted for makers whose hands are in flour, needing something intuitive and personal"
             },
             {
-              "key": "access.model",
-              "value": "No user accounts required",
-              "inference": "User confirmed no accounts are needed right now"
+              "key": "experience.primary",
+              "value": "Quiet, tactile logging of living cultures and daily seasonal ingredients",
+              "inference": "Focuses on the daily rhythm of caring for sourdough starters, flour bags, and ripe fruits"
             },
             {
-              "key": "device.target",
-              "value": "Local on-premise shop iPad",
-              "inference": "Runs directly on the shop's shared iPad"
+              "key": "aesthetic.tone",
+              "value": "Warm botanical parchment, botanical sketches, and soft earth tones",
+              "inference": "Directly requested to feel like a personal field journal, warm and anti-corporate"
             }
           ]
         },
         "evidence": [
           {
             "source": "chat",
-            "quote": "Mostly browsing roast logs and seeing which beans scored highest. No accounts needed right now, just local on the iPad at the shop."
+            "quote": "I run an artisan pastry kitchen. I need an inventory book for our daily flour, wild yeast, and seasonal fruit. I want something warm, botanical, earthy, like a personal field journal. Nothing corporate or cold."
           }
         ],
-        "next": "Confirm understanding of core workflow and clarify bean roast logging details"
+        "next": "confirm-facts"
       },
-      "rawOutput": "{\n  \"type\": \"CONFIRM\",\n  \"status\": \"proposed\",\n  \"message\": \"That gives us such clear direction! Keeping it simple on the shop iPad with no logins will make it super snappy for baristas to check scores and flip through roast logs between rushes. Take a quick peek at what I've noted down to make sure we've captured your vision accurately.\",\n  \"payload\": {\n    \"items\": [\n      {\n        \"key\": \"product.outcome\",\n        \"value\": \"Browse roast logs and review highest-scoring coffee beans\",\n        \"inference\": \"Directly stated purpose to browse roasts and see top scores\"\n      },\n      {\n        \"key\": \"target.audience\",\n        \"value\": \"Shop baristas and roastery staff\",\n        \"inference\": \"Intended for baristas to use between shifts at the cafe\"\n      },\n      {\n        \"key\": \"access.model\",\n        \"value\": \"No user accounts required\",\n        \"inference\": \"User confirmed no accounts are needed right now\"\n      },\n      {\n        \"key\": \"device.target\",\n        \"value\": \"Local on-premise shop iPad\",\n        \"inference\": \"Runs directly on the shop's shared iPad\"\n      }\n    ]\n  },\n  \"evidence\": [\n    {\n      \"source\": \"chat\",\n      \"quote\": \"Mostly browsing roast logs and seeing which beans scored highest. No accounts needed right now, just local on the iPad at the shop.\"\n    }\n  ],\n  \"next\": \"Confirm understanding of core workflow and clarify bean roast logging details\"\n}",
+      "rawOutput": "{\n  \"type\": \"CONFIRM\",\n  \"status\": \"proposed\",\n  \"message\": \"A handwritten field journal for the kitchen sounds lovely—grounded in flour-dusted mornings and the rhythm of your bakes. Let us make sure we have captured the spirit and purpose of your notebook before we turn the page.\",\n  \"payload\": {\n    \"items\": [\n      {\n        \"key\": \"product.outcome\",\n        \"value\": \"An earthy digital field journal to lovingly track wild yeasts, pantry grains, and fresh harvest arrivals\",\n        \"inference\": \"The user seeks an intimate, non-corporate kitchen log rather than a sterile spreadsheet\"\n      },\n      {\n        \"key\": \"target.audience\",\n        \"value\": \"Artisan pastry chefs and baker-owners working hands-on in the kitchen\",\n        \"inference\": \"Crafted for makers whose hands are in flour, needing something intuitive and personal\"\n      },\n      {\n        \"key\": \"experience.primary\",\n        \"value\": \"Quiet, tactile logging of living cultures and daily seasonal ingredients\",\n        \"inference\": \"Focuses on the daily rhythm of caring for sourdough starters, flour bags, and ripe fruits\"\n      },\n      {\n        \"key\": \"aesthetic.tone\",\n        \"value\": \"Warm botanical parchment, botanical sketches, and soft earth tones\",\n        \"inference\": \"Directly requested to feel like a personal field journal, warm and anti-corporate\"\n      }\n    ]\n  },\n  \"evidence\": [\n    {\n      \"source\": \"chat\",\n      \"quote\": \"I run an artisan pastry kitchen. I need an inventory book for our daily flour, wild yeast, and seasonal fruit. I want something warm, botanical, earthy, like a personal field journal. Nothing corporate or cold.\"\n    }\n  ],\n  \"next\": \"confirm-facts\"\n}",
       "validationErrors": null,
       "apiOperations": [
         {
@@ -143,8 +104,8 @@
           "keys": [
             "product.outcome",
             "target.audience",
-            "access.model",
-            "device.target"
+            "experience.primary",
+            "aesthetic.tone"
           ]
         },
         {
@@ -152,117 +113,72 @@
           "keys": [
             "product.outcome",
             "target.audience",
-            "access.model",
-            "device.target"
+            "experience.primary",
+            "aesthetic.tone"
           ],
-          "quote": "Mostly browsing roast logs and seeing which beans scored highest. No accounts needed right now, just local on the iPad at the shop."
+          "quote": "I run an artisan pastry kitchen. I need an inventory book for our daily flour, wild yeast, and seasonal fruit. I want something warm, botanical, earthy, like a personal field journal. Nothing corporate or cold."
         }
       ],
       "commands": [
         "plan.record",
         "plan.confirm"
       ],
-      "timestamp": "2026-11-18T19:23:43.581Z"
+      "timestamp": "2026-11-18T19:49:41.182Z"
     },
     {
       "role": "user",
-      "turn": 3,
-      "content": "Yeah exactly, simple single list pushing to roast details. The Focus-First native defaults are great. Go ahead and generate the brief.",
-      "timestamp": "2026-11-18T19:23:43.585Z"
+      "turn": 2,
+      "content": "My bakers have flour on their hands, so large readable cards, calm pacing, and very few buttons. We track batches twice a day.",
+      "timestamp": "2026-11-18T19:49:41.182Z"
     },
     {
       "role": "assistant",
-      "turn": 3,
-      "content": "Here is the visual direction and layout brief for your shop's iPad! We've styled it with warm, bean-inspired tones and a clean list so baristas can quickly browse roast logs, check top scores, and tap straight into the details between rushes.",
+      "turn": 2,
+      "content": "We envision an open, botanical journal designed for flour-dusted hands—generous cards with soft earthen tones, gentle transitions, and clear tallies for your morning and evening counts.",
       "envelope": {
         "type": "DESIGN",
         "status": "proposed",
-        "message": "Here is the visual direction and layout brief for your shop's iPad! We've styled it with warm, bean-inspired tones and a clean list so baristas can quickly browse roast logs, check top scores, and tap straight into the details between rushes.",
+        "message": "We envision an open, botanical journal designed for flour-dusted hands—generous cards with soft earthen tones, gentle transitions, and clear tallies for your morning and evening counts.",
         "payload": {
-          "direction": "Warm, streamlined roast catalog with rich media cards and quick detail views tailored for fast-paced baristas.",
-          "rationale": "Prioritizes immediate readability and rapid tapping on the shop iPad, focusing directly on roast scores and visual bean profiles without login overhead.",
+          "direction": "A tranquil, botanical field ledger featuring spacious cards, warm earthen tones, and minimal touchpoints suited for the kitchen counter.",
+          "rationale": "Honors the sensory warmth of an artisan kitchen while providing large, easy-to-tap cards that work gracefully when bakers have flour on their hands.",
           "previewReference": "patterns.focusscreen",
           "visualChoices": {
-            "preset": "minimal-pro",
-            "hierarchy": "media-led",
+            "preset": "wellness-botanical",
+            "hierarchy": "editorial",
             "motion": "subtle",
-            "pacing": "compact",
+            "pacing": "relaxed",
             "palette": "amber"
           },
-          "blueprint": {
-            "classification": {
-              "type": "catalog"
-            },
-            "objects": [
-              "bean"
+          "intent": {
+            "subjects": [
+              "ingredient",
+              "batch"
             ],
-            "functionality": [
-              "bean.view"
-            ],
-            "pages": [
-              "catalog.home",
-              "catalog.detail"
-            ],
-            "composition": {
-              "catalog.home": {
-                "kind": "collection",
-                "archetype": "bento-overview",
-                "bindings": {
-                  "title": "name"
-                },
-                "navigation": [
-                  {
-                    "to": "catalog.detail",
-                    "placement": "select"
-                  }
-                ]
-              },
-              "catalog.detail": {
-                "kind": "detail",
-                "archetype": "content-canvas",
-                "bindings": {
-                  "heading": "name"
-                }
-              }
-            },
-            "content": {
-              "pages": {
-                "catalog.home": {
-                  "title": "Roast Logs",
-                  "subtitle": "Shop Bean Profiles & Cupping Scores"
-                },
-                "catalog.detail": {
-                  "title": "Roast Details"
-                }
-              },
-              "data": {
-                "bean": [
-                  {
-                    "id": "ethiopia-yirgacheffe",
-                    "name": "Ethiopia Yirgacheffe (Score: 92)"
-                  },
-                  {
-                    "id": "colombia-huila",
-                    "name": "Colombia Huila (Score: 89)"
-                  }
-                ]
-              }
-            }
+            "actions": [
+              "log",
+              "view",
+              "browse"
+            ]
           }
         },
         "evidence": [
           {
             "source": "chat",
-            "quote": "Mostly browsing roast logs and seeing which beans scored highest. No accounts needed right now, just local on the iPad at the shop."
+            "quote": "warm, botanical, earthy, like a personal field journal"
           },
           {
             "source": "chat",
-            "quote": "simple single list pushing to roast details"
+            "quote": "large readable cards, calm pacing, and very few buttons"
+          },
+          {
+            "source": "chat",
+            "quote": "We track batches twice a day."
           }
         ],
-        "next": "await_client_confirmation"
+        "next": "await_design_feedback"
       },
-      "rawOutput": "{\n  \"type\": \"DESIGN\",\n  \"status\": \"proposed\",\n  \"message\": \"Here is the visual direction and layout brief for your shop's iPad! We've styled it with warm, bean-inspired tones and a clean list so baristas can quickly browse roast logs, check top scores, and tap straight into the details between rushes.\",\n  \"payload\": {\n    \"direction\": \"Warm, streamlined roast catalog with rich media cards and quick detail views tailored for fast-paced baristas.\",\n    \"rationale\": \"Prioritizes immediate readability and rapid tapping on the shop iPad, focusing directly on roast scores and visual bean profiles without login overhead.\",\n    \"previewReference\": \"patterns.focusscreen\",\n    \"visualChoices\": {\n      \"preset\": \"minimal-pro\",\n      \"hierarchy\": \"media-led\",\n      \"motion\": \"subtle\",\n      \"pacing\": \"compact\",\n      \"palette\": \"amber\"\n    },\n    \"blueprint\": {\n      \"classification\": {\n        \"type\": \"catalog\"\n      },\n      \"objects\": [\n        \"bean\"\n      ],\n      \"functionality\": [\n        \"bean.view\"\n      ],\n      \"pages\": [\n        \"catalog.home\",\n        \"catalog.detail\"\n      ],\n      \"composition\": {\n        \"catalog.home\": {\n          \"kind\": \"collection\",\n          \"archetype\": \"bento-overview\",\n          \"bindings\": {\n            \"title\": \"name\"\n          },\n          \"navigation\": [\n            {\n              \"to\": \"catalog.detail\",\n              \"placement\": \"select\"\n            }\n          ]\n        },\n        \"catalog.detail\": {\n          \"kind\": \"detail\",\n          \"archetype\": \"content-canvas\",\n          \"bindings\": {\n            \"heading\": \"name\"\n          }\n        }\n      },\n      \"content\": {\n        \"pages\": {\n          \"catalog.home\": {\n            \"title\": \"Roast Logs\",\n            \"subtitle\": \"Shop Bean Profiles & Cupping Scores\"\n          },\n          \"catalog.detail\": {\n            \"title\": \"Roast Details\"\n          }\n        },\n        \"data\": {\n          \"bean\": [\n            {\n              \"id\": \"ethiopia-yirgacheffe\",\n              \"name\": \"Ethiopia Yirgacheffe (Score: 92)\"\n            },\n            {\n              \"id\": \"colombia-huila\",\n              \"name\": \"Colombia Huila (Score: 89)\"\n            }\n          ]\n        }\n      }\n    }\n  },\n  \"evidence\": [\n    {\n      \"source\": \"chat\",\n      \"quote\": \"Mostly browsing roast logs and seeing which beans scored highest. No accounts needed right now, just local on the iPad at the shop.\"\n    },\n    {\n      \"source\": \"chat\",\n      \"quote\": \"simple single list pushing to roast details\"\n    }\n  ],\n  \"next\": \"await_client_confirmation\"\n}",
+      "rawOutput": "{\n  \"type\": \"DESIGN\",\n  \"status\": \"proposed\",\n  \"message\": \"We envision an open, botanical journal designed for flour-dusted hands—generous cards with soft earthen tones, gentle transitions, and clear tallies for your morning and evening counts.\",\n  \"payload\": {\n    \"direction\": \"A tranquil, botanical field ledger featuring spacious cards, warm earthen tones, and minimal touchpoints suited for the kitchen counter.\",\n    \"rationale\": \"Honors the sensory warmth of an artisan kitchen while providing large, easy-to-tap cards that work gracefully when bakers have flour on their hands.\",\n    \"previewReference\": \"patterns.focusscreen\",\n    \"visualChoices\": {\n      \"preset\": \"wellness-botanical\",\n      \"hierarchy\": \"editorial\",\n      \"motion\": \"subtle\",\n      \"pacing\": \"relaxed\",\n      \"palette\": \"amber\"\n    },\n    \"intent\": {\n      \"subjects\": [\n        \"ingredient\",\n        \"batch\"\n      ],\n      \"actions\": [\n        \"log\",\n        \"view\",\n        \"browse\"\n      ]\n    }\n  },\n  \"evidence\": [\n    {\n      \"source\": \"chat\",\n      \"quote\": \"warm, botanical, earthy, like a personal field journal\"\n    },\n    {\n      \"source\": \"chat\",\n      \"quote\": \"large readable cards, calm pacing, and very few buttons\"\n    },\n    {\n      \"source\": \"chat\",\n      \"quote\": \"We track batches twice a day.\"\n    }\n  ],\n  \"next\": \"await_design_feedback\"\n}",
       "validationErrors": null,
       "apiOperations": [
         {
@@ -271,8 +187,8 @@
           "keys": [
             "product.outcome",
             "target.audience",
-            "access.model",
-            "device.target"
+            "experience.primary",
+            "aesthetic.tone"
           ]
         },
         {
@@ -280,10 +196,10 @@
           "keys": [
             "product.outcome",
             "target.audience",
-            "access.model",
-            "device.target"
+            "experience.primary",
+            "aesthetic.tone"
           ],
-          "quote": "Mostly browsing roast logs and seeing which beans scored highest. No accounts needed right now, just local on the iPad at the shop."
+          "quote": "I run an artisan pastry kitchen. I need an inventory book for our daily flour, wild yeast, and seasonal fruit. I want something warm, botanical, earthy, like a personal field journal. Nothing corporate or cold."
         },
         {
           "operation": "plan.record",
@@ -298,42 +214,45 @@
         },
         {
           "operation": "batches.init",
-          "project": "C:\\Users\\ADMINI~1\\AppData\\Local\\Temp\\factory-live-vague-visionary-kxfiFI\\app"
+          "project": "C:\\Users\\ADMINI~1\\AppData\\Local\\Temp\\factory-live-non-technical-founder-6YbWmL\\app"
         },
         {
           "operation": "batches.set",
           "stage": "classification",
           "value": {
-            "type": "catalog"
+            "type": "tracker"
           }
         },
         {
           "operation": "batches.set",
           "stage": "objects",
           "value": [
-            "bean"
+            "ingredient",
+            "batch"
           ]
         },
         {
           "operation": "batches.set",
           "stage": "functionality",
           "value": [
-            "bean.view"
+            "ingredient.view",
+            "ingredient.create"
           ]
         },
         {
           "operation": "batches.set",
           "stage": "pages",
           "value": [
-            "catalog.home",
-            "catalog.detail"
+            "tracker.home",
+            "tracker.detail",
+            "tracker.create"
           ]
         },
         {
           "operation": "batches.set",
           "stage": "composition",
           "value": {
-            "catalog.home": {
+            "tracker.home": {
               "kind": "collection",
               "archetype": "bento-overview",
               "bindings": {
@@ -341,17 +260,46 @@
               },
               "navigation": [
                 {
-                  "to": "catalog.detail",
+                  "to": "tracker.detail",
                   "placement": "select"
+                },
+                {
+                  "to": "tracker.create",
+                  "placement": "header"
                 }
               ]
             },
-            "catalog.detail": {
+            "tracker.detail": {
               "kind": "detail",
               "archetype": "content-canvas",
               "bindings": {
-                "heading": "name"
-              }
+                "heading": "name",
+                "facts": [
+                  "notes"
+                ]
+              },
+              "navigation": [
+                {
+                  "to": "tracker.home",
+                  "placement": "action"
+                }
+              ]
+            },
+            "tracker.create": {
+              "kind": "form",
+              "archetype": "focus-wizard",
+              "bindings": {
+                "fields": [
+                  "name",
+                  "notes"
+                ]
+              },
+              "actions": [
+                {
+                  "id": "ingredient.create",
+                  "placement": "primary"
+                }
+              ]
             }
           }
         },
@@ -360,33 +308,44 @@
           "stage": "content",
           "value": {
             "pages": {
-              "catalog.home": {
-                "title": "Roast Logs",
-                "subtitle": "Shop Bean Profiles & Cupping Scores"
+              "tracker.home": {
+                "title": "The Non-Technical Founder",
+                "subtitle": "Ingredient logs & highlights"
               },
-              "catalog.detail": {
-                "title": "Roast Details"
+              "tracker.detail": {
+                "title": "Ingredient Profile"
+              },
+              "tracker.create": {
+                "title": "Log New Ingredient",
+                "primary": "Save Ingredient"
               }
             },
             "data": {
-              "bean": [
+              "ingredient": [
                 {
-                  "id": "ethiopia-yirgacheffe",
-                  "name": "Ethiopia Yirgacheffe (Score: 92)"
+                  "id": "ing-flour",
+                  "name": "Stoneground Rye Flour",
+                  "notes": "Organic heritage grain, 25kg cold stoneground"
                 },
                 {
-                  "id": "colombia-huila",
-                  "name": "Colombia Huila (Score: 89)"
+                  "id": "ing-levain",
+                  "name": "Wild Sourdough Starter",
+                  "notes": "Active 3-day fermentation, 100% hydration"
+                },
+                {
+                  "id": "ing-fruit",
+                  "name": "Summer Mountain Berries",
+                  "notes": "Local orchard harvest, wild blackberries & raspberries"
                 }
               ]
             },
             "design": {
-              "preset": "minimal-pro",
+              "preset": "wellness-botanical",
               "palette": "amber",
               "experience": {
                 "hierarchy": "media-led",
                 "motion": "subtle",
-                "pacing": "compact"
+                "pacing": "relaxed"
               }
             }
           }
@@ -396,7 +355,7 @@
           "stage": "review",
           "value": {
             "passed": true,
-            "specHash": "b35e745991a29ca205532d210d1095063cd12b609c7ef0bf054f470b529b1179"
+            "specHash": "ad95906edec12269a0a5579db9878598494a2959240f04a29dfcba76eb35a06d"
           }
         }
       ],
@@ -413,36 +372,58 @@
         "batches.set content",
         "batches.set review"
       ],
-      "timestamp": "2026-11-18T19:23:59.358Z"
+      "timestamp": "2026-11-18T19:49:55.240Z"
     },
     {
       "role": "user",
-      "turn": 4,
-      "content": "The brief, screens, and amber design look great. I approve this blueprint—go ahead and build the app.",
-      "timestamp": "2026-11-18T19:23:59.359Z"
+      "turn": 3,
+      "content": "That captures our kitchen perfectly. Please document this and show me the plan.",
+      "timestamp": "2026-11-18T19:49:55.248Z"
     },
     {
       "role": "assistant",
-      "turn": 4,
-      "content": "Awesome! We have your approval locked in for the coffee bean and roast log app. I'm moving right into assembling the app and bringing the warm amber design to life for the shop iPad.",
+      "turn": 3,
+      "content": "Here is the visual plan for your kitchen journal. We have shaped it around broad, readable cards in earthy botanical tones, giving your bakers a calm, unhurried space to tally batches with flour on their hands.",
       "envelope": {
-        "type": "APPROVAL",
-        "status": "ready",
-        "message": "Awesome! We have your approval locked in for the coffee bean and roast log app. I'm moving right into assembling the app and bringing the warm amber design to life for the shop iPad.",
+        "type": "DESIGN",
+        "status": "proposed",
+        "message": "Here is the visual plan for your kitchen journal. We have shaped it around broad, readable cards in earthy botanical tones, giving your bakers a calm, unhurried space to tally batches with flour on their hands.",
         "payload": {
-          "blueprintHash": "bp-rev11-amber-coffee-log",
-          "revision": 11,
-          "summary": "Photo-first coffee bean catalog and roast logging app styled in warm amber tones for the shop iPad with quick browsing and roast detail viewing."
+          "direction": "An earthy, botanical field journal featuring generous card layouts, soft organic textures, and peaceful pacing for effortless kitchen tallies.",
+          "rationale": "Honors the sensory nature of wild yeast and seasonal harvests while offering large, uncluttered touch targets suitable for bakers with dusted hands.",
+          "previewReference": "patterns.focusscreen",
+          "visualChoices": {
+            "preset": "wellness-botanical",
+            "hierarchy": "editorial",
+            "motion": "subtle",
+            "pacing": "relaxed",
+            "palette": "amber"
+          },
+          "intent": {
+            "subjects": [
+              "ingredient",
+              "batch"
+            ],
+            "actions": [
+              "log",
+              "view",
+              "browse"
+            ]
+          }
         },
         "evidence": [
           {
             "source": "chat",
-            "quote": "The brief, screens, and amber design look great. I approve this blueprint—go ahead and build the app."
+            "quote": "warm, botanical, earthy, like a personal field journal"
+          },
+          {
+            "source": "chat",
+            "quote": "flour on their hands, so large readable cards, calm pacing, and very few buttons"
           }
         ],
-        "next": "plan build"
+        "next": "await_client_design_feedback"
       },
-      "rawOutput": "{\n  \"type\": \"APPROVAL\",\n  \"status\": \"ready\",\n  \"message\": \"Awesome! We have your approval locked in for the coffee bean and roast log app. I'm moving right into assembling the app and bringing the warm amber design to life for the shop iPad.\",\n  \"payload\": {\n    \"blueprintHash\": \"bp-rev11-amber-coffee-log\",\n    \"revision\": 11,\n    \"summary\": \"Photo-first coffee bean catalog and roast logging app styled in warm amber tones for the shop iPad with quick browsing and roast detail viewing.\"\n  },\n  \"evidence\": [\n    {\n      \"source\": \"chat\",\n      \"quote\": \"The brief, screens, and amber design look great. I approve this blueprint—go ahead and build the app.\"\n    }\n  ],\n  \"next\": \"plan build\"\n}",
+      "rawOutput": "{\n  \"type\": \"DESIGN\",\n  \"status\": \"proposed\",\n  \"message\": \"Here is the visual plan for your kitchen journal. We have shaped it around broad, readable cards in earthy botanical tones, giving your bakers a calm, unhurried space to tally batches with flour on their hands.\",\n  \"payload\": {\n    \"direction\": \"An earthy, botanical field journal featuring generous card layouts, soft organic textures, and peaceful pacing for effortless kitchen tallies.\",\n    \"rationale\": \"Honors the sensory nature of wild yeast and seasonal harvests while offering large, uncluttered touch targets suitable for bakers with dusted hands.\",\n    \"previewReference\": \"patterns.focusscreen\",\n    \"visualChoices\": {\n      \"preset\": \"wellness-botanical\",\n      \"hierarchy\": \"editorial\",\n      \"motion\": \"subtle\",\n      \"pacing\": \"relaxed\",\n      \"palette\": \"amber\"\n    },\n    \"intent\": {\n      \"subjects\": [\n        \"ingredient\",\n        \"batch\"\n      ],\n      \"actions\": [\n        \"log\",\n        \"view\",\n        \"browse\"\n      ]\n    }\n  },\n  \"evidence\": [\n    {\n      \"source\": \"chat\",\n      \"quote\": \"warm, botanical, earthy, like a personal field journal\"\n    },\n    {\n      \"source\": \"chat\",\n      \"quote\": \"flour on their hands, so large readable cards, calm pacing, and very few buttons\"\n    }\n  ],\n  \"next\": \"await_client_design_feedback\"\n}",
       "validationErrors": null,
       "apiOperations": [
         {
@@ -451,8 +432,8 @@
           "keys": [
             "product.outcome",
             "target.audience",
-            "access.model",
-            "device.target"
+            "experience.primary",
+            "aesthetic.tone"
           ]
         },
         {
@@ -460,10 +441,10 @@
           "keys": [
             "product.outcome",
             "target.audience",
-            "access.model",
-            "device.target"
+            "experience.primary",
+            "aesthetic.tone"
           ],
-          "quote": "Mostly browsing roast logs and seeing which beans scored highest. No accounts needed right now, just local on the iPad at the shop."
+          "quote": "I run an artisan pastry kitchen. I need an inventory book for our daily flour, wild yeast, and seasonal fruit. I want something warm, botanical, earthy, like a personal field journal. Nothing corporate or cold."
         },
         {
           "operation": "plan.record",
@@ -478,42 +459,45 @@
         },
         {
           "operation": "batches.init",
-          "project": "C:\\Users\\ADMINI~1\\AppData\\Local\\Temp\\factory-live-vague-visionary-kxfiFI\\app"
+          "project": "C:\\Users\\ADMINI~1\\AppData\\Local\\Temp\\factory-live-non-technical-founder-6YbWmL\\app"
         },
         {
           "operation": "batches.set",
           "stage": "classification",
           "value": {
-            "type": "catalog"
+            "type": "tracker"
           }
         },
         {
           "operation": "batches.set",
           "stage": "objects",
           "value": [
-            "bean"
+            "ingredient",
+            "batch"
           ]
         },
         {
           "operation": "batches.set",
           "stage": "functionality",
           "value": [
-            "bean.view"
+            "ingredient.view",
+            "ingredient.create"
           ]
         },
         {
           "operation": "batches.set",
           "stage": "pages",
           "value": [
-            "catalog.home",
-            "catalog.detail"
+            "tracker.home",
+            "tracker.detail",
+            "tracker.create"
           ]
         },
         {
           "operation": "batches.set",
           "stage": "composition",
           "value": {
-            "catalog.home": {
+            "tracker.home": {
               "kind": "collection",
               "archetype": "bento-overview",
               "bindings": {
@@ -521,17 +505,46 @@
               },
               "navigation": [
                 {
-                  "to": "catalog.detail",
+                  "to": "tracker.detail",
                   "placement": "select"
+                },
+                {
+                  "to": "tracker.create",
+                  "placement": "header"
                 }
               ]
             },
-            "catalog.detail": {
+            "tracker.detail": {
               "kind": "detail",
               "archetype": "content-canvas",
               "bindings": {
-                "heading": "name"
-              }
+                "heading": "name",
+                "facts": [
+                  "notes"
+                ]
+              },
+              "navigation": [
+                {
+                  "to": "tracker.home",
+                  "placement": "action"
+                }
+              ]
+            },
+            "tracker.create": {
+              "kind": "form",
+              "archetype": "focus-wizard",
+              "bindings": {
+                "fields": [
+                  "name",
+                  "notes"
+                ]
+              },
+              "actions": [
+                {
+                  "id": "ingredient.create",
+                  "placement": "primary"
+                }
+              ]
             }
           }
         },
@@ -540,33 +553,44 @@
           "stage": "content",
           "value": {
             "pages": {
-              "catalog.home": {
-                "title": "Roast Logs",
-                "subtitle": "Shop Bean Profiles & Cupping Scores"
+              "tracker.home": {
+                "title": "The Non-Technical Founder",
+                "subtitle": "Ingredient logs & highlights"
               },
-              "catalog.detail": {
-                "title": "Roast Details"
+              "tracker.detail": {
+                "title": "Ingredient Profile"
+              },
+              "tracker.create": {
+                "title": "Log New Ingredient",
+                "primary": "Save Ingredient"
               }
             },
             "data": {
-              "bean": [
+              "ingredient": [
                 {
-                  "id": "ethiopia-yirgacheffe",
-                  "name": "Ethiopia Yirgacheffe (Score: 92)"
+                  "id": "ing-flour",
+                  "name": "Stoneground Rye Flour",
+                  "notes": "Organic heritage grain, 25kg cold stoneground"
                 },
                 {
-                  "id": "colombia-huila",
-                  "name": "Colombia Huila (Score: 89)"
+                  "id": "ing-levain",
+                  "name": "Wild Sourdough Starter",
+                  "notes": "Active 3-day fermentation, 100% hydration"
+                },
+                {
+                  "id": "ing-fruit",
+                  "name": "Summer Mountain Berries",
+                  "notes": "Local orchard harvest, wild blackberries & raspberries"
                 }
               ]
             },
             "design": {
-              "preset": "minimal-pro",
+              "preset": "wellness-botanical",
               "palette": "amber",
               "experience": {
                 "hierarchy": "media-led",
                 "motion": "subtle",
-                "pacing": "compact"
+                "pacing": "relaxed"
               }
             }
           }
@@ -576,17 +600,165 @@
           "stage": "review",
           "value": {
             "passed": true,
-            "specHash": "b35e745991a29ca205532d210d1095063cd12b609c7ef0bf054f470b529b1179"
+            "specHash": "ad95906edec12269a0a5579db9878598494a2959240f04a29dfcba76eb35a06d"
           }
         },
         {
-          "operation": "workflow.confirm",
-          "quote": "The brief, screens, and amber design look great. I approve this blueprint—go ahead and build the app."
+          "operation": "plan.record",
+          "count": 5,
+          "keys": [
+            "design.preset",
+            "design.palette",
+            "experience.hierarchy",
+            "experience.pacing",
+            "design.direction"
+          ]
         },
         {
-          "operation": "blueprint.approve",
-          "project": "C:\\Users\\ADMINI~1\\AppData\\Local\\Temp\\factory-live-vague-visionary-kxfiFI\\app",
-          "specHash": "b35e745991a29ca205532d210d1095063cd12b609c7ef0bf054f470b529b1179"
+          "operation": "batches.init",
+          "project": "C:\\Users\\ADMINI~1\\AppData\\Local\\Temp\\factory-live-non-technical-founder-6YbWmL\\app"
+        },
+        {
+          "operation": "batches.set",
+          "stage": "classification",
+          "value": {
+            "type": "tracker"
+          }
+        },
+        {
+          "operation": "batches.set",
+          "stage": "objects",
+          "value": [
+            "ingredient",
+            "batch"
+          ]
+        },
+        {
+          "operation": "batches.set",
+          "stage": "functionality",
+          "value": [
+            "ingredient.view",
+            "ingredient.create"
+          ]
+        },
+        {
+          "operation": "batches.set",
+          "stage": "pages",
+          "value": [
+            "tracker.home",
+            "tracker.detail",
+            "tracker.create"
+          ]
+        },
+        {
+          "operation": "batches.set",
+          "stage": "composition",
+          "value": {
+            "tracker.home": {
+              "kind": "collection",
+              "archetype": "bento-overview",
+              "bindings": {
+                "title": "name"
+              },
+              "navigation": [
+                {
+                  "to": "tracker.detail",
+                  "placement": "select"
+                },
+                {
+                  "to": "tracker.create",
+                  "placement": "header"
+                }
+              ]
+            },
+            "tracker.detail": {
+              "kind": "detail",
+              "archetype": "content-canvas",
+              "bindings": {
+                "heading": "name",
+                "facts": [
+                  "notes"
+                ]
+              },
+              "navigation": [
+                {
+                  "to": "tracker.home",
+                  "placement": "action"
+                }
+              ]
+            },
+            "tracker.create": {
+              "kind": "form",
+              "archetype": "focus-wizard",
+              "bindings": {
+                "fields": [
+                  "name",
+                  "notes"
+                ]
+              },
+              "actions": [
+                {
+                  "id": "ingredient.create",
+                  "placement": "primary"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "operation": "batches.set",
+          "stage": "content",
+          "value": {
+            "pages": {
+              "tracker.home": {
+                "title": "The Non-Technical Founder",
+                "subtitle": "Ingredient logs & highlights"
+              },
+              "tracker.detail": {
+                "title": "Ingredient Profile"
+              },
+              "tracker.create": {
+                "title": "Log New Ingredient",
+                "primary": "Save Ingredient"
+              }
+            },
+            "data": {
+              "ingredient": [
+                {
+                  "id": "ing-flour",
+                  "name": "Stoneground Rye Flour",
+                  "notes": "Organic heritage grain, 25kg cold stoneground"
+                },
+                {
+                  "id": "ing-levain",
+                  "name": "Wild Sourdough Starter",
+                  "notes": "Active 3-day fermentation, 100% hydration"
+                },
+                {
+                  "id": "ing-fruit",
+                  "name": "Summer Mountain Berries",
+                  "notes": "Local orchard harvest, wild blackberries & raspberries"
+                }
+              ]
+            },
+            "design": {
+              "preset": "wellness-botanical",
+              "palette": "amber",
+              "experience": {
+                "hierarchy": "media-led",
+                "motion": "subtle",
+                "pacing": "relaxed"
+              }
+            }
+          }
+        },
+        {
+          "operation": "batches.set",
+          "stage": "review",
+          "value": {
+            "passed": true,
+            "specHash": "ad95906edec12269a0a5579db9878598494a2959240f04a29dfcba76eb35a06d"
+          }
         }
       ],
       "commands": [
@@ -601,32 +773,439 @@
         "batches.set composition",
         "batches.set content",
         "batches.set review",
+        "plan.record",
+        "batches.init",
+        "batches.set classification",
+        "batches.set objects",
+        "batches.set functionality",
+        "batches.set pages",
+        "batches.set composition",
+        "batches.set content",
+        "batches.set review"
+      ],
+      "timestamp": "2026-11-18T19:50:09.301Z"
+    },
+    {
+      "role": "user",
+      "turn": 4,
+      "content": "The botanical field journal plan and screens look wonderful. I approve this blueprint—go ahead and build our bakery app.",
+      "timestamp": "2026-11-18T19:50:09.302Z"
+    },
+    {
+      "role": "assistant",
+      "turn": 4,
+      "content": "It is an honor to bring your kitchen journal to life. We will craft every corner to feel gentle, earthy, and welcoming to flour-dusted hands.",
+      "envelope": {
+        "type": "APPROVAL",
+        "status": "complete",
+        "message": "It is an honor to bring your kitchen journal to life. We will craft every corner to feel gentle, earthy, and welcoming to flour-dusted hands.",
+        "payload": {
+          "blueprintHash": "rev12-botanical-field-journal",
+          "revision": 12,
+          "summary": "Botanical field journal inventory app for artisan pastry kitchen with generous cards, earthy tones, and twice-daily batch tracking."
+        },
+        "evidence": [
+          {
+            "source": "chat",
+            "quote": "The botanical field journal plan and screens look wonderful. I approve this blueprint—go ahead and build our bakery app."
+          }
+        ],
+        "next": "factory.build"
+      },
+      "rawOutput": "{\n  \"type\": \"APPROVAL\",\n  \"status\": \"complete\",\n  \"message\": \"It is an honor to bring your kitchen journal to life. We will craft every corner to feel gentle, earthy, and welcoming to flour-dusted hands.\",\n  \"payload\": {\n    \"blueprintHash\": \"rev12-botanical-field-journal\",\n    \"revision\": 12,\n    \"summary\": \"Botanical field journal inventory app for artisan pastry kitchen with generous cards, earthy tones, and twice-daily batch tracking.\"\n  },\n  \"evidence\": [\n    {\n      \"source\": \"chat\",\n      \"quote\": \"The botanical field journal plan and screens look wonderful. I approve this blueprint—go ahead and build our bakery app.\"\n    }\n  ],\n  \"next\": \"factory.build\"\n}",
+      "validationErrors": null,
+      "apiOperations": [
+        {
+          "operation": "plan.record",
+          "count": 4,
+          "keys": [
+            "product.outcome",
+            "target.audience",
+            "experience.primary",
+            "aesthetic.tone"
+          ]
+        },
+        {
+          "operation": "plan.confirm",
+          "keys": [
+            "product.outcome",
+            "target.audience",
+            "experience.primary",
+            "aesthetic.tone"
+          ],
+          "quote": "I run an artisan pastry kitchen. I need an inventory book for our daily flour, wild yeast, and seasonal fruit. I want something warm, botanical, earthy, like a personal field journal. Nothing corporate or cold."
+        },
+        {
+          "operation": "plan.record",
+          "count": 5,
+          "keys": [
+            "design.preset",
+            "design.palette",
+            "experience.hierarchy",
+            "experience.pacing",
+            "design.direction"
+          ]
+        },
+        {
+          "operation": "batches.init",
+          "project": "C:\\Users\\ADMINI~1\\AppData\\Local\\Temp\\factory-live-non-technical-founder-6YbWmL\\app"
+        },
+        {
+          "operation": "batches.set",
+          "stage": "classification",
+          "value": {
+            "type": "tracker"
+          }
+        },
+        {
+          "operation": "batches.set",
+          "stage": "objects",
+          "value": [
+            "ingredient",
+            "batch"
+          ]
+        },
+        {
+          "operation": "batches.set",
+          "stage": "functionality",
+          "value": [
+            "ingredient.view",
+            "ingredient.create"
+          ]
+        },
+        {
+          "operation": "batches.set",
+          "stage": "pages",
+          "value": [
+            "tracker.home",
+            "tracker.detail",
+            "tracker.create"
+          ]
+        },
+        {
+          "operation": "batches.set",
+          "stage": "composition",
+          "value": {
+            "tracker.home": {
+              "kind": "collection",
+              "archetype": "bento-overview",
+              "bindings": {
+                "title": "name"
+              },
+              "navigation": [
+                {
+                  "to": "tracker.detail",
+                  "placement": "select"
+                },
+                {
+                  "to": "tracker.create",
+                  "placement": "header"
+                }
+              ]
+            },
+            "tracker.detail": {
+              "kind": "detail",
+              "archetype": "content-canvas",
+              "bindings": {
+                "heading": "name",
+                "facts": [
+                  "notes"
+                ]
+              },
+              "navigation": [
+                {
+                  "to": "tracker.home",
+                  "placement": "action"
+                }
+              ]
+            },
+            "tracker.create": {
+              "kind": "form",
+              "archetype": "focus-wizard",
+              "bindings": {
+                "fields": [
+                  "name",
+                  "notes"
+                ]
+              },
+              "actions": [
+                {
+                  "id": "ingredient.create",
+                  "placement": "primary"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "operation": "batches.set",
+          "stage": "content",
+          "value": {
+            "pages": {
+              "tracker.home": {
+                "title": "The Non-Technical Founder",
+                "subtitle": "Ingredient logs & highlights"
+              },
+              "tracker.detail": {
+                "title": "Ingredient Profile"
+              },
+              "tracker.create": {
+                "title": "Log New Ingredient",
+                "primary": "Save Ingredient"
+              }
+            },
+            "data": {
+              "ingredient": [
+                {
+                  "id": "ing-flour",
+                  "name": "Stoneground Rye Flour",
+                  "notes": "Organic heritage grain, 25kg cold stoneground"
+                },
+                {
+                  "id": "ing-levain",
+                  "name": "Wild Sourdough Starter",
+                  "notes": "Active 3-day fermentation, 100% hydration"
+                },
+                {
+                  "id": "ing-fruit",
+                  "name": "Summer Mountain Berries",
+                  "notes": "Local orchard harvest, wild blackberries & raspberries"
+                }
+              ]
+            },
+            "design": {
+              "preset": "wellness-botanical",
+              "palette": "amber",
+              "experience": {
+                "hierarchy": "media-led",
+                "motion": "subtle",
+                "pacing": "relaxed"
+              }
+            }
+          }
+        },
+        {
+          "operation": "batches.set",
+          "stage": "review",
+          "value": {
+            "passed": true,
+            "specHash": "ad95906edec12269a0a5579db9878598494a2959240f04a29dfcba76eb35a06d"
+          }
+        },
+        {
+          "operation": "plan.record",
+          "count": 5,
+          "keys": [
+            "design.preset",
+            "design.palette",
+            "experience.hierarchy",
+            "experience.pacing",
+            "design.direction"
+          ]
+        },
+        {
+          "operation": "batches.init",
+          "project": "C:\\Users\\ADMINI~1\\AppData\\Local\\Temp\\factory-live-non-technical-founder-6YbWmL\\app"
+        },
+        {
+          "operation": "batches.set",
+          "stage": "classification",
+          "value": {
+            "type": "tracker"
+          }
+        },
+        {
+          "operation": "batches.set",
+          "stage": "objects",
+          "value": [
+            "ingredient",
+            "batch"
+          ]
+        },
+        {
+          "operation": "batches.set",
+          "stage": "functionality",
+          "value": [
+            "ingredient.view",
+            "ingredient.create"
+          ]
+        },
+        {
+          "operation": "batches.set",
+          "stage": "pages",
+          "value": [
+            "tracker.home",
+            "tracker.detail",
+            "tracker.create"
+          ]
+        },
+        {
+          "operation": "batches.set",
+          "stage": "composition",
+          "value": {
+            "tracker.home": {
+              "kind": "collection",
+              "archetype": "bento-overview",
+              "bindings": {
+                "title": "name"
+              },
+              "navigation": [
+                {
+                  "to": "tracker.detail",
+                  "placement": "select"
+                },
+                {
+                  "to": "tracker.create",
+                  "placement": "header"
+                }
+              ]
+            },
+            "tracker.detail": {
+              "kind": "detail",
+              "archetype": "content-canvas",
+              "bindings": {
+                "heading": "name",
+                "facts": [
+                  "notes"
+                ]
+              },
+              "navigation": [
+                {
+                  "to": "tracker.home",
+                  "placement": "action"
+                }
+              ]
+            },
+            "tracker.create": {
+              "kind": "form",
+              "archetype": "focus-wizard",
+              "bindings": {
+                "fields": [
+                  "name",
+                  "notes"
+                ]
+              },
+              "actions": [
+                {
+                  "id": "ingredient.create",
+                  "placement": "primary"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "operation": "batches.set",
+          "stage": "content",
+          "value": {
+            "pages": {
+              "tracker.home": {
+                "title": "The Non-Technical Founder",
+                "subtitle": "Ingredient logs & highlights"
+              },
+              "tracker.detail": {
+                "title": "Ingredient Profile"
+              },
+              "tracker.create": {
+                "title": "Log New Ingredient",
+                "primary": "Save Ingredient"
+              }
+            },
+            "data": {
+              "ingredient": [
+                {
+                  "id": "ing-flour",
+                  "name": "Stoneground Rye Flour",
+                  "notes": "Organic heritage grain, 25kg cold stoneground"
+                },
+                {
+                  "id": "ing-levain",
+                  "name": "Wild Sourdough Starter",
+                  "notes": "Active 3-day fermentation, 100% hydration"
+                },
+                {
+                  "id": "ing-fruit",
+                  "name": "Summer Mountain Berries",
+                  "notes": "Local orchard harvest, wild blackberries & raspberries"
+                }
+              ]
+            },
+            "design": {
+              "preset": "wellness-botanical",
+              "palette": "amber",
+              "experience": {
+                "hierarchy": "media-led",
+                "motion": "subtle",
+                "pacing": "relaxed"
+              }
+            }
+          }
+        },
+        {
+          "operation": "batches.set",
+          "stage": "review",
+          "value": {
+            "passed": true,
+            "specHash": "ad95906edec12269a0a5579db9878598494a2959240f04a29dfcba76eb35a06d"
+          }
+        },
+        {
+          "operation": "workflow.confirm",
+          "quote": "The botanical field journal plan and screens look wonderful. I approve this blueprint—go ahead and build our bakery app."
+        },
+        {
+          "operation": "blueprint.approve",
+          "project": "C:\\Users\\ADMINI~1\\AppData\\Local\\Temp\\factory-live-non-technical-founder-6YbWmL\\app",
+          "specHash": "ad95906edec12269a0a5579db9878598494a2959240f04a29dfcba76eb35a06d"
+        }
+      ],
+      "commands": [
+        "plan.record",
+        "plan.confirm",
+        "plan.record",
+        "batches.init",
+        "batches.set classification",
+        "batches.set objects",
+        "batches.set functionality",
+        "batches.set pages",
+        "batches.set composition",
+        "batches.set content",
+        "batches.set review",
+        "plan.record",
+        "batches.init",
+        "batches.set classification",
+        "batches.set objects",
+        "batches.set functionality",
+        "batches.set pages",
+        "batches.set composition",
+        "batches.set content",
+        "batches.set review",
         "workflow.confirm",
         "blueprint.approve"
       ],
-      "timestamp": "2026-11-18T19:24:14.243Z"
+      "timestamp": "2026-11-18T19:50:22.314Z"
     }
   ],
   "projectState": {
     "schemaVersion": 1,
-    "name": "The Vague Visionary",
+    "name": "The Non-Technical Founder",
     "phase": "build",
-    "revision": 12,
+    "revision": 13,
     "approval": {
-      "revision": 12,
-      "appSpecHash": "b35e745991a29ca205532d210d1095063cd12b609c7ef0bf054f470b529b1179",
-      "at": "2026-11-18T19:24:14.239Z"
+      "revision": 13,
+      "appSpecHash": "ad95906edec12269a0a5579db9878598494a2959240f04a29dfcba76eb35a06d",
+      "at": "2026-11-18T19:50:22.313Z"
     },
     "answers": {
-      "product.outcome": "Browse roast logs and review highest-scoring coffee beans",
-      "target.audience": "Shop baristas and roastery staff",
-      "access.model": "No user accounts required",
-      "device.target": "Local on-premise shop iPad",
-      "design.direction": "Warm, streamlined roast catalog with rich media cards and quick detail views tailored for fast-paced baristas.",
-      "design.preset": "minimal-pro",
+      "product.outcome": "An earthy digital field journal to lovingly track wild yeasts, pantry grains, and fresh harvest arrivals",
+      "target.audience": "Artisan pastry chefs and baker-owners working hands-on in the kitchen",
+      "experience.primary": "Quiet, tactile logging of living cultures and daily seasonal ingredients",
+      "aesthetic.tone": "Warm botanical parchment, botanical sketches, and soft earth tones",
+      "design.direction": "An earthy, botanical field journal featuring generous card layouts, soft organic textures, and peaceful pacing for effortless kitchen tallies.",
+      "design.preset": "wellness-botanical",
       "design.palette": "amber",
-      "experience.hierarchy": "media-led",
-      "experience.pacing": "compact",
+      "experience.hierarchy": "editorial",
+      "experience.pacing": "relaxed",
       "experience.motion": "subtle"
     },
     "screens": [],
@@ -636,23 +1215,23 @@
     "decisions": [
       {
         "type": "user-confirmation",
-        "value": "USER: The brief, screens, and amber design look great. I approve this blueprint—go ahead and build the app.",
-        "revision": 11,
-        "appSpecHash": "b35e745991a29ca205532d210d1095063cd12b609c7ef0bf054f470b529b1179"
+        "value": "USER: The botanical field journal plan and screens look wonderful. I approve this blueprint—go ahead and build our bakery app.",
+        "revision": 12,
+        "appSpecHash": "ad95906edec12269a0a5579db9878598494a2959240f04a29dfcba76eb35a06d"
       },
       {
         "type": "user-confirmation",
-        "value": "USER: The brief, screens, and amber design look great. I approve this blueprint—go ahead and build the app.",
+        "value": "USER: The botanical field journal plan and screens look wonderful. I approve this blueprint—go ahead and build our bakery app.",
         "source": {
           "id": "chat",
-          "quote": "The brief, screens, and amber design look great. I approve this blueprint—go ahead and build the app."
+          "quote": "The botanical field journal plan and screens look wonderful. I approve this blueprint—go ahead and build our bakery app."
         },
-        "revision": 12
+        "revision": 13
       }
     ],
     "tasks": [],
     "verification": [],
-    "createdAt": "2026-11-18T19:22:37.250Z",
+    "createdAt": "2026-11-18T19:49:25.281Z",
     "facts": {
       "identity.required": {
         "value": false,
@@ -688,16 +1267,16 @@
         "history": []
       },
       "design.direction": {
-        "value": "Warm, streamlined roast catalog with rich media cards and quick detail views tailored for fast-paced baristas.",
+        "value": "An earthy, botanical field journal featuring generous card layouts, soft organic textures, and peaceful pacing for effortless kitchen tallies.",
         "status": "stated",
         "sources": [
           {
             "id": "chat",
-            "quote": "Mostly browsing roast logs and seeing which beans scored highest. No accounts needed right now, just local on the iPad at the shop."
+            "quote": "warm, botanical, earthy, like a personal field journal"
           },
           {
             "id": "chat",
-            "quote": "Mostly browsing roast logs and seeing which beans scored highest. No accounts needed right now, just local on the iPad at the shop."
+            "quote": "warm, botanical, earthy, like a personal field journal"
           }
         ],
         "history": [
@@ -711,6 +1290,21 @@
               }
             ],
             "replacedAtRevision": 2
+          },
+          {
+            "value": "A tranquil, botanical field ledger featuring spacious cards, warm earthen tones, and minimal touchpoints suited for the kitchen counter.",
+            "status": "stated",
+            "sources": [
+              {
+                "id": "chat",
+                "quote": "warm, botanical, earthy, like a personal field journal"
+              },
+              {
+                "id": "chat",
+                "quote": "warm, botanical, earthy, like a personal field journal"
+              }
+            ],
+            "replacedAtRevision": 11
           }
         ]
       },
@@ -729,92 +1323,100 @@
         "history": []
       },
       "product.outcome": {
-        "value": "Browse roast logs and review highest-scoring coffee beans",
+        "value": "An earthy digital field journal to lovingly track wild yeasts, pantry grains, and fresh harvest arrivals",
         "status": "confirmed",
         "sources": [
           {
             "id": "chat",
-            "quote": "Mostly browsing roast logs and seeing which beans scored highest. No accounts needed right now, just local on the iPad at the shop."
+            "quote": "I run an artisan pastry kitchen. I need an inventory book for our daily flour, wild yeast, and seasonal fruit. I want something warm, botanical, earthy, like a personal field journal. Nothing corporate or cold."
           },
           {
             "id": "chat",
-            "quote": "Mostly browsing roast logs and seeing which beans scored highest. No accounts needed right now, just local on the iPad at the shop."
+            "quote": "I run an artisan pastry kitchen. I need an inventory book for our daily flour, wild yeast, and seasonal fruit. I want something warm, botanical, earthy, like a personal field journal. Nothing corporate or cold."
           },
           {
             "id": "chat",
-            "quote": "Mostly browsing roast logs and seeing which beans scored highest. No accounts needed right now, just local on the iPad at the shop."
+            "quote": "I run an artisan pastry kitchen. I need an inventory book for our daily flour, wild yeast, and seasonal fruit. I want something warm, botanical, earthy, like a personal field journal. Nothing corporate or cold."
           }
         ],
         "history": []
       },
       "target.audience": {
-        "value": "Shop baristas and roastery staff",
+        "value": "Artisan pastry chefs and baker-owners working hands-on in the kitchen",
         "status": "confirmed",
         "sources": [
           {
             "id": "chat",
-            "quote": "Mostly browsing roast logs and seeing which beans scored highest. No accounts needed right now, just local on the iPad at the shop."
+            "quote": "I run an artisan pastry kitchen. I need an inventory book for our daily flour, wild yeast, and seasonal fruit. I want something warm, botanical, earthy, like a personal field journal. Nothing corporate or cold."
           },
           {
             "id": "chat",
-            "quote": "Mostly browsing roast logs and seeing which beans scored highest. No accounts needed right now, just local on the iPad at the shop."
+            "quote": "I run an artisan pastry kitchen. I need an inventory book for our daily flour, wild yeast, and seasonal fruit. I want something warm, botanical, earthy, like a personal field journal. Nothing corporate or cold."
           },
           {
             "id": "chat",
-            "quote": "Mostly browsing roast logs and seeing which beans scored highest. No accounts needed right now, just local on the iPad at the shop."
+            "quote": "I run an artisan pastry kitchen. I need an inventory book for our daily flour, wild yeast, and seasonal fruit. I want something warm, botanical, earthy, like a personal field journal. Nothing corporate or cold."
           }
         ],
         "history": []
       },
-      "access.model": {
-        "value": "No user accounts required",
+      "experience.primary": {
+        "value": "Quiet, tactile logging of living cultures and daily seasonal ingredients",
         "status": "confirmed",
         "sources": [
           {
             "id": "chat",
-            "quote": "Mostly browsing roast logs and seeing which beans scored highest. No accounts needed right now, just local on the iPad at the shop."
+            "quote": "I run an artisan pastry kitchen. I need an inventory book for our daily flour, wild yeast, and seasonal fruit. I want something warm, botanical, earthy, like a personal field journal. Nothing corporate or cold."
           },
           {
             "id": "chat",
-            "quote": "Mostly browsing roast logs and seeing which beans scored highest. No accounts needed right now, just local on the iPad at the shop."
+            "quote": "I run an artisan pastry kitchen. I need an inventory book for our daily flour, wild yeast, and seasonal fruit. I want something warm, botanical, earthy, like a personal field journal. Nothing corporate or cold."
           },
           {
             "id": "chat",
-            "quote": "Mostly browsing roast logs and seeing which beans scored highest. No accounts needed right now, just local on the iPad at the shop."
+            "quote": "I run an artisan pastry kitchen. I need an inventory book for our daily flour, wild yeast, and seasonal fruit. I want something warm, botanical, earthy, like a personal field journal. Nothing corporate or cold."
           }
         ],
         "history": []
       },
-      "device.target": {
-        "value": "Local on-premise shop iPad",
+      "aesthetic.tone": {
+        "value": "Warm botanical parchment, botanical sketches, and soft earth tones",
         "status": "confirmed",
         "sources": [
           {
             "id": "chat",
-            "quote": "Mostly browsing roast logs and seeing which beans scored highest. No accounts needed right now, just local on the iPad at the shop."
+            "quote": "I run an artisan pastry kitchen. I need an inventory book for our daily flour, wild yeast, and seasonal fruit. I want something warm, botanical, earthy, like a personal field journal. Nothing corporate or cold."
           },
           {
             "id": "chat",
-            "quote": "Mostly browsing roast logs and seeing which beans scored highest. No accounts needed right now, just local on the iPad at the shop."
+            "quote": "I run an artisan pastry kitchen. I need an inventory book for our daily flour, wild yeast, and seasonal fruit. I want something warm, botanical, earthy, like a personal field journal. Nothing corporate or cold."
           },
           {
             "id": "chat",
-            "quote": "Mostly browsing roast logs and seeing which beans scored highest. No accounts needed right now, just local on the iPad at the shop."
+            "quote": "I run an artisan pastry kitchen. I need an inventory book for our daily flour, wild yeast, and seasonal fruit. I want something warm, botanical, earthy, like a personal field journal. Nothing corporate or cold."
           }
         ],
         "history": []
       },
       "design.preset": {
-        "value": "minimal-pro",
+        "value": "wellness-botanical",
         "status": "stated",
         "sources": [
           {
             "id": "chat",
-            "quote": "Mostly browsing roast logs and seeing which beans scored highest. No accounts needed right now, just local on the iPad at the shop."
+            "quote": "warm, botanical, earthy, like a personal field journal"
           },
           {
             "id": "chat",
-            "quote": "Mostly browsing roast logs and seeing which beans scored highest. No accounts needed right now, just local on the iPad at the shop."
+            "quote": "warm, botanical, earthy, like a personal field journal"
+          },
+          {
+            "id": "chat",
+            "quote": "warm, botanical, earthy, like a personal field journal"
+          },
+          {
+            "id": "chat",
+            "quote": "warm, botanical, earthy, like a personal field journal"
           }
         ],
         "history": []
@@ -825,41 +1427,65 @@
         "sources": [
           {
             "id": "chat",
-            "quote": "Mostly browsing roast logs and seeing which beans scored highest. No accounts needed right now, just local on the iPad at the shop."
+            "quote": "warm, botanical, earthy, like a personal field journal"
           },
           {
             "id": "chat",
-            "quote": "Mostly browsing roast logs and seeing which beans scored highest. No accounts needed right now, just local on the iPad at the shop."
+            "quote": "warm, botanical, earthy, like a personal field journal"
+          },
+          {
+            "id": "chat",
+            "quote": "warm, botanical, earthy, like a personal field journal"
+          },
+          {
+            "id": "chat",
+            "quote": "warm, botanical, earthy, like a personal field journal"
           }
         ],
         "history": []
       },
       "experience.hierarchy": {
-        "value": "media-led",
+        "value": "editorial",
         "status": "stated",
         "sources": [
           {
             "id": "chat",
-            "quote": "Mostly browsing roast logs and seeing which beans scored highest. No accounts needed right now, just local on the iPad at the shop."
+            "quote": "warm, botanical, earthy, like a personal field journal"
           },
           {
             "id": "chat",
-            "quote": "Mostly browsing roast logs and seeing which beans scored highest. No accounts needed right now, just local on the iPad at the shop."
+            "quote": "warm, botanical, earthy, like a personal field journal"
+          },
+          {
+            "id": "chat",
+            "quote": "warm, botanical, earthy, like a personal field journal"
+          },
+          {
+            "id": "chat",
+            "quote": "warm, botanical, earthy, like a personal field journal"
           }
         ],
         "history": []
       },
       "experience.pacing": {
-        "value": "compact",
+        "value": "relaxed",
         "status": "stated",
         "sources": [
           {
             "id": "chat",
-            "quote": "Mostly browsing roast logs and seeing which beans scored highest. No accounts needed right now, just local on the iPad at the shop."
+            "quote": "warm, botanical, earthy, like a personal field journal"
           },
           {
             "id": "chat",
-            "quote": "Mostly browsing roast logs and seeing which beans scored highest. No accounts needed right now, just local on the iPad at the shop."
+            "quote": "warm, botanical, earthy, like a personal field journal"
+          },
+          {
+            "id": "chat",
+            "quote": "warm, botanical, earthy, like a personal field journal"
+          },
+          {
+            "id": "chat",
+            "quote": "warm, botanical, earthy, like a personal field journal"
           }
         ],
         "history": []
@@ -870,7 +1496,11 @@
         "sources": [
           {
             "id": "chat",
-            "quote": "Mostly browsing roast logs and seeing which beans scored highest. No accounts needed right now, just local on the iPad at the shop."
+            "quote": "warm, botanical, earthy, like a personal field journal"
+          },
+          {
+            "id": "chat",
+            "quote": "warm, botanical, earthy, like a personal field journal"
           }
         ],
         "history": []
@@ -886,20 +1516,23 @@
       "schemaVersion": 1,
       "selections": {
         "classification": {
-          "type": "catalog"
+          "type": "tracker"
         },
         "objects": [
-          "bean"
+          "ingredient",
+          "batch"
         ],
         "functionality": [
-          "bean.view"
+          "ingredient.view",
+          "ingredient.create"
         ],
         "pages": [
-          "catalog.home",
-          "catalog.detail"
+          "tracker.home",
+          "tracker.detail",
+          "tracker.create"
         ],
         "composition": {
-          "catalog.home": {
+          "tracker.home": {
             "kind": "collection",
             "archetype": "bento-overview",
             "bindings": {
@@ -907,80 +1540,139 @@
             },
             "navigation": [
               {
-                "to": "catalog.detail",
+                "to": "tracker.detail",
                 "placement": "select"
+              },
+              {
+                "to": "tracker.create",
+                "placement": "header"
               }
             ]
           },
-          "catalog.detail": {
+          "tracker.detail": {
             "kind": "detail",
             "archetype": "content-canvas",
             "bindings": {
-              "heading": "name"
-            }
+              "heading": "name",
+              "facts": [
+                "notes"
+              ]
+            },
+            "navigation": [
+              {
+                "to": "tracker.home",
+                "placement": "action"
+              }
+            ]
+          },
+          "tracker.create": {
+            "kind": "form",
+            "archetype": "focus-wizard",
+            "bindings": {
+              "fields": [
+                "name",
+                "notes"
+              ]
+            },
+            "actions": [
+              {
+                "id": "ingredient.create",
+                "placement": "primary"
+              }
+            ]
           }
         },
         "content": {
           "pages": {
-            "catalog.home": {
-              "title": "Roast Logs",
-              "subtitle": "Shop Bean Profiles & Cupping Scores"
+            "tracker.home": {
+              "title": "The Non-Technical Founder",
+              "subtitle": "Ingredient logs & highlights"
             },
-            "catalog.detail": {
-              "title": "Roast Details"
+            "tracker.detail": {
+              "title": "Ingredient Profile"
+            },
+            "tracker.create": {
+              "title": "Log New Ingredient",
+              "primary": "Save Ingredient"
             }
           },
           "data": {
-            "bean": [
+            "ingredient": [
               {
-                "id": "ethiopia-yirgacheffe",
-                "name": "Ethiopia Yirgacheffe (Score: 92)"
+                "id": "ing-flour",
+                "name": "Stoneground Rye Flour",
+                "notes": "Organic heritage grain, 25kg cold stoneground"
               },
               {
-                "id": "colombia-huila",
-                "name": "Colombia Huila (Score: 89)"
+                "id": "ing-levain",
+                "name": "Wild Sourdough Starter",
+                "notes": "Active 3-day fermentation, 100% hydration"
+              },
+              {
+                "id": "ing-fruit",
+                "name": "Summer Mountain Berries",
+                "notes": "Local orchard harvest, wild blackberries & raspberries"
               }
             ]
           },
           "design": {
-            "preset": "minimal-pro",
+            "preset": "wellness-botanical",
             "palette": "amber",
             "experience": {
               "hierarchy": "media-led",
               "motion": "subtle",
-              "pacing": "compact"
+              "pacing": "relaxed"
             }
           }
         },
         "review": {
           "passed": true,
-          "evidence": "Verified The Vague Visionary (Coffee Notes) spec and design",
-          "specHash": "b35e745991a29ca205532d210d1095063cd12b609c7ef0bf054f470b529b1179"
+          "evidence": "Verified The Non-Technical Founder (Artisan Pâtisserie) spec and resolved design intent",
+          "specHash": "ad95906edec12269a0a5579db9878598494a2959240f04a29dfcba76eb35a06d"
         }
       }
     }
   },
   "docs": {
-    "brief": "# The Vague Visionary — agent brief (rev 12, APPROVED b35e745991a2)\nMode: lite. Canonical state: .factory/project.json. This brief is a projection; do not edit it.\n\n## Workflow\nActive segment: **02-discovery** → load `references/02-discovery.md`.\nNext condition: fact:product.audience — Who is the primary user?\nSegments: 02· 03· 04· 05✓ 06· 07· 08·\n## Decisions\n- `access.model`: \"No user accounts required\" — confirmed [chat]\n- `data.required`: false — proposed [factory]\n- `design.direction`: \"Warm, streamlined roast catalog with rich media cards and quick detail views tailored for fast-paced baristas.\" — stated [chat] (rev. 1×)\n- `design.palette`: \"amber\" — stated [chat]\n- `design.preset`: \"minimal-pro\" — stated [chat]\n- `device.target`: \"Local on-premise shop iPad\" — confirmed [chat]\n- `experience.hierarchy`: \"media-led\" — stated [chat]\n- `experience.motion`: \"subtle\" — stated [chat]\n- `experience.navigation`: \"Single stack: home screen pushes detail screens; native back\" — proposed [factory]\n- `experience.pacing`: \"compact\" — stated [chat]\n- `identity.required`: false — proposed [factory]\n- `product.outcome`: \"Browse roast logs and review highest-scoring coffee beans\" — confirmed [chat]\n- `release.targets`: [\"ios\",\"android\"] — proposed [factory]\n- `target.audience`: \"Shop baristas and roastery staff\" — confirmed [chat]\n## Screens (0)\n\n## Readiness\nBlueprint audit: ready.\n",
-    "decisions": "# Decision log (rev 12)\n\n## access.model\n- `access.model`: \"No user accounts required\" — confirmed [chat]\n> Mostly browsing roast logs and seeing which beans scored highest. No accounts needed right now, just local on the iPad at the shop.\n> Mostly browsing roast logs and seeing which beans scored highest. No accounts needed right now, just local on the iPad at the shop.\n> Mostly browsing roast logs and seeing which beans scored highest. No accounts needed right now, just local on the iPad at the shop.\n\n## data.required\n- `data.required`: false — proposed [factory]\n\n\n## design.direction\n- `design.direction`: \"Warm, streamlined roast catalog with rich media cards and quick detail views tailored for fast-paced baristas.\" — stated [chat] (rev. 1×)\n> Mostly browsing roast logs and seeing which beans scored highest. No accounts needed right now, just local on the iPad at the shop.\n> Mostly browsing roast logs and seeing which beans scored highest. No accounts needed right now, just local on the iPad at the shop.\n\nHistory:\n- \"Factory Focus-First Native defaults (system light/dark, calm loading, one primary action per screen)\" (proposed, replaced at rev 2)\n\n## design.palette\n- `design.palette`: \"amber\" — stated [chat]\n> Mostly browsing roast logs and seeing which beans scored highest. No accounts needed right now, just local on the iPad at the shop.\n> Mostly browsing roast logs and seeing which beans scored highest. No accounts needed right now, just local on the iPad at the shop.\n\n## design.preset\n- `design.preset`: \"minimal-pro\" — stated [chat]\n> Mostly browsing roast logs and seeing which beans scored highest. No accounts needed right now, just local on the iPad at the shop.\n> Mostly browsing roast logs and seeing which beans scored highest. No accounts needed right now, just local on the iPad at the shop.\n\n## device.target\n- `device.target`: \"Local on-premise shop iPad\" — confirmed [chat]\n> Mostly browsing roast logs and seeing which beans scored highest. No accounts needed right now, just local on the iPad at the shop.\n> Mostly browsing roast logs and seeing which beans scored highest. No accounts needed right now, just local on the iPad at the shop.\n> Mostly browsing roast logs and seeing which beans scored highest. No accounts needed right now, just local on the iPad at the shop.\n\n## experience.hierarchy\n- `experience.hierarchy`: \"media-led\" — stated [chat]\n> Mostly browsing roast logs and seeing which beans scored highest. No accounts needed right now, just local on the iPad at the shop.\n> Mostly browsing roast logs and seeing which beans scored highest. No accounts needed right now, just local on the iPad at the shop.\n\n## experience.motion\n- `experience.motion`: \"subtle\" — stated [chat]\n> Mostly browsing roast logs and seeing which beans scored highest. No accounts needed right now, just local on the iPad at the shop.\n\n## experience.navigation\n- `experience.navigation`: \"Single stack: home screen pushes detail screens; native back\" — proposed [factory]\n\n\n## experience.pacing\n- `experience.pacing`: \"compact\" — stated [chat]\n> Mostly browsing roast logs and seeing which beans scored highest. No accounts needed right now, just local on the iPad at the shop.\n> Mostly browsing roast logs and seeing which beans scored highest. No accounts needed right now, just local on the iPad at the shop.\n\n## identity.required\n- `identity.required`: false — proposed [factory]\n\n\n## product.outcome\n- `product.outcome`: \"Browse roast logs and review highest-scoring coffee beans\" — confirmed [chat]\n> Mostly browsing roast logs and seeing which beans scored highest. No accounts needed right now, just local on the iPad at the shop.\n> Mostly browsing roast logs and seeing which beans scored highest. No accounts needed right now, just local on the iPad at the shop.\n> Mostly browsing roast logs and seeing which beans scored highest. No accounts needed right now, just local on the iPad at the shop.\n\n## release.targets\n- `release.targets`: [\"ios\",\"android\"] — proposed [factory]\n\n\n## target.audience\n- `target.audience`: \"Shop baristas and roastery staff\" — confirmed [chat]\n> Mostly browsing roast logs and seeing which beans scored highest. No accounts needed right now, just local on the iPad at the shop.\n> Mostly browsing roast logs and seeing which beans scored highest. No accounts needed right now, just local on the iPad at the shop.\n> Mostly browsing roast logs and seeing which beans scored highest. No accounts needed right now, just local on the iPad at the shop.\n",
-    "design": "# Global design (rev 12)\n\nCanonical source: .factory/project.json. This file is generated; do not edit.\n\n- `design.direction`: \"Warm, streamlined roast catalog with rich media cards and quick detail views tailored for fast-paced baristas.\" — stated [chat] (rev. 1×)\n- `design.palette`: \"amber\" — stated [chat]\n- `design.preset`: \"minimal-pro\" — stated [chat]\n"
+    "brief": "# The Non-Technical Founder — agent brief (rev 13, APPROVED ad95906edec1)\nMode: lite. Canonical state: .factory/project.json. This brief is a projection; do not edit it.\n\n## Workflow\nActive segment: **02-discovery** → load `references/02-discovery.md`.\nNext condition: fact:product.audience — Who is the primary user?\nSegments: 02· 03· 04· 05✓ 06· 07· 08·\n## Decisions\n- `aesthetic.tone`: \"Warm botanical parchment, botanical sketches, and soft earth tones\" — confirmed [chat]\n- `data.required`: false — proposed [factory]\n- `design.direction`: \"An earthy, botanical field journal featuring generous card layouts, soft organic textures, and peaceful pacing for effortless kitchen tallies.\" — stated [chat] (rev. 2×)\n- `design.palette`: \"amber\" — stated [chat]\n- `design.preset`: \"wellness-botanical\" — stated [chat]\n- `experience.hierarchy`: \"editorial\" — stated [chat]\n- `experience.motion`: \"subtle\" — stated [chat]\n- `experience.navigation`: \"Single stack: home screen pushes detail screens; native back\" — proposed [factory]\n- `experience.pacing`: \"relaxed\" — stated [chat]\n- `experience.primary`: \"Quiet, tactile logging of living cultures and daily seasonal ingredients\" — confirmed [chat]\n- `identity.required`: false — proposed [factory]\n- `product.outcome`: \"An earthy digital field journal to lovingly track wild yeasts, pantry grains, and fresh harvest arrivals\" — confirmed [chat]\n- `release.targets`: [\"ios\",\"android\"] — proposed [factory]\n- `target.audience`: \"Artisan pastry chefs and baker-owners working hands-on in the kitchen\" — confirmed [chat]\n## Screens (0)\n\n## Readiness\nBlueprint audit: ready.\n",
+    "decisions": "# Decision log (rev 13)\n\n## aesthetic.tone\n- `aesthetic.tone`: \"Warm botanical parchment, botanical sketches, and soft earth tones\" — confirmed [chat]\n> I run an artisan pastry kitchen. I need an inventory book for our daily flour, wild yeast, and seasonal fruit. I want something warm, botanical, earthy, like a personal field journal. Nothing corporate or cold.\n> I run an artisan pastry kitchen. I need an inventory book for our daily flour, wild yeast, and seasonal fruit. I want something warm, botanical, earthy, like a personal field journal. Nothing corporate or cold.\n> I run an artisan pastry kitchen. I need an inventory book for our daily flour, wild yeast, and seasonal fruit. I want something warm, botanical, earthy, like a personal field journal. Nothing corporate or cold.\n\n## data.required\n- `data.required`: false — proposed [factory]\n\n\n## design.direction\n- `design.direction`: \"An earthy, botanical field journal featuring generous card layouts, soft organic textures, and peaceful pacing for effortless kitchen tallies.\" — stated [chat] (rev. 2×)\n> warm, botanical, earthy, like a personal field journal\n> warm, botanical, earthy, like a personal field journal\n\nHistory:\n- \"Factory Focus-First Native defaults (system light/dark, calm loading, one primary action per screen)\" (proposed, replaced at rev 2)\n- \"A tranquil, botanical field ledger featuring spacious cards, warm earthen tones, and minimal touchpoints suited for the kitchen counter.\" (stated, replaced at rev 11)\n\n## design.palette\n- `design.palette`: \"amber\" — stated [chat]\n> warm, botanical, earthy, like a personal field journal\n> warm, botanical, earthy, like a personal field journal\n> warm, botanical, earthy, like a personal field journal\n> warm, botanical, earthy, like a personal field journal\n\n## design.preset\n- `design.preset`: \"wellness-botanical\" — stated [chat]\n> warm, botanical, earthy, like a personal field journal\n> warm, botanical, earthy, like a personal field journal\n> warm, botanical, earthy, like a personal field journal\n> warm, botanical, earthy, like a personal field journal\n\n## experience.hierarchy\n- `experience.hierarchy`: \"editorial\" — stated [chat]\n> warm, botanical, earthy, like a personal field journal\n> warm, botanical, earthy, like a personal field journal\n> warm, botanical, earthy, like a personal field journal\n> warm, botanical, earthy, like a personal field journal\n\n## experience.motion\n- `experience.motion`: \"subtle\" — stated [chat]\n> warm, botanical, earthy, like a personal field journal\n> warm, botanical, earthy, like a personal field journal\n\n## experience.navigation\n- `experience.navigation`: \"Single stack: home screen pushes detail screens; native back\" — proposed [factory]\n\n\n## experience.pacing\n- `experience.pacing`: \"relaxed\" — stated [chat]\n> warm, botanical, earthy, like a personal field journal\n> warm, botanical, earthy, like a personal field journal\n> warm, botanical, earthy, like a personal field journal\n> warm, botanical, earthy, like a personal field journal\n\n## experience.primary\n- `experience.primary`: \"Quiet, tactile logging of living cultures and daily seasonal ingredients\" — confirmed [chat]\n> I run an artisan pastry kitchen. I need an inventory book for our daily flour, wild yeast, and seasonal fruit. I want something warm, botanical, earthy, like a personal field journal. Nothing corporate or cold.\n> I run an artisan pastry kitchen. I need an inventory book for our daily flour, wild yeast, and seasonal fruit. I want something warm, botanical, earthy, like a personal field journal. Nothing corporate or cold.\n> I run an artisan pastry kitchen. I need an inventory book for our daily flour, wild yeast, and seasonal fruit. I want something warm, botanical, earthy, like a personal field journal. Nothing corporate or cold.\n\n## identity.required\n- `identity.required`: false — proposed [factory]\n\n\n## product.outcome\n- `product.outcome`: \"An earthy digital field journal to lovingly track wild yeasts, pantry grains, and fresh harvest arrivals\" — confirmed [chat]\n> I run an artisan pastry kitchen. I need an inventory book for our daily flour, wild yeast, and seasonal fruit. I want something warm, botanical, earthy, like a personal field journal. Nothing corporate or cold.\n> I run an artisan pastry kitchen. I need an inventory book for our daily flour, wild yeast, and seasonal fruit. I want something warm, botanical, earthy, like a personal field journal. Nothing corporate or cold.\n> I run an artisan pastry kitchen. I need an inventory book for our daily flour, wild yeast, and seasonal fruit. I want something warm, botanical, earthy, like a personal field journal. Nothing corporate or cold.\n\n## release.targets\n- `release.targets`: [\"ios\",\"android\"] — proposed [factory]\n\n\n## target.audience\n- `target.audience`: \"Artisan pastry chefs and baker-owners working hands-on in the kitchen\" — confirmed [chat]\n> I run an artisan pastry kitchen. I need an inventory book for our daily flour, wild yeast, and seasonal fruit. I want something warm, botanical, earthy, like a personal field journal. Nothing corporate or cold.\n> I run an artisan pastry kitchen. I need an inventory book for our daily flour, wild yeast, and seasonal fruit. I want something warm, botanical, earthy, like a personal field journal. Nothing corporate or cold.\n> I run an artisan pastry kitchen. I need an inventory book for our daily flour, wild yeast, and seasonal fruit. I want something warm, botanical, earthy, like a personal field journal. Nothing corporate or cold.\n",
+    "design": "# Global design (rev 13)\n\nCanonical source: .factory/project.json. This file is generated; do not edit.\n\n- `design.direction`: \"An earthy, botanical field journal featuring generous card layouts, soft organic textures, and peaceful pacing for effortless kitchen tallies.\" — stated [chat] (rev. 2×)\n- `design.palette`: \"amber\" — stated [chat]\n- `design.preset`: \"wellness-botanical\" — stated [chat]\n"
   },
   "generated": {
     "ok": true,
     "mode": "create",
-    "appSpecHash": "b35e745991a29ca205532d210d1095063cd12b609c7ef0bf054f470b529b1179",
+    "appSpecHash": "ad95906edec12269a0a5579db9878598494a2959240f04a29dfcba76eb35a06d",
     "files": {
       "appIndexExists": true,
       "appTsExists": true,
       "monadPageExists": true,
-      "appIndexSource": "// GENERATED by the mobile factory (assemble). Edit app.spec.json and re-run assemble; do not edit by hand.\nimport React from 'react';\nimport { MonadPage } from '@/src/assembly';\nimport { app, store } from '@/src/factory/app';\n\nexport default function CatalogHomePage() {\n  return <MonadPage app={app} page=\"catalog-home\" store={store} />;\n}\n",
-      "appTsSnippet": "// GENERATED by the mobile factory (assemble). Edit app.spec.json and re-run assemble; do not edit by hand.\nimport { createStore, type AppSpec } from '@/src/assembly';\n\nexport const app: AppSpec = {\n  \"name\": \"The Vague Visionary\",\n  \"data\": {\n    \"bean\": [\n      {\n        \"id\": \"ethiopia-yirgacheffe\",\n        \"name\": \"Ethiopia Yirgacheffe (Score: 92)\"\n      },\n      {\n        \"id\": \"colombia-huila\",\n        \"name\": \"Colombia Huila (Score: 89)\"\n      }\n    ]\n  },\n  \"pages\": {\n    \"catalog-home\":"
+      "recordDetailExists": true,
+      "recordNewExists": true,
+      "appIndexSource": "// GENERATED by the mobile factory (assemble). Edit app.spec.json and re-run assemble; do not edit by hand.\nimport React from 'react';\nimport { MonadPage } from '@/src/assembly';\nimport { app, store } from '@/src/factory/app';\n\nexport default function TrackerHomePage() {\n  return <MonadPage app={app} page=\"tracker-home\" store={store} />;\n}\n",
+      "appTsSnippet": "// GENERATED by the mobile factory (assemble). Edit app.spec.json and re-run assemble; do not edit by hand.\nimport { createStore, type AppSpec } from '@/src/assembly';\n\nexport const app: AppSpec = {\n  \"name\": \"The Non-Technical Founder\",\n  \"data\": {\n    \"ingredient\": [\n      {\n        \"id\": \"ing-flour\",\n        \"name\": \"Stoneground Rye Flour\",\n        \"notes\": \"Organic heritage grain, 25kg cold stoneground\"\n      },\n      {\n        \"id\": \"ing-levain\",\n        \"name\": \"Wild Sourdough Starter\",\n  "
     },
     "verifiedVisuals": {
-      "preset": "minimal-pro",
+      "preset": "wellness-botanical",
       "palette": "amber",
       "hierarchy": "media-led",
-      "pacing": "compact"
+      "pacing": "relaxed"
+    },
+    "primaryWorkflow": {
+      "classification": "tracker",
+      "objects": [
+        "ingredient",
+        "batch"
+      ],
+      "capabilities": [
+        "ingredient.view",
+        "ingredient.create"
+      ],
+      "pages": [
+        "tracker.home",
+        "tracker.detail",
+        "tracker.create"
+      ],
+      "hasCreateWorkflow": true
     },
     "visualVerification": {
       "method": "static-contract-and-token-verification",
@@ -995,8 +1687,8 @@
       "keys": [
         "product.outcome",
         "target.audience",
-        "access.model",
-        "device.target"
+        "experience.primary",
+        "aesthetic.tone"
       ]
     },
     {
@@ -1004,10 +1696,10 @@
       "keys": [
         "product.outcome",
         "target.audience",
-        "access.model",
-        "device.target"
+        "experience.primary",
+        "aesthetic.tone"
       ],
-      "quote": "Mostly browsing roast logs and seeing which beans scored highest. No accounts needed right now, just local on the iPad at the shop."
+      "quote": "I run an artisan pastry kitchen. I need an inventory book for our daily flour, wild yeast, and seasonal fruit. I want something warm, botanical, earthy, like a personal field journal. Nothing corporate or cold."
     },
     {
       "operation": "plan.record",
@@ -1022,42 +1714,45 @@
     },
     {
       "operation": "batches.init",
-      "project": "C:\\Users\\ADMINI~1\\AppData\\Local\\Temp\\factory-live-vague-visionary-kxfiFI\\app"
+      "project": "C:\\Users\\ADMINI~1\\AppData\\Local\\Temp\\factory-live-non-technical-founder-6YbWmL\\app"
     },
     {
       "operation": "batches.set",
       "stage": "classification",
       "value": {
-        "type": "catalog"
+        "type": "tracker"
       }
     },
     {
       "operation": "batches.set",
       "stage": "objects",
       "value": [
-        "bean"
+        "ingredient",
+        "batch"
       ]
     },
     {
       "operation": "batches.set",
       "stage": "functionality",
       "value": [
-        "bean.view"
+        "ingredient.view",
+        "ingredient.create"
       ]
     },
     {
       "operation": "batches.set",
       "stage": "pages",
       "value": [
-        "catalog.home",
-        "catalog.detail"
+        "tracker.home",
+        "tracker.detail",
+        "tracker.create"
       ]
     },
     {
       "operation": "batches.set",
       "stage": "composition",
       "value": {
-        "catalog.home": {
+        "tracker.home": {
           "kind": "collection",
           "archetype": "bento-overview",
           "bindings": {
@@ -1065,17 +1760,46 @@
           },
           "navigation": [
             {
-              "to": "catalog.detail",
+              "to": "tracker.detail",
               "placement": "select"
+            },
+            {
+              "to": "tracker.create",
+              "placement": "header"
             }
           ]
         },
-        "catalog.detail": {
+        "tracker.detail": {
           "kind": "detail",
           "archetype": "content-canvas",
           "bindings": {
-            "heading": "name"
-          }
+            "heading": "name",
+            "facts": [
+              "notes"
+            ]
+          },
+          "navigation": [
+            {
+              "to": "tracker.home",
+              "placement": "action"
+            }
+          ]
+        },
+        "tracker.create": {
+          "kind": "form",
+          "archetype": "focus-wizard",
+          "bindings": {
+            "fields": [
+              "name",
+              "notes"
+            ]
+          },
+          "actions": [
+            {
+              "id": "ingredient.create",
+              "placement": "primary"
+            }
+          ]
         }
       }
     },
@@ -1084,33 +1808,44 @@
       "stage": "content",
       "value": {
         "pages": {
-          "catalog.home": {
-            "title": "Roast Logs",
-            "subtitle": "Shop Bean Profiles & Cupping Scores"
+          "tracker.home": {
+            "title": "The Non-Technical Founder",
+            "subtitle": "Ingredient logs & highlights"
           },
-          "catalog.detail": {
-            "title": "Roast Details"
+          "tracker.detail": {
+            "title": "Ingredient Profile"
+          },
+          "tracker.create": {
+            "title": "Log New Ingredient",
+            "primary": "Save Ingredient"
           }
         },
         "data": {
-          "bean": [
+          "ingredient": [
             {
-              "id": "ethiopia-yirgacheffe",
-              "name": "Ethiopia Yirgacheffe (Score: 92)"
+              "id": "ing-flour",
+              "name": "Stoneground Rye Flour",
+              "notes": "Organic heritage grain, 25kg cold stoneground"
             },
             {
-              "id": "colombia-huila",
-              "name": "Colombia Huila (Score: 89)"
+              "id": "ing-levain",
+              "name": "Wild Sourdough Starter",
+              "notes": "Active 3-day fermentation, 100% hydration"
+            },
+            {
+              "id": "ing-fruit",
+              "name": "Summer Mountain Berries",
+              "notes": "Local orchard harvest, wild blackberries & raspberries"
             }
           ]
         },
         "design": {
-          "preset": "minimal-pro",
+          "preset": "wellness-botanical",
           "palette": "amber",
           "experience": {
             "hierarchy": "media-led",
             "motion": "subtle",
-            "pacing": "compact"
+            "pacing": "relaxed"
           }
         }
       }
@@ -1120,17 +1855,174 @@
       "stage": "review",
       "value": {
         "passed": true,
-        "specHash": "b35e745991a29ca205532d210d1095063cd12b609c7ef0bf054f470b529b1179"
+        "specHash": "ad95906edec12269a0a5579db9878598494a2959240f04a29dfcba76eb35a06d"
+      }
+    },
+    {
+      "operation": "plan.record",
+      "count": 5,
+      "keys": [
+        "design.preset",
+        "design.palette",
+        "experience.hierarchy",
+        "experience.pacing",
+        "design.direction"
+      ]
+    },
+    {
+      "operation": "batches.init",
+      "project": "C:\\Users\\ADMINI~1\\AppData\\Local\\Temp\\factory-live-non-technical-founder-6YbWmL\\app"
+    },
+    {
+      "operation": "batches.set",
+      "stage": "classification",
+      "value": {
+        "type": "tracker"
+      }
+    },
+    {
+      "operation": "batches.set",
+      "stage": "objects",
+      "value": [
+        "ingredient",
+        "batch"
+      ]
+    },
+    {
+      "operation": "batches.set",
+      "stage": "functionality",
+      "value": [
+        "ingredient.view",
+        "ingredient.create"
+      ]
+    },
+    {
+      "operation": "batches.set",
+      "stage": "pages",
+      "value": [
+        "tracker.home",
+        "tracker.detail",
+        "tracker.create"
+      ]
+    },
+    {
+      "operation": "batches.set",
+      "stage": "composition",
+      "value": {
+        "tracker.home": {
+          "kind": "collection",
+          "archetype": "bento-overview",
+          "bindings": {
+            "title": "name"
+          },
+          "navigation": [
+            {
+              "to": "tracker.detail",
+              "placement": "select"
+            },
+            {
+              "to": "tracker.create",
+              "placement": "header"
+            }
+          ]
+        },
+        "tracker.detail": {
+          "kind": "detail",
+          "archetype": "content-canvas",
+          "bindings": {
+            "heading": "name",
+            "facts": [
+              "notes"
+            ]
+          },
+          "navigation": [
+            {
+              "to": "tracker.home",
+              "placement": "action"
+            }
+          ]
+        },
+        "tracker.create": {
+          "kind": "form",
+          "archetype": "focus-wizard",
+          "bindings": {
+            "fields": [
+              "name",
+              "notes"
+            ]
+          },
+          "actions": [
+            {
+              "id": "ingredient.create",
+              "placement": "primary"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "operation": "batches.set",
+      "stage": "content",
+      "value": {
+        "pages": {
+          "tracker.home": {
+            "title": "The Non-Technical Founder",
+            "subtitle": "Ingredient logs & highlights"
+          },
+          "tracker.detail": {
+            "title": "Ingredient Profile"
+          },
+          "tracker.create": {
+            "title": "Log New Ingredient",
+            "primary": "Save Ingredient"
+          }
+        },
+        "data": {
+          "ingredient": [
+            {
+              "id": "ing-flour",
+              "name": "Stoneground Rye Flour",
+              "notes": "Organic heritage grain, 25kg cold stoneground"
+            },
+            {
+              "id": "ing-levain",
+              "name": "Wild Sourdough Starter",
+              "notes": "Active 3-day fermentation, 100% hydration"
+            },
+            {
+              "id": "ing-fruit",
+              "name": "Summer Mountain Berries",
+              "notes": "Local orchard harvest, wild blackberries & raspberries"
+            }
+          ]
+        },
+        "design": {
+          "preset": "wellness-botanical",
+          "palette": "amber",
+          "experience": {
+            "hierarchy": "media-led",
+            "motion": "subtle",
+            "pacing": "relaxed"
+          }
+        }
+      }
+    },
+    {
+      "operation": "batches.set",
+      "stage": "review",
+      "value": {
+        "passed": true,
+        "specHash": "ad95906edec12269a0a5579db9878598494a2959240f04a29dfcba76eb35a06d"
       }
     },
     {
       "operation": "workflow.confirm",
-      "quote": "The brief, screens, and amber design look great. I approve this blueprint—go ahead and build the app."
+      "quote": "The botanical field journal plan and screens look wonderful. I approve this blueprint—go ahead and build our bakery app."
     },
     {
       "operation": "blueprint.approve",
-      "project": "C:\\Users\\ADMINI~1\\AppData\\Local\\Temp\\factory-live-vague-visionary-kxfiFI\\app",
-      "specHash": "b35e745991a29ca205532d210d1095063cd12b609c7ef0bf054f470b529b1179"
+      "project": "C:\\Users\\ADMINI~1\\AppData\\Local\\Temp\\factory-live-non-technical-founder-6YbWmL\\app",
+      "specHash": "ad95906edec12269a0a5579db9878598494a2959240f04a29dfcba76eb35a06d"
     },
     {
       "operation": "generator.generate",
@@ -1149,6 +2041,15 @@
     "batches.set composition",
     "batches.set content",
     "batches.set review",
+    "plan.record",
+    "batches.init",
+    "batches.set classification",
+    "batches.set objects",
+    "batches.set functionality",
+    "batches.set pages",
+    "batches.set composition",
+    "batches.set content",
+    "batches.set review",
     "workflow.confirm",
     "blueprint.approve",
     "generator.generate"
@@ -1157,8 +2058,8 @@
     "runnerMode": "live-agent",
     "isLiveAgent": true,
     "model": "gemini-3.8-flash-low",
-    "planningMode": "agent-owned-blueprint",
-    "executionMechanism": "live-model-with-factory-api",
+    "planningMode": "demand-driven-intent-resolution",
+    "executionMechanism": "live-model-intent-with-factory-resolution",
     "warning": null
   }
 }

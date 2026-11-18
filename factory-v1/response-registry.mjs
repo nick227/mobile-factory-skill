@@ -167,10 +167,28 @@ function validatePayload(type, payload, evidence, errors) {
     }
 
     case 'DESIGN': {
-      checkUnknown(['direction', 'rationale', 'visualChoices', 'previewReference', 'blueprint']);
+      checkUnknown(['direction', 'rationale', 'visualChoices', 'previewReference', 'blueprint', 'intent']);
       if (!isNonEmptyStr(payload.direction)) errors.push('$.payload.direction: non-empty string required');
       if (!isNonEmptyStr(payload.rationale)) errors.push('$.payload.rationale: non-empty string required');
       if (!isNonEmptyStr(payload.previewReference)) errors.push('$.payload.previewReference: non-empty string required');
+
+      if (payload.intent !== undefined) {
+        if (!isObj(payload.intent)) {
+          errors.push('$.payload.intent: object required');
+        } else {
+          for (const k of Object.keys(payload.intent)) {
+            if (!['goal', 'subjects', 'actions', 'fixtures'].includes(k)) {
+              errors.push(`$.payload.intent.${k}: unknown key`);
+            }
+          }
+          if (payload.intent.subjects !== undefined && (!Array.isArray(payload.intent.subjects) || !payload.intent.subjects.length)) {
+            errors.push('$.payload.intent.subjects: non-empty array of subject IDs required');
+          }
+          if (payload.intent.actions !== undefined && (!Array.isArray(payload.intent.actions) || !payload.intent.actions.length)) {
+            errors.push('$.payload.intent.actions: non-empty array of action IDs required');
+          }
+        }
+      }
 
       if (payload.blueprint !== undefined) {
         if (!isObj(payload.blueprint)) {

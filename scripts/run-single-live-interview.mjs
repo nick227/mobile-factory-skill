@@ -58,11 +58,22 @@ async function main() {
       console.log(`Status: ${result.generated.ok ? 'SUCCESS' : 'FAILED'} (mode: ${result.generated.mode})`);
       console.log(`AppSpec Hash: ${result.generated.appSpecHash}`);
       console.log(`Files Created:`);
-      console.log(`  - app/index.tsx: ${result.generated.files.appIndexExists ? 'EXISTS' : 'MISSING'}`);
+      console.log(`  - app/index.tsx (Collection Route): ${result.generated.files.appIndexExists ? 'EXISTS' : 'MISSING'}`);
+      console.log(`  - app/records/[id].tsx (Detail Route): ${result.generated.files.recordDetailExists ? 'EXISTS' : 'N/A'}`);
+      console.log(`  - app/records/new.tsx (Create Form Route): ${result.generated.files.recordNewExists ? 'EXISTS' : 'N/A'}`);
       console.log(`  - src/factory/app.ts: ${result.generated.files.appTsExists ? 'EXISTS' : 'MISSING'}`);
       console.log(`  - src/assembly/MonadPage.tsx: ${result.generated.files.monadPageExists ? 'EXISTS' : 'MISSING'}`);
       console.log(`Preserved Visual Tokens:`, result.generated.verifiedVisuals);
       console.log(`Visual Verification (Rule 7):`, result.generated.visualVerification);
+
+      if (result.generated.primaryWorkflow) {
+        console.log(`\n=== Functional Workflow Verification ===`);
+        console.log(`Classification: ${result.generated.primaryWorkflow.classification}`);
+        console.log(`Domain Objects: ${JSON.stringify(result.generated.primaryWorkflow.objects)}`);
+        console.log(`Operational Capabilities: ${JSON.stringify(result.generated.primaryWorkflow.capabilities)}`);
+        console.log(`Compiled Pages: ${JSON.stringify(result.generated.primaryWorkflow.pages)}`);
+        console.log(`Interactive Workflow (View + Create Form): ${result.generated.primaryWorkflow.hasCreateWorkflow ? 'VERIFIED (Functional)' : 'READ-ONLY'}`);
+      }
     }
 
     // Save single live interview record to bench/results/single-live-audit.json

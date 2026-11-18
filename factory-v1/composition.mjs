@@ -97,6 +97,7 @@ export function compile(selection, context) {
       if(bindings.filter!==undefined){
         field(bindings.filter,where+'.bindings.filter');
         addField(page.object,bindings.filter);
+        booleanFields.add(page.object+'.'+bindings.filter);
         subject.segments=[{label:'All'},{label:'Active',where:{[bindings.filter]:true}}];
       }
     } else if(kind==='detail'){

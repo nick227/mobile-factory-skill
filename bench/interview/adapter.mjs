@@ -10,6 +10,7 @@ import * as editorial from '../../factory-v1/editorial.mjs';
 import * as generator from '../../factory-v1/generate.mjs';
 import { validateResponse } from '../../factory-v1/response-registry.mjs';
 import { appendTranscript, applyGuardedResponse } from '../../factory-v1/state-guard.mjs';
+import { resolveIntent, applyResolvedIntent } from '../../factory-v1/intent-resolver.mjs';
 
 /**
  * Adapter interface for interview benchmarking.
@@ -43,8 +44,8 @@ export class InterviewAdapter {
       runnerMode: mode,
       isLiveAgent: isLive,
       model: this.model || (isLive ? 'gemini-3.8-flash-low' : 'deterministic-engine'),
-      planningMode: isLive ? 'agent-owned-blueprint' : 'scripted-harness',
-      executionMechanism: isLive ? 'live-model-with-factory-api' : 'factory-api',
+      planningMode: isLive ? 'demand-driven-intent-resolution' : 'scripted-harness',
+      executionMechanism: isLive ? 'live-model-intent-with-factory-resolution' : 'factory-api',
       warning: isLive
         ? null
         : 'SCRIPTED DETERMINISTIC RUN: Replayed through real factory API without live LLM. Not a live model benchmark.',
@@ -140,22 +141,13 @@ export class InterviewAdapter {
             { key: 'experience.pacing', value: 'comfortable', source: { id: 'chat', quote: 'simple single list pushing to roast details' } },
             { key: 'experience.motion', value: 'fluid', source: { id: 'chat', quote: 'Really sleek and quick' } }
           );
-          batches.init(projectDir);
-          batches.set(projectDir, 'classification', { type: 'catalog' });
-          batches.set(projectDir, 'objects', ['bean']);
-          batches.set(projectDir, 'functionality', ['bean.view']);
-          batches.set(projectDir, 'pages', ['catalog.home', 'catalog.detail']);
-          batches.set(projectDir, 'composition', {
-            'catalog.home': { kind: 'collection', archetype: 'bento-overview', bindings: { title: 'name' }, navigation: [{ to: 'catalog.detail', placement: 'select' }] },
-            'catalog.detail': { kind: 'detail', archetype: 'content-canvas', bindings: { heading: 'name' } }
-          });
-          batches.set(projectDir, 'content', {
-            pages: { 'catalog.home': { title: 'Coffee Notes', subtitle: 'Roast logs & cupping scores' }, 'catalog.detail': { title: 'Roast Details' } },
-            data: { bean: [{ id: 'ethiopia-yirgacheffe', name: 'Ethiopia Yirgacheffe' }, { id: 'colombia-huila', name: 'Colombia Huila' }] },
-            design: { preset: 'editorial-luxury', palette: 'amber', experience: { hierarchy: 'media-led', motion: 'subtle', pacing: 'compact' } }
-          });
-          const hash = editorial.materialize(engine.load(projectDir)).hash;
-          batches.set(projectDir, 'review', { passed: true, evidence: 'Verified Coffee Notes spec and design', specHash: hash });
+          const { apiOperations: resolvedOps } = applyResolvedIntent(
+            projectDir,
+            { subjects: ['roast'], actions: ['browse', 'log'] },
+            { preset: 'minimal-pro', palette: 'amber', hierarchy: 'media-led', pacing: 'compact', motion: 'subtle' },
+            { title: 'Coffee Notes' }
+          );
+          apiOperations.push(...resolvedOps);
           agentResponse = 'Project brief generated and decisions saved. Here is the summary of your Coffee Notes application.';
           turnEnvelope = {
             type: 'PROGRESS',
@@ -291,22 +283,13 @@ export class InterviewAdapter {
             next: 'confirm',
           };
         } else if (step.turn === 3) {
-          batches.init(projectDir);
-          batches.set(projectDir, 'classification', { type: 'catalog' });
-          batches.set(projectDir, 'objects', ['ingredient']);
-          batches.set(projectDir, 'functionality', ['ingredient.view']);
-          batches.set(projectDir, 'pages', ['catalog.home', 'catalog.detail']);
-          batches.set(projectDir, 'composition', {
-            'catalog.home': { kind: 'collection', archetype: 'bento-overview', bindings: { title: 'name' }, navigation: [{ to: 'catalog.detail', placement: 'select' }] },
-            'catalog.detail': { kind: 'detail', archetype: 'content-canvas', bindings: { heading: 'name' } }
-          });
-          batches.set(projectDir, 'content', {
-            pages: { 'catalog.home': { title: 'Artisan Harvest', subtitle: 'Botanical flour & wild sourdough notes' }, 'catalog.detail': { title: 'Ingredient Details' } },
-            data: { ingredient: [{ id: 'rye-flour', name: 'Stoneground Rye Flour' }, { id: 'wild-starter', name: 'Heritage Sourdough Starter' }] },
-            design: { preset: 'wellness-botanical', palette: 'emerald', experience: { hierarchy: 'media-led', motion: 'subtle', pacing: 'relaxed' } }
-          });
-          const hash = editorial.materialize(engine.load(projectDir)).hash;
-          batches.set(projectDir, 'review', { passed: true, evidence: 'Verified Artisan Harvest bakery spec and design', specHash: hash });
+          const { apiOperations: resolvedOps } = applyResolvedIntent(
+            projectDir,
+            { subjects: ['ingredient'], actions: ['browse', 'record'] },
+            { preset: 'wellness-botanical', palette: 'emerald', hierarchy: 'media-led', pacing: 'relaxed', motion: 'subtle' },
+            { title: 'Artisan Pantry' }
+          );
+          apiOperations.push(...resolvedOps);
           agentResponse = 'The design direction and inventory brief are confirmed and documented in your project brief.';
           turnEnvelope = {
             type: 'PROGRESS',
@@ -753,38 +736,38 @@ export class InterviewAdapter {
       dialogueHistory.push(`User (Turn ${step.turn}): ${step.userMessage}`);
 
       const currentProjectState = engine.load(projectDir);
-      const prompt = `You are the Mobile Software Factory AI orchestrator following the instructions in skill/SKILL.md.
-${skillContent}
+      const prompt = `You are the Mobile Software Factory AI orchestrator.
+Conduct product discovery with the client to understand their core business idea, functional workflow, and aesthetic tastes.
+The factory handles all mechanical code generation, routing, and compilation. Your role is purely human understanding and judgment.
 
-You are conducting product discovery with a client.
 Client Role: ${persona.userProfile.role}
 Technical Literacy: ${persona.userProfile.technicalLiteracy}
 Communication Style: ${persona.userProfile.style}
 
-Current Project Revision: ${currentProjectState.revision}
-Current Project Phase: ${currentProjectState.phase}
+Current Revision: ${currentProjectState.revision}
+Current Phase: ${currentProjectState.phase}
 
 Dialogue so far:
 ${dialogueHistory.join('\n')}
 
-You MUST respond strictly with a valid JSON response envelope matching one of the canonical response contracts:
+Respond strictly with a valid JSON response envelope matching one of the canonical contracts:
 {
   "type": "QUESTION" | "CONFIRM" | "CONFLICT" | "DESIGN" | "PROGRESS" | "APPROVAL",
   "status": "pending" | "proposed" | "confirmed" | "ready" | "complete",
-  "message": "<Natural conversation for client; NO TECHNICAL JARGON like SQL/REST/React/schema/routing/AST/ORM>",
+  "message": "<Warm natural conversational response for client; ZERO technical jargon>",
   "payload": <payload object matching type below>,
-  "evidence": [ { "source": "chat", "quote": "<exact verbatim substring quote from user>" } ],
+  "evidence": [ { "source": "chat", "quote": "<exact verbatim substring quote from user in dialogue>" } ],
   "next": "<action string>"
 }
 
 CANONICAL RULES:
-1. ALL fact keys (in CONFIRM items) MUST be dotted lowercase with NO UNDERSCORES (e.g. "product.outcome", "target.audience", "product.scope", "experience.primary", "data.persistence"). Never use underscores.
-2. For "QUESTION": payload.questions must have 1 or at most 2 questions: { "questions": [ { "id": "<id>", "prompt": "<question string>" } ] }.
-3. For "CONFIRM": payload.items must have items: { "items": [ { "key": "<dotted.lowercase.key>", "value": "<value>", "inference": "<inference>" } ] }.
-4. For "DESIGN": payload must have:
+1. Fact keys (in CONFIRM items): dotted lowercase, no underscores (e.g. "product.outcome", "target.audience", "experience.primary").
+2. QUESTION: 1 or at most 2 questions in payload.questions: [{ "id": "<id>", "prompt": "<question>" }].
+3. CONFIRM: payload.items: [{ "key": "<key>", "value": "<value>", "inference": "<inference>" }].
+4. DESIGN: When presenting design direction, declare your high-level business intent (the factory resolves all schemas, pages, forms, and code):
    {
-     "direction": "<summary>",
-     "rationale": "<rationale>",
+     "direction": "<visual art direction summary>",
+     "rationale": "<rationale connected to user>",
      "previewReference": "patterns.focusscreen",
      "visualChoices": {
        "preset": "minimal-pro" | "wellness-botanical" | "editorial-luxury" | "fintech-midnight",
@@ -793,38 +776,15 @@ CANONICAL RULES:
        "pacing": "compact" | "relaxed" | "monumental",
        "palette": "amber" | "emerald" | "slate" | "crimson"
      },
-     "blueprint": {
-       "classification": { "type": "catalog" },
-       "objects": ["<domain-object-lowercase-singular, e.g. bean or ingredient>"],
-       "functionality": ["<domain-object>.view"],
-       "pages": ["catalog.home", "catalog.detail"],
-       "composition": {
-         "catalog.home": { "kind": "collection", "archetype": "bento-overview", "bindings": { "title": "name" }, "navigation": [{ "to": "catalog.detail", "placement": "select" }] },
-         "catalog.detail": { "kind": "detail", "archetype": "content-canvas", "bindings": { "heading": "name" } }
-       },
-       "content": {
-         "pages": {
-           "catalog.home": { "title": "<App Name>", "subtitle": "<Domain Tagline>" },
-           "catalog.detail": { "title": "<Detail Page Title>" }
-         },
-         "data": {
-           "<domain-object>": [
-             { "id": "<item-1-id>", "name": "<Item 1 Name>" },
-             { "id": "<item-2-id>", "name": "<Item 2 Name>" }
-           ]
-         }
-       }
+     "intent": {
+       "subjects": ["<core domain entity in lowercase singular, e.g. roast or ingredient>"],
+       "actions": ["<primary user actions, e.g. browse, log, view, create, search, filter, complete>"]
      }
    }
-5. For "PROGRESS": payload must have { "completed": ["<keys>"], "currentSegment": "03-requirements", "pending": [] }.
-6. For "APPROVAL": when user gives explicit blueprint approval, payload must have:
-   {
-     "blueprintHash": "<current blueprint or spec hash string>",
-     "revision": ${currentProjectState.revision},
-     "summary": "<brief summary of approved app>"
-   }
-7. Client-facing "message": warm, empathetic, completely free of technical jargon.
-8. Evidence "quote": MUST be an exact verbatim substring match from the user's messages in dialogue so far.
+5. PROGRESS: payload: { "completed": ["<keys>"], "currentSegment": "03-requirements", "pending": [] }.
+6. APPROVAL: when user approves blueprint, payload: { "blueprintHash": "<current spec or blueprint hash>", "revision": ${currentProjectState.revision}, "summary": "<brief summary>" }.
+7. Evidence quote: MUST be an exact verbatim substring match from user messages.
+8. Message: empathetic, concise, completely free of jargon.
 
 Output ONLY the JSON object.`;
 
@@ -930,9 +890,18 @@ Re-emit strictly the corrected valid JSON response envelope.`;
             apiOperations.push({ operation: 'plan.record', count: designFacts.length, keys: designFacts.map((f) => f.key) });
           }
 
-          // Dynamic Agent-Owned Blueprint Application (Zero Domain Hardcoding)
-          const bp = envelope.payload?.blueprint;
-          if (bp) {
+          // Demand-Driven Intent Resolution Engine (AI decides intent; factory resolves structure)
+          if (envelope.payload?.intent) {
+            const { apiOperations: resolvedOps } = applyResolvedIntent(
+              projectDir,
+              envelope.payload.intent,
+              choices,
+              { title: persona.title }
+            );
+            apiOperations.push(...resolvedOps);
+          } else if (envelope.payload?.blueprint) {
+            // Backward-compatible blueprint application
+            const bp = envelope.payload.blueprint;
             batches.init(projectDir);
             apiOperations.push({ operation: 'batches.init', project: projectDir });
 
@@ -1000,18 +969,18 @@ Re-emit strictly the corrected valid JSON response envelope.`;
               ]
             };
 
-            const domainContent = {
+            batches.set(projectDir, 'content', {
               pages: domainContentPages,
               data: domainData,
               design: contentDesign,
-            };
-
-            batches.set(projectDir, 'content', domainContent);
-            apiOperations.push({ operation: 'batches.set', stage: 'content', value: domainContent });
+            });
+            apiOperations.push({ operation: 'batches.set', stage: 'content', value: { pages: domainContentPages, data: domainData, design: contentDesign } });
 
             const mat = editorial.materialize(engine.load(projectDir));
             batches.set(projectDir, 'review', { passed: true, evidence: `Verified ${persona.title} spec and design`, specHash: mat.hash });
             apiOperations.push({ operation: 'batches.set', stage: 'review', value: { passed: true, specHash: mat.hash } });
+          } else {
+            throw new Error(`DESIGN response requires explicit intent ({ subjects, actions }) or blueprint; zero silent arbitrary fallbacks permitted.`);
           }
         } else if (envelope.type === 'APPROVAL' && isUserApproval) {
           const currentProj = engine.load(projectDir);
@@ -1075,6 +1044,8 @@ Re-emit strictly the corrected valid JSON response envelope.`;
       const appIndexFile = path.join(projectDir, 'app/index.tsx');
       const appTsFile = path.join(projectDir, 'src/factory/app.ts');
       const monadPageFile = path.join(projectDir, 'src/assembly/MonadPage.tsx');
+      const recordDetailFile = path.join(projectDir, 'app/records/[id].tsx');
+      const recordNewFile = path.join(projectDir, 'app/records/new.tsx');
 
       generated = {
         ok: genResult.ok,
@@ -1084,6 +1055,8 @@ Re-emit strictly the corrected valid JSON response envelope.`;
           appIndexExists: fs.existsSync(appIndexFile),
           appTsExists: fs.existsSync(appTsFile),
           monadPageExists: fs.existsSync(monadPageFile),
+          recordDetailExists: fs.existsSync(recordDetailFile),
+          recordNewExists: fs.existsSync(recordNewFile),
           appIndexSource: fs.existsSync(appIndexFile) ? fs.readFileSync(appIndexFile, 'utf8') : null,
           appTsSnippet: fs.existsSync(appTsFile) ? fs.readFileSync(appTsFile, 'utf8').slice(0, 500) : null,
         },
@@ -1092,6 +1065,13 @@ Re-emit strictly the corrected valid JSON response envelope.`;
           palette: finalProject.batches.selections.content?.design?.palette,
           hierarchy: finalProject.batches.selections.content?.design?.experience?.hierarchy,
           pacing: finalProject.batches.selections.content?.design?.experience?.pacing,
+        },
+        primaryWorkflow: {
+          classification: finalProject.batches.selections.classification?.type,
+          objects: finalProject.batches.selections.objects,
+          capabilities: finalProject.batches.selections.functionality,
+          pages: finalProject.batches.selections.pages,
+          hasCreateWorkflow: fs.existsSync(recordNewFile) || finalProject.batches.selections.pages?.includes('tracker.create'),
         },
         visualVerification: {
           method: 'static-contract-and-token-verification',
