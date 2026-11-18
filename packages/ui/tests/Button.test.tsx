@@ -5,6 +5,7 @@ import renderer, { act } from 'react-test-renderer';
 import { Button } from '../src/controls/Button';
 
 export const componentUnderTest = 'Button';
+const resolved = (root) => Object.assign({}, ...root.root.findByType('Pressable').props.style.flat(Infinity).filter(Boolean));
 
 test('Button renders accessible role and label', () => {
   let root;
@@ -40,4 +41,15 @@ test('Button respects disabled and loading states', () => {
   assert.equal(loadingBtn.props.accessibilityState.busy, true);
   assert.equal(loadingBtn.props.accessibilityState.disabled, true);
   assert.ok(root.root.findByType('ActivityIndicator'));
+});
+
+test('Button pressable has at least 44 × 44 pt actual minimum geometry in all sizes', () => {
+  for (const size of ['sm', 'md', 'lg'] as const) {
+    let root;
+    act(() => { root = renderer.create(<Button label="I" size={size} />); });
+    const style = resolved(root);
+    assert.ok(style.minWidth >= 44, size+' width='+style.minWidth);
+    assert.ok(style.minHeight >= 44, size+' height='+style.minHeight);
+    act(() => root.unmount());
+  }
 });

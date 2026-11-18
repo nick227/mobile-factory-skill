@@ -14,8 +14,8 @@ Architectural decision-making in the factory is evaluated by whether it generate
 │ • Unsupported composition variants                     │
 │ • Multiple competing primary CTAs                      │
 │ • Reduced-motion accessibility fallback                │
-│ • Insufficient touch target geometry (< 44×44pt)       │
-│ • Invalid contrast combinations (< 4.5:1 / 3.0:1)      │
+│ • Core Button/IconButton minimum target geometry (rendered component tests; not inferred from labels)       │
+│ • Canonical palette contrast combinations (< 4.5:1 / 3.0:1)      │
 └────────────────────────────────────────────────────────┘
                            │
                            ▼

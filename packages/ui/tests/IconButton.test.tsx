@@ -46,3 +46,12 @@ test('IconButton renders loading state properly', () => {
   assert.equal(pressable.props.accessibilityState.busy, true);
   assert.ok(root.root.findByType('ActivityIndicator'));
 });
+
+test('IconButton pressable has at least 44 × 44 pt minimum geometry', () => {
+  let root;
+  act(() => { root = renderer.create(<IconButton label="X" icon={<View />} />); });
+  const style = Object.assign({}, ...root.root.findByType('Pressable').props.style.flat(Infinity).filter(Boolean));
+  assert.ok(style.minWidth >= 44);
+  assert.ok(style.minHeight >= 44);
+  act(() => root.unmount());
+});
