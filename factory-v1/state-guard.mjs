@@ -195,7 +195,7 @@ export function applyGuardedResponse(dir, envelope, userAuthorization = {}, opti
           decisions: [
             {
               type: 'user-confirmation',
-              value: `USER-APPROVED: ${verified.quote}`,
+              value: `USER: ${verified.quote}`,
               revision: currentRevision,
               source: { id: 'chat', messageId: verified.messageId, quote: verified.quote },
             },
@@ -285,6 +285,22 @@ export function applyGuardedResponse(dir, envelope, userAuthorization = {}, opti
           findings.push({
             key: 'experience.pacing',
             value: choices.pacing,
+            status: 'stated',
+            source: envelope.evidence?.[0] ? { id: 'chat', quote: envelope.evidence[0].quote } : { id: 'chat' },
+          });
+        }
+        if (choices.palette) {
+          findings.push({
+            key: 'design.palette',
+            value: choices.palette,
+            status: 'stated',
+            source: envelope.evidence?.[0] ? { id: 'chat', quote: envelope.evidence[0].quote } : { id: 'chat' },
+          });
+        }
+        if (choices.motion) {
+          findings.push({
+            key: 'experience.motion',
+            value: choices.motion,
             status: 'stated',
             source: envelope.evidence?.[0] ? { id: 'chat', quote: envelope.evidence[0].quote } : { id: 'chat' },
           });

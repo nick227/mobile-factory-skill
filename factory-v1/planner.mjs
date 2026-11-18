@@ -375,7 +375,7 @@ export function brief(dir, { write = true, workflow } = {}) {
   const model = typescriptModel(p.entities);
   const nextTasks = engine.next(p).map((t) => t.id);
   const md = [
-    `# ${p.name} — agent brief (rev ${p.revision}, ${approved ? `APPROVED ${p.approval.blueprintHash.slice(0, 12)}` : 'NOT APPROVED — no construction'})`,
+    `# ${p.name} — agent brief (rev ${p.revision}, ${approved ? `APPROVED ${(p.approval.blueprintHash || p.approval.appSpecHash || '').slice(0, 12)}` : 'NOT APPROVED — no construction'})`,
     `Mode: ${p.profile.mode}. Canonical state: .factory/project.json. This brief is a projection; do not edit it.`,
     workflow ? `\n## Workflow\n${workflow}` : '',
     '', '## Decisions', ...facts.map(([k, f]) => factLine(k, f)),

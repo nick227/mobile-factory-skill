@@ -41,7 +41,25 @@ async function main() {
     }
 
     console.log(`\n=== Persisted Factory Decisions (.factory/project.json) ===`);
-    console.log(JSON.stringify(result.projectState?.project?.classification || {}, null, 2));
+    console.log(JSON.stringify(result.projectState?.project?.classification || result.projectState?.batches?.selections?.classification || {}, null, 2));
+
+    if (result.commandsExecuted?.length) {
+      console.log(`\n=== Factory CLI Operations Executed ===`);
+      for (const cmd of result.commandsExecuted) {
+        console.log(`  > ${cmd}`);
+      }
+    }
+
+    if (result.generated) {
+      console.log(`\n=== Generated Application Verification ===`);
+      console.log(`Status: ${result.generated.ok ? 'SUCCESS' : 'FAILED'} (mode: ${result.generated.mode})`);
+      console.log(`AppSpec Hash: ${result.generated.appSpecHash}`);
+      console.log(`Files Created:`);
+      console.log(`  - app/index.tsx: ${result.generated.files.appIndexExists ? 'EXISTS' : 'MISSING'}`);
+      console.log(`  - src/factory/app.ts: ${result.generated.files.appTsExists ? 'EXISTS' : 'MISSING'}`);
+      console.log(`  - src/assembly/MonadPage.tsx: ${result.generated.files.monadPageExists ? 'EXISTS' : 'MISSING'}`);
+      console.log(`Preserved Visual Tokens:`, result.generated.verifiedVisuals);
+    }
 
     // Save single live interview record to bench/results/single-live-audit.json
     const rootDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');

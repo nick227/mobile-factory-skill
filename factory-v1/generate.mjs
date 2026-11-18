@@ -80,7 +80,7 @@ export function generate(projectDir,{dryRun=false,root=ROOT,allowPending=false}=
     fs.writeFileSync(installManifest,JSON.stringify(installed,null,2)+'\n');
     const result=assembler.assemble(specFile,stage,{root});
     if(!result.ok)throw Error('Assembly preflight failed: '+(result.error??result.errors?.join('; ')));
-    const staged=walk(stage).map(file=>path.relative(stage,file)).sort();
+    const staged=walk(stage).map(file=>path.relative(stage,file).replaceAll('\\','/')).sort();
     const conflicts=staged.filter(rel=>fs.existsSync(path.join(project,rel)));
     if(conflicts.length)throw Error('Generation would overwrite existing project files: '+conflicts.slice(0,8).join(', '));
     if(dryRun)return {ok:true,project,revision:approved.revision,appSpecHash:approved.hash,mode:'create',dryRun:true,files:staged,pages:result.pages};

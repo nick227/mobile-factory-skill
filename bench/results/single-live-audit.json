@@ -21,6 +21,10 @@
       {
         "turn": 3,
         "userMessage": "Yeah exactly, simple single list pushing to roast details. The Focus-First native defaults are great. Go ahead and generate the brief."
+      },
+      {
+        "turn": 4,
+        "userMessage": "The brief, screens, and amber design look great. I approve this blueprint—go ahead and build the app."
       }
     ],
     "expectedArtDirection": {
@@ -52,27 +56,32 @@
       "role": "user",
       "turn": 1,
       "content": "I want an app like Instagram but for coffee beans. Really sleek and quick so baristas can log roast profiles between shifts.",
-      "timestamp": "2026-11-18T16:24:03.832Z"
+      "timestamp": "2026-11-18T16:48:35.178Z"
     },
     {
       "role": "assistant",
       "turn": 1,
-      "content": "Love that vision! It sounds like you want a super clean, visual feed where your team and other coffee lovers can share photos and notes of different beans, combined with a fast tool for your baristas to record roasting details in seconds.",
+      "content": "Love that vision! An Instagram-style feed dedicated to coffee beans with super fast logging for baristas between shifts sounds fantastic. Let's make sure I've captured the core idea before we dig into the details.",
       "envelope": {
         "type": "CONFIRM",
         "status": "proposed",
-        "message": "Love that vision! It sounds like you want a super clean, visual feed where your team and other coffee lovers can share photos and notes of different beans, combined with a fast tool for your baristas to record roasting details in seconds.",
+        "message": "Love that vision! An Instagram-style feed dedicated to coffee beans with super fast logging for baristas between shifts sounds fantastic. Let's make sure I've captured the core idea before we dig into the details.",
         "payload": {
           "items": [
             {
               "key": "product.outcome",
-              "value": "A visual social discovery feed combined with high-speed roast profile logging for baristas.",
-              "inference": "User asked for an app like Instagram for coffee beans with rapid roast logging."
+              "value": "A fast, visual coffee bean logging and sharing feed for baristas and coffee roasters",
+              "inference": "Client stated they want an app like Instagram but for coffee beans with quick logging"
             },
             {
               "key": "target.audience",
-              "value": "Baristas and coffee roasters needing rapid between-shift entry, alongside coffee enthusiasts.",
-              "inference": "Explicitly mentioned baristas logging profiles between shifts and coffee bean discovery."
+              "value": "Baristas and cafe roasters logging roast profiles between shifts",
+              "inference": "Client explicitly highlighted baristas logging roast profiles between shifts"
+            },
+            {
+              "key": "experience.primary",
+              "value": "Visual social feed with quick-entry roast logging",
+              "inference": "Client requested an experience like Instagram that is sleek and quick"
             }
           ]
         },
@@ -82,73 +91,33 @@
             "quote": "I want an app like Instagram but for coffee beans. Really sleek and quick so baristas can log roast profiles between shifts."
           }
         ],
-        "next": "ask_clarifying_questions"
+        "next": "Confirm initial product scope and explore sharing versus private logging needs."
       },
-      "rawOutput": "{\n  \"type\": \"CONFIRM\",\n  \"status\": \"proposed\",\n  \"message\": \"Love that vision! It sounds like you want a super clean, visual feed where your team and other coffee lovers can share photos and notes of different beans, combined with a fast tool for your baristas to record roasting details in seconds.\",\n  \"payload\": {\n    \"items\": [\n      {\n        \"key\": \"product.outcome\",\n        \"value\": \"A visual social discovery feed combined with high-speed roast profile logging for baristas.\",\n        \"inference\": \"User asked for an app like Instagram for coffee beans with rapid roast logging.\"\n      },\n      {\n        \"key\": \"target.audience\",\n        \"value\": \"Baristas and coffee roasters needing rapid between-shift entry, alongside coffee enthusiasts.\",\n        \"inference\": \"Explicitly mentioned baristas logging profiles between shifts and coffee bean discovery.\"\n      }\n    ]\n  },\n  \"evidence\": [\n    {\n      \"source\": \"chat\",\n      \"quote\": \"I want an app like Instagram but for coffee beans. Really sleek and quick so baristas can log roast profiles between shifts.\"\n    }\n  ],\n  \"next\": \"ask_clarifying_questions\"\n}",
+      "rawOutput": "{\n  \"type\": \"CONFIRM\",\n  \"status\": \"proposed\",\n  \"message\": \"Love that vision! An Instagram-style feed dedicated to coffee beans with super fast logging for baristas between shifts sounds fantastic. Let's make sure I've captured the core idea before we dig into the details.\",\n  \"payload\": {\n    \"items\": [\n      {\n        \"key\": \"product.outcome\",\n        \"value\": \"A fast, visual coffee bean logging and sharing feed for baristas and coffee roasters\",\n        \"inference\": \"Client stated they want an app like Instagram but for coffee beans with quick logging\"\n      },\n      {\n        \"key\": \"target.audience\",\n        \"value\": \"Baristas and cafe roasters logging roast profiles between shifts\",\n        \"inference\": \"Client explicitly highlighted baristas logging roast profiles between shifts\"\n      },\n      {\n        \"key\": \"experience.primary\",\n        \"value\": \"Visual social feed with quick-entry roast logging\",\n        \"inference\": \"Client requested an experience like Instagram that is sleek and quick\"\n      }\n    ]\n  },\n  \"evidence\": [\n    {\n      \"source\": \"chat\",\n      \"quote\": \"I want an app like Instagram but for coffee beans. Really sleek and quick so baristas can log roast profiles between shifts.\"\n    }\n  ],\n  \"next\": \"Confirm initial product scope and explore sharing versus private logging needs.\"\n}",
       "validationErrors": null,
-      "commands": [],
-      "timestamp": "2026-11-18T16:24:17.614Z"
+      "commands": [
+        "interview record --file facts.json (3 confirmed facts)",
+        "interview confirm product.outcome,target.audience,experience.primary --quote \"I want an app like Instagram but for coffee beans. Really sleek and quick so baristas can log roast profiles between shifts.\""
+      ],
+      "timestamp": "2026-11-18T16:48:45.409Z"
     },
     {
       "role": "user",
       "turn": 2,
       "content": "Mostly browsing roast logs and seeing which beans scored highest. No accounts needed right now, just local on the iPad at the shop.",
-      "timestamp": "2026-11-18T16:24:17.615Z"
+      "timestamp": "2026-11-18T16:48:45.409Z"
     },
     {
       "role": "assistant",
       "turn": 2,
-      "content": "That gives us a really clear focus! Keeping it simple on the shop iPad without logins will make logging roasts lightning-fast between rushes. Let's make sure we've captured these core details accurately:",
-      "envelope": {
-        "type": "CONFIRM",
-        "status": "proposed",
-        "message": "That gives us a really clear focus! Keeping it simple on the shop iPad without logins will make logging roasts lightning-fast between rushes. Let's make sure we've captured these core details accurately:",
-        "payload": {
-          "items": [
-            {
-              "key": "product.scope",
-              "value": "Standalone iPad app for the shop without user accounts or login required",
-              "inference": "Client wants zero friction for in-store staff using a single shared tablet."
-            },
-            {
-              "key": "product.primary_activity",
-              "value": "Visual feed to browse roast logs, view cupping/tasting scores, and spot top-rated beans",
-              "inference": "The primary everyday experience is browsing roast cards and high-score leaderboards."
-            }
-          ]
-        },
-        "evidence": [
-          {
-            "source": "chat",
-            "quote": "Mostly browsing roast logs and seeing which beans scored highest. No accounts needed right now, just local on the iPad at the shop."
-          }
-        ],
-        "next": "await_confirmation_then_clarify_logging_details"
-      },
-      "rawOutput": "{\n  \"type\": \"CONFIRM\",\n  \"status\": \"proposed\",\n  \"message\": \"That gives us a really clear focus! Keeping it simple on the shop iPad without logins will make logging roasts lightning-fast between rushes. Let's make sure we've captured these core details accurately:\",\n  \"payload\": {\n    \"items\": [\n      {\n        \"key\": \"product.scope\",\n        \"value\": \"Standalone iPad app for the shop without user accounts or login required\",\n        \"inference\": \"Client wants zero friction for in-store staff using a single shared tablet.\"\n      },\n      {\n        \"key\": \"product.primary_activity\",\n        \"value\": \"Visual feed to browse roast logs, view cupping/tasting scores, and spot top-rated beans\",\n        \"inference\": \"The primary everyday experience is browsing roast cards and high-score leaderboards.\"\n      }\n    ]\n  },\n  \"evidence\": [\n    {\n      \"source\": \"chat\",\n      \"quote\": \"Mostly browsing roast logs and seeing which beans scored highest. No accounts needed right now, just local on the iPad at the shop.\"\n    }\n  ],\n  \"next\": \"await_confirmation_then_clarify_logging_details\"\n}",
-      "validationErrors": [
-        "Invalid fact key 'product.primary_activity'; use dotted lowercase like data.source"
-      ],
-      "commands": [],
-      "timestamp": "2026-11-18T16:24:33.084Z"
-    },
-    {
-      "role": "user",
-      "turn": 3,
-      "content": "Yeah exactly, simple single list pushing to roast details. The Focus-First native defaults are great. Go ahead and generate the brief.",
-      "timestamp": "2026-11-18T16:24:33.089Z"
-    },
-    {
-      "role": "assistant",
-      "turn": 3,
-      "content": "Awesome! We have everything lined up for your shop's iPad. We'll set up a warm, sleek look with rich coffee tones, highlighting your beans and roast scores front and center with quick tap-throughs to each batch's details.",
+      "content": "That gives us a really clear picture! Since this will live on the shop iPad for baristas to quickly browse high-scoring beans and snap roast logs between shifts, I'm thinking of a warm, visual look where photos of the beans and roast scores take center stage. How does this look and feel sound to you?",
       "envelope": {
         "type": "DESIGN",
         "status": "proposed",
-        "message": "Awesome! We have everything lined up for your shop's iPad. We'll set up a warm, sleek look with rich coffee tones, highlighting your beans and roast scores front and center with quick tap-throughs to each batch's details.",
+        "message": "That gives us a really clear picture! Since this will live on the shop iPad for baristas to quickly browse high-scoring beans and snap roast logs between shifts, I'm thinking of a warm, visual look where photos of the beans and roast scores take center stage. How does this look and feel sound to you?",
         "payload": {
-          "direction": "A clean, media-rich bean log tailored for quick shop floor use on an iPad, emphasizing high scores and streamlined profile details.",
-          "rationale": "Matches the client's goal of a sleek, visual feed for quick browsing and tapping into roast logs without clutter or complex account steps.",
+          "direction": "Warm, photo-first iPad logbook highlighting roast scores and fast entry for baristas.",
+          "rationale": "A media-forward layout honors the Instagram feel while warm coffee tones fit the cafe ambiance and make logs quick to scan.",
           "previewReference": "patterns.focusscreen",
           "visualChoices": {
             "preset": "editorial-luxury",
@@ -161,39 +130,189 @@
         "evidence": [
           {
             "source": "chat",
-            "quote": "Yeah exactly, simple single list pushing to roast details. The Focus-First native defaults are great. Go ahead and generate the brief."
+            "quote": "Mostly browsing roast logs and seeing which beans scored highest. No accounts needed right now, just local on the iPad at the shop."
           }
         ],
-        "next": "generate_brief"
+        "next": "review-design-direction"
       },
-      "rawOutput": "{\n  \"type\": \"DESIGN\",\n  \"status\": \"proposed\",\n  \"message\": \"Awesome! We have everything lined up for your shop's iPad. We'll set up a warm, sleek look with rich coffee tones, highlighting your beans and roast scores front and center with quick tap-throughs to each batch's details.\",\n  \"payload\": {\n    \"direction\": \"A clean, media-rich bean log tailored for quick shop floor use on an iPad, emphasizing high scores and streamlined profile details.\",\n    \"rationale\": \"Matches the client's goal of a sleek, visual feed for quick browsing and tapping into roast logs without clutter or complex account steps.\",\n    \"previewReference\": \"patterns.focusscreen\",\n    \"visualChoices\": {\n      \"preset\": \"editorial-luxury\",\n      \"hierarchy\": \"media-led\",\n      \"motion\": \"subtle\",\n      \"pacing\": \"compact\",\n      \"palette\": \"amber\"\n    }\n  },\n  \"evidence\": [\n    {\n      \"source\": \"chat\",\n      \"quote\": \"Yeah exactly, simple single list pushing to roast details. The Focus-First native defaults are great. Go ahead and generate the brief.\"\n    }\n  ],\n  \"next\": \"generate_brief\"\n}",
+      "rawOutput": "{\n  \"type\": \"DESIGN\",\n  \"status\": \"proposed\",\n  \"message\": \"That gives us a really clear picture! Since this will live on the shop iPad for baristas to quickly browse high-scoring beans and snap roast logs between shifts, I'm thinking of a warm, visual look where photos of the beans and roast scores take center stage. How does this look and feel sound to you?\",\n  \"payload\": {\n    \"direction\": \"Warm, photo-first iPad logbook highlighting roast scores and fast entry for baristas.\",\n    \"rationale\": \"A media-forward layout honors the Instagram feel while warm coffee tones fit the cafe ambiance and make logs quick to scan.\",\n    \"previewReference\": \"patterns.focusscreen\",\n    \"visualChoices\": {\n      \"preset\": \"editorial-luxury\",\n      \"hierarchy\": \"media-led\",\n      \"motion\": \"subtle\",\n      \"pacing\": \"compact\",\n      \"palette\": \"amber\"\n    }\n  },\n  \"evidence\": [\n    {\n      \"source\": \"chat\",\n      \"quote\": \"Mostly browsing roast logs and seeing which beans scored highest. No accounts needed right now, just local on the iPad at the shop.\"\n    }\n  ],\n  \"next\": \"review-design-direction\"\n}",
       "validationErrors": null,
-      "commands": [],
-      "timestamp": "2026-11-18T16:24:46.380Z"
+      "commands": [
+        "interview record --file facts.json (3 confirmed facts)",
+        "interview confirm product.outcome,target.audience,experience.primary --quote \"I want an app like Instagram but for coffee beans. Really sleek and quick so baristas can log roast profiles between shifts.\"",
+        "interview record --file design-facts.json (5 design facts)",
+        "workflow batch init --project <app>",
+        "workflow batch set classification --project <app>",
+        "workflow batch set objects --project <app>",
+        "workflow batch set functionality --project <app>",
+        "workflow batch set pages --project <app>",
+        "workflow batch set composition --project <app>",
+        "workflow batch set content --project <app>",
+        "workflow batch set review --project <app>"
+      ],
+      "timestamp": "2026-11-18T16:48:56.141Z"
+    },
+    {
+      "role": "user",
+      "turn": 3,
+      "content": "Yeah exactly, simple single list pushing to roast details. The Focus-First native defaults are great. Go ahead and generate the brief.",
+      "timestamp": "2026-11-18T16:48:56.141Z"
+    },
+    {
+      "role": "assistant",
+      "turn": 3,
+      "content": "I've put together the visual design and project brief for your shop iPad app! It features a warm, bean-focused feed highlighting roast scores and photos, leading smoothly into full roast details. Take a look at the design summary below.",
+      "envelope": {
+        "type": "DESIGN",
+        "status": "proposed",
+        "message": "I've put together the visual design and project brief for your shop iPad app! It features a warm, bean-focused feed highlighting roast scores and photos, leading smoothly into full roast details. Take a look at the design summary below.",
+        "payload": {
+          "direction": "Warm, photo-first coffee roast feed with quick card browsing and focused roast score details tailored for fast shop floor use.",
+          "rationale": "Prioritizes immediate visual inspection of bean roasts and high scores while baristas switch between shifts, keeping navigation down to a clean single feed and detail view.",
+          "previewReference": "patterns.focusscreen",
+          "visualChoices": {
+            "preset": "editorial-luxury",
+            "hierarchy": "media-led",
+            "motion": "subtle",
+            "pacing": "compact",
+            "palette": "amber"
+          }
+        },
+        "evidence": [
+          {
+            "source": "chat",
+            "quote": "simple single list pushing to roast details. The Focus-First native defaults are great. Go ahead and generate the brief."
+          }
+        ],
+        "next": "present-brief-for-approval"
+      },
+      "rawOutput": "{\n  \"type\": \"DESIGN\",\n  \"status\": \"proposed\",\n  \"message\": \"I've put together the visual design and project brief for your shop iPad app! It features a warm, bean-focused feed highlighting roast scores and photos, leading smoothly into full roast details. Take a look at the design summary below.\",\n  \"payload\": {\n    \"direction\": \"Warm, photo-first coffee roast feed with quick card browsing and focused roast score details tailored for fast shop floor use.\",\n    \"rationale\": \"Prioritizes immediate visual inspection of bean roasts and high scores while baristas switch between shifts, keeping navigation down to a clean single feed and detail view.\",\n    \"previewReference\": \"patterns.focusscreen\",\n    \"visualChoices\": {\n      \"preset\": \"editorial-luxury\",\n      \"hierarchy\": \"media-led\",\n      \"motion\": \"subtle\",\n      \"pacing\": \"compact\",\n      \"palette\": \"amber\"\n    }\n  },\n  \"evidence\": [\n    {\n      \"source\": \"chat\",\n      \"quote\": \"simple single list pushing to roast details. The Focus-First native defaults are great. Go ahead and generate the brief.\"\n    }\n  ],\n  \"next\": \"present-brief-for-approval\"\n}",
+      "validationErrors": null,
+      "commands": [
+        "interview record --file facts.json (3 confirmed facts)",
+        "interview confirm product.outcome,target.audience,experience.primary --quote \"I want an app like Instagram but for coffee beans. Really sleek and quick so baristas can log roast profiles between shifts.\"",
+        "interview record --file design-facts.json (5 design facts)",
+        "workflow batch init --project <app>",
+        "workflow batch set classification --project <app>",
+        "workflow batch set objects --project <app>",
+        "workflow batch set functionality --project <app>",
+        "workflow batch set pages --project <app>",
+        "workflow batch set composition --project <app>",
+        "workflow batch set content --project <app>",
+        "workflow batch set review --project <app>",
+        "interview record --file design-facts.json (5 design facts)",
+        "workflow batch init --project <app>",
+        "workflow batch set classification --project <app>",
+        "workflow batch set objects --project <app>",
+        "workflow batch set functionality --project <app>",
+        "workflow batch set pages --project <app>",
+        "workflow batch set composition --project <app>",
+        "workflow batch set content --project <app>",
+        "workflow batch set review --project <app>"
+      ],
+      "timestamp": "2026-11-18T16:49:08.149Z"
+    },
+    {
+      "role": "user",
+      "turn": 4,
+      "content": "The brief, screens, and amber design look great. I approve this blueprint—go ahead and build the app.",
+      "timestamp": "2026-11-18T16:49:08.150Z"
+    },
+    {
+      "role": "assistant",
+      "turn": 4,
+      "content": "Awesome! With your approval of the blueprint, screens, and amber design, we're ready to start building the shop iPad app for your baristas.",
+      "envelope": {
+        "type": "APPROVAL",
+        "status": "ready",
+        "message": "Awesome! With your approval of the blueprint, screens, and amber design, we're ready to start building the shop iPad app for your baristas.",
+        "payload": {
+          "blueprintHash": "bp-rev12-amber-coffee-ipad",
+          "revision": 12,
+          "summary": "Local iPad app for coffee shop baristas to quickly browse high-scoring roast logs and tap into full roast details with a warm amber visual look."
+        },
+        "evidence": [
+          {
+            "source": "chat",
+            "quote": "The brief, screens, and amber design look great. I approve this blueprint—go ahead and build the app."
+          }
+        ],
+        "next": "scaffold-app"
+      },
+      "rawOutput": "{\n  \"type\": \"APPROVAL\",\n  \"status\": \"ready\",\n  \"message\": \"Awesome! With your approval of the blueprint, screens, and amber design, we're ready to start building the shop iPad app for your baristas.\",\n  \"payload\": {\n    \"blueprintHash\": \"bp-rev12-amber-coffee-ipad\",\n    \"revision\": 12,\n    \"summary\": \"Local iPad app for coffee shop baristas to quickly browse high-scoring roast logs and tap into full roast details with a warm amber visual look.\"\n  },\n  \"evidence\": [\n    {\n      \"source\": \"chat\",\n      \"quote\": \"The brief, screens, and amber design look great. I approve this blueprint—go ahead and build the app.\"\n    }\n  ],\n  \"next\": \"scaffold-app\"\n}",
+      "validationErrors": null,
+      "commands": [
+        "interview record --file facts.json (3 confirmed facts)",
+        "interview confirm product.outcome,target.audience,experience.primary --quote \"I want an app like Instagram but for coffee beans. Really sleek and quick so baristas can log roast profiles between shifts.\"",
+        "interview record --file design-facts.json (5 design facts)",
+        "workflow batch init --project <app>",
+        "workflow batch set classification --project <app>",
+        "workflow batch set objects --project <app>",
+        "workflow batch set functionality --project <app>",
+        "workflow batch set pages --project <app>",
+        "workflow batch set composition --project <app>",
+        "workflow batch set content --project <app>",
+        "workflow batch set review --project <app>",
+        "interview record --file design-facts.json (5 design facts)",
+        "workflow batch init --project <app>",
+        "workflow batch set classification --project <app>",
+        "workflow batch set objects --project <app>",
+        "workflow batch set functionality --project <app>",
+        "workflow batch set pages --project <app>",
+        "workflow batch set composition --project <app>",
+        "workflow batch set content --project <app>",
+        "workflow batch set review --project <app>",
+        "workflow confirm --quote \"The brief, screens, and amber design look great. I approve this blueprint—go ahead and build the app.\"",
+        "blueprint approve --project <app>"
+      ],
+      "timestamp": "2026-11-18T16:49:47.549Z"
     }
   ],
   "projectState": {
     "schemaVersion": 1,
     "name": "The Vague Visionary",
-    "phase": "design",
-    "revision": 4,
-    "approval": null,
+    "phase": "build",
+    "revision": 13,
+    "approval": {
+      "revision": 13,
+      "appSpecHash": "af5e08c8707b5fe5b241a8e55725ee41d4f66020385309e0370bff01c1af1b26",
+      "at": "2026-11-18T16:49:47.548Z"
+    },
     "answers": {
-      "product.outcome": "A visual social discovery feed combined with high-speed roast profile logging for baristas.",
-      "target.audience": "Baristas and coffee roasters needing rapid between-shift entry, alongside coffee enthusiasts.",
-      "design.direction": "A clean, media-rich bean log tailored for quick shop floor use on an iPad, emphasizing high scores and streamlined profile details.",
+      "product.outcome": "A fast, visual coffee bean logging and sharing feed for baristas and coffee roasters",
+      "target.audience": "Baristas and cafe roasters logging roast profiles between shifts",
+      "experience.primary": "Visual social feed with quick-entry roast logging",
+      "design.direction": "Warm, photo-first coffee roast feed with quick card browsing and focused roast score details tailored for fast shop floor use.",
       "design.preset": "editorial-luxury",
+      "design.palette": "amber",
       "experience.hierarchy": "media-led",
-      "experience.pacing": "compact"
+      "experience.pacing": "compact",
+      "experience.motion": "subtle"
     },
     "screens": [],
     "entities": [],
     "integrations": [],
     "roles": [],
-    "decisions": [],
+    "decisions": [
+      {
+        "type": "user-confirmation",
+        "value": "USER: The brief, screens, and amber design look great. I approve this blueprint—go ahead and build the app.",
+        "revision": 12,
+        "appSpecHash": "af5e08c8707b5fe5b241a8e55725ee41d4f66020385309e0370bff01c1af1b26"
+      },
+      {
+        "type": "user-confirmation",
+        "value": "USER: The brief, screens, and amber design look great. I approve this blueprint—go ahead and build the app.",
+        "source": {
+          "id": "chat",
+          "quote": "The brief, screens, and amber design look great. I approve this blueprint—go ahead and build the app."
+        },
+        "revision": 13
+      }
+    ],
     "tasks": [],
     "verification": [],
-    "createdAt": "2026-11-18T16:24:03.824Z",
+    "createdAt": "2026-11-18T16:48:35.171Z",
     "facts": {
       "identity.required": {
         "value": false,
@@ -229,12 +348,16 @@
         "history": []
       },
       "design.direction": {
-        "value": "A clean, media-rich bean log tailored for quick shop floor use on an iPad, emphasizing high scores and streamlined profile details.",
+        "value": "Warm, photo-first coffee roast feed with quick card browsing and focused roast score details tailored for fast shop floor use.",
         "status": "stated",
         "sources": [
           {
             "id": "chat",
-            "quote": "Yeah exactly, simple single list pushing to roast details. The Focus-First native defaults are great. Go ahead and generate the brief."
+            "quote": "simple single list pushing to roast details. The Focus-First native defaults are great. Go ahead and generate the brief."
+          },
+          {
+            "id": "chat",
+            "quote": "simple single list pushing to roast details. The Focus-First native defaults are great. Go ahead and generate the brief."
           }
         ],
         "history": [
@@ -247,7 +370,22 @@
                 "note": "lite-mode default"
               }
             ],
-            "replacedAtRevision": 3
+            "replacedAtRevision": 2
+          },
+          {
+            "value": "Warm, photo-first iPad logbook highlighting roast scores and fast entry for baristas.",
+            "status": "stated",
+            "sources": [
+              {
+                "id": "chat",
+                "quote": "Mostly browsing roast logs and seeing which beans scored highest. No accounts needed right now, just local on the iPad at the shop."
+              },
+              {
+                "id": "chat",
+                "quote": "Mostly browsing roast logs and seeing which beans scored highest. No accounts needed right now, just local on the iPad at the shop."
+              }
+            ],
+            "replacedAtRevision": 11
           }
         ]
       },
@@ -266,9 +404,17 @@
         "history": []
       },
       "product.outcome": {
-        "value": "A visual social discovery feed combined with high-speed roast profile logging for baristas.",
+        "value": "A fast, visual coffee bean logging and sharing feed for baristas and coffee roasters",
         "status": "confirmed",
         "sources": [
+          {
+            "id": "chat",
+            "quote": "I want an app like Instagram but for coffee beans. Really sleek and quick so baristas can log roast profiles between shifts."
+          },
+          {
+            "id": "chat",
+            "quote": "I want an app like Instagram but for coffee beans. Really sleek and quick so baristas can log roast profiles between shifts."
+          },
           {
             "id": "chat",
             "quote": "I want an app like Instagram but for coffee beans. Really sleek and quick so baristas can log roast profiles between shifts."
@@ -277,9 +423,36 @@
         "history": []
       },
       "target.audience": {
-        "value": "Baristas and coffee roasters needing rapid between-shift entry, alongside coffee enthusiasts.",
+        "value": "Baristas and cafe roasters logging roast profiles between shifts",
         "status": "confirmed",
         "sources": [
+          {
+            "id": "chat",
+            "quote": "I want an app like Instagram but for coffee beans. Really sleek and quick so baristas can log roast profiles between shifts."
+          },
+          {
+            "id": "chat",
+            "quote": "I want an app like Instagram but for coffee beans. Really sleek and quick so baristas can log roast profiles between shifts."
+          },
+          {
+            "id": "chat",
+            "quote": "I want an app like Instagram but for coffee beans. Really sleek and quick so baristas can log roast profiles between shifts."
+          }
+        ],
+        "history": []
+      },
+      "experience.primary": {
+        "value": "Visual social feed with quick-entry roast logging",
+        "status": "confirmed",
+        "sources": [
+          {
+            "id": "chat",
+            "quote": "I want an app like Instagram but for coffee beans. Really sleek and quick so baristas can log roast profiles between shifts."
+          },
+          {
+            "id": "chat",
+            "quote": "I want an app like Instagram but for coffee beans. Really sleek and quick so baristas can log roast profiles between shifts."
+          },
           {
             "id": "chat",
             "quote": "I want an app like Instagram but for coffee beans. Really sleek and quick so baristas can log roast profiles between shifts."
@@ -293,7 +466,42 @@
         "sources": [
           {
             "id": "chat",
-            "quote": "Yeah exactly, simple single list pushing to roast details. The Focus-First native defaults are great. Go ahead and generate the brief."
+            "quote": "Mostly browsing roast logs and seeing which beans scored highest. No accounts needed right now, just local on the iPad at the shop."
+          },
+          {
+            "id": "chat",
+            "quote": "Mostly browsing roast logs and seeing which beans scored highest. No accounts needed right now, just local on the iPad at the shop."
+          },
+          {
+            "id": "chat",
+            "quote": "simple single list pushing to roast details. The Focus-First native defaults are great. Go ahead and generate the brief."
+          },
+          {
+            "id": "chat",
+            "quote": "simple single list pushing to roast details. The Focus-First native defaults are great. Go ahead and generate the brief."
+          }
+        ],
+        "history": []
+      },
+      "design.palette": {
+        "value": "amber",
+        "status": "stated",
+        "sources": [
+          {
+            "id": "chat",
+            "quote": "Mostly browsing roast logs and seeing which beans scored highest. No accounts needed right now, just local on the iPad at the shop."
+          },
+          {
+            "id": "chat",
+            "quote": "Mostly browsing roast logs and seeing which beans scored highest. No accounts needed right now, just local on the iPad at the shop."
+          },
+          {
+            "id": "chat",
+            "quote": "simple single list pushing to roast details. The Focus-First native defaults are great. Go ahead and generate the brief."
+          },
+          {
+            "id": "chat",
+            "quote": "simple single list pushing to roast details. The Focus-First native defaults are great. Go ahead and generate the brief."
           }
         ],
         "history": []
@@ -304,7 +512,19 @@
         "sources": [
           {
             "id": "chat",
-            "quote": "Yeah exactly, simple single list pushing to roast details. The Focus-First native defaults are great. Go ahead and generate the brief."
+            "quote": "Mostly browsing roast logs and seeing which beans scored highest. No accounts needed right now, just local on the iPad at the shop."
+          },
+          {
+            "id": "chat",
+            "quote": "Mostly browsing roast logs and seeing which beans scored highest. No accounts needed right now, just local on the iPad at the shop."
+          },
+          {
+            "id": "chat",
+            "quote": "simple single list pushing to roast details. The Focus-First native defaults are great. Go ahead and generate the brief."
+          },
+          {
+            "id": "chat",
+            "quote": "simple single list pushing to roast details. The Focus-First native defaults are great. Go ahead and generate the brief."
           }
         ],
         "history": []
@@ -315,7 +535,34 @@
         "sources": [
           {
             "id": "chat",
-            "quote": "Yeah exactly, simple single list pushing to roast details. The Focus-First native defaults are great. Go ahead and generate the brief."
+            "quote": "Mostly browsing roast logs and seeing which beans scored highest. No accounts needed right now, just local on the iPad at the shop."
+          },
+          {
+            "id": "chat",
+            "quote": "Mostly browsing roast logs and seeing which beans scored highest. No accounts needed right now, just local on the iPad at the shop."
+          },
+          {
+            "id": "chat",
+            "quote": "simple single list pushing to roast details. The Focus-First native defaults are great. Go ahead and generate the brief."
+          },
+          {
+            "id": "chat",
+            "quote": "simple single list pushing to roast details. The Focus-First native defaults are great. Go ahead and generate the brief."
+          }
+        ],
+        "history": []
+      },
+      "experience.motion": {
+        "value": "subtle",
+        "status": "stated",
+        "sources": [
+          {
+            "id": "chat",
+            "quote": "Mostly browsing roast logs and seeing which beans scored highest. No accounts needed right now, just local on the iPad at the shop."
+          },
+          {
+            "id": "chat",
+            "quote": "simple single list pushing to roast details. The Focus-First native defaults are great. Go ahead and generate the brief."
           }
         ],
         "history": []
@@ -326,13 +573,133 @@
     "profile": {
       "mode": "lite"
     },
-    "skipped": []
+    "skipped": [],
+    "batches": {
+      "schemaVersion": 1,
+      "selections": {
+        "classification": {
+          "type": "catalog"
+        },
+        "objects": [
+          "bean"
+        ],
+        "functionality": [
+          "bean.view"
+        ],
+        "pages": [
+          "catalog.home",
+          "catalog.detail"
+        ],
+        "composition": {
+          "catalog.home": {
+            "kind": "collection",
+            "archetype": "bento-overview",
+            "bindings": {
+              "title": "name"
+            },
+            "navigation": [
+              {
+                "to": "catalog.detail",
+                "placement": "select"
+              }
+            ]
+          },
+          "catalog.detail": {
+            "kind": "detail",
+            "archetype": "content-canvas",
+            "bindings": {
+              "heading": "name"
+            }
+          }
+        },
+        "content": {
+          "pages": {
+            "catalog.home": {
+              "title": "Coffee Notes",
+              "subtitle": "Roast logs & cupping scores"
+            },
+            "catalog.detail": {
+              "title": "Roast Details"
+            }
+          },
+          "data": {
+            "bean": [
+              {
+                "id": "ethiopia-yirgacheffe",
+                "name": "Ethiopia Yirgacheffe"
+              },
+              {
+                "id": "colombia-huila",
+                "name": "Colombia Huila"
+              }
+            ]
+          },
+          "design": {
+            "preset": "editorial-luxury",
+            "palette": "amber",
+            "experience": {
+              "hierarchy": "media-led",
+              "motion": "subtle",
+              "pacing": "compact"
+            }
+          }
+        },
+        "review": {
+          "passed": true,
+          "evidence": "Verified Coffee Notes spec and design",
+          "specHash": "af5e08c8707b5fe5b241a8e55725ee41d4f66020385309e0370bff01c1af1b26"
+        }
+      }
+    }
   },
   "docs": {
-    "brief": "# The Vague Visionary — agent brief (rev 4, NOT APPROVED — no construction)\nMode: lite. Canonical state: .factory/project.json. This brief is a projection; do not edit it.\n\n## Workflow\nActive segment: **02-discovery** → load `references/02-discovery.md`.\nNext condition: fact:product.audience — Who is the primary user?\nSegments: 02· 03· 04· 05· 06· 07· 08·\n## Decisions\n- `data.required`: false — proposed [factory]\n- `design.direction`: \"A clean, media-rich bean log tailored for quick shop floor use on an iPad, emphasizing high scores and streamlined profile details.\" — stated [chat] (rev. 1×)\n- `design.preset`: \"editorial-luxury\" — stated [chat]\n- `experience.hierarchy`: \"media-led\" — stated [chat]\n- `experience.navigation`: \"Single stack: home screen pushes detail screens; native back\" — proposed [factory]\n- `experience.pacing`: \"compact\" — stated [chat]\n- `identity.required`: false — proposed [factory]\n- `product.outcome`: \"A visual social discovery feed combined with high-speed roast profile logging for baristas.\" — confirmed [chat]\n- `release.targets`: [\"ios\",\"android\"] — proposed [factory]\n- `target.audience`: \"Baristas and coffee roasters needing rapid between-shift entry, alongside coffee enthusiasts.\" — confirmed [chat]\n## Screens (0)\n\n## Readiness\n- decision product.audience: Unanswered required question\n- decision experience.navigation: Unanswered required question\n- decision identity.required: Unanswered required question\n- decision data.required: Unanswered required question\n- decision release.targets: Unanswered required question\n- screens: At least one screen required\n- approval: No recorded user design confirmation\n",
-    "decisions": "# Decision log (rev 4)\n\n## data.required\n- `data.required`: false — proposed [factory]\n\n\n## design.direction\n- `design.direction`: \"A clean, media-rich bean log tailored for quick shop floor use on an iPad, emphasizing high scores and streamlined profile details.\" — stated [chat] (rev. 1×)\n> Yeah exactly, simple single list pushing to roast details. The Focus-First native defaults are great. Go ahead and generate the brief.\n\nHistory:\n- \"Factory Focus-First Native defaults (system light/dark, calm loading, one primary action per screen)\" (proposed, replaced at rev 3)\n\n## design.preset\n- `design.preset`: \"editorial-luxury\" — stated [chat]\n> Yeah exactly, simple single list pushing to roast details. The Focus-First native defaults are great. Go ahead and generate the brief.\n\n## experience.hierarchy\n- `experience.hierarchy`: \"media-led\" — stated [chat]\n> Yeah exactly, simple single list pushing to roast details. The Focus-First native defaults are great. Go ahead and generate the brief.\n\n## experience.navigation\n- `experience.navigation`: \"Single stack: home screen pushes detail screens; native back\" — proposed [factory]\n\n\n## experience.pacing\n- `experience.pacing`: \"compact\" — stated [chat]\n> Yeah exactly, simple single list pushing to roast details. The Focus-First native defaults are great. Go ahead and generate the brief.\n\n## identity.required\n- `identity.required`: false — proposed [factory]\n\n\n## product.outcome\n- `product.outcome`: \"A visual social discovery feed combined with high-speed roast profile logging for baristas.\" — confirmed [chat]\n> I want an app like Instagram but for coffee beans. Really sleek and quick so baristas can log roast profiles between shifts.\n\n## release.targets\n- `release.targets`: [\"ios\",\"android\"] — proposed [factory]\n\n\n## target.audience\n- `target.audience`: \"Baristas and coffee roasters needing rapid between-shift entry, alongside coffee enthusiasts.\" — confirmed [chat]\n> I want an app like Instagram but for coffee beans. Really sleek and quick so baristas can log roast profiles between shifts.\n",
-    "design": "# Global design (rev 4)\n\nCanonical source: .factory/project.json. This file is generated; do not edit.\n\n- `design.direction`: \"A clean, media-rich bean log tailored for quick shop floor use on an iPad, emphasizing high scores and streamlined profile details.\" — stated [chat] (rev. 1×)\n- `design.preset`: \"editorial-luxury\" — stated [chat]\n"
+    "brief": "# The Vague Visionary — agent brief (rev 13, APPROVED af5e08c8707b)\nMode: lite. Canonical state: .factory/project.json. This brief is a projection; do not edit it.\n\n## Workflow\nActive segment: **02-discovery** → load `references/02-discovery.md`.\nNext condition: fact:product.audience — Who is the primary user?\nSegments: 02· 03· 04· 05✓ 06· 07· 08·\n## Decisions\n- `data.required`: false — proposed [factory]\n- `design.direction`: \"Warm, photo-first coffee roast feed with quick card browsing and focused roast score details tailored for fast shop floor use.\" — stated [chat] (rev. 2×)\n- `design.palette`: \"amber\" — stated [chat]\n- `design.preset`: \"editorial-luxury\" — stated [chat]\n- `experience.hierarchy`: \"media-led\" — stated [chat]\n- `experience.motion`: \"subtle\" — stated [chat]\n- `experience.navigation`: \"Single stack: home screen pushes detail screens; native back\" — proposed [factory]\n- `experience.pacing`: \"compact\" — stated [chat]\n- `experience.primary`: \"Visual social feed with quick-entry roast logging\" — confirmed [chat]\n- `identity.required`: false — proposed [factory]\n- `product.outcome`: \"A fast, visual coffee bean logging and sharing feed for baristas and coffee roasters\" — confirmed [chat]\n- `release.targets`: [\"ios\",\"android\"] — proposed [factory]\n- `target.audience`: \"Baristas and cafe roasters logging roast profiles between shifts\" — confirmed [chat]\n## Screens (0)\n\n## Readiness\nBlueprint audit: ready.\n",
+    "decisions": "# Decision log (rev 13)\n\n## data.required\n- `data.required`: false — proposed [factory]\n\n\n## design.direction\n- `design.direction`: \"Warm, photo-first coffee roast feed with quick card browsing and focused roast score details tailored for fast shop floor use.\" — stated [chat] (rev. 2×)\n> simple single list pushing to roast details. The Focus-First native defaults are great. Go ahead and generate the brief.\n> simple single list pushing to roast details. The Focus-First native defaults are great. Go ahead and generate the brief.\n\nHistory:\n- \"Factory Focus-First Native defaults (system light/dark, calm loading, one primary action per screen)\" (proposed, replaced at rev 2)\n- \"Warm, photo-first iPad logbook highlighting roast scores and fast entry for baristas.\" (stated, replaced at rev 11)\n\n## design.palette\n- `design.palette`: \"amber\" — stated [chat]\n> Mostly browsing roast logs and seeing which beans scored highest. No accounts needed right now, just local on the iPad at the shop.\n> Mostly browsing roast logs and seeing which beans scored highest. No accounts needed right now, just local on the iPad at the shop.\n> simple single list pushing to roast details. The Focus-First native defaults are great. Go ahead and generate the brief.\n> simple single list pushing to roast details. The Focus-First native defaults are great. Go ahead and generate the brief.\n\n## design.preset\n- `design.preset`: \"editorial-luxury\" — stated [chat]\n> Mostly browsing roast logs and seeing which beans scored highest. No accounts needed right now, just local on the iPad at the shop.\n> Mostly browsing roast logs and seeing which beans scored highest. No accounts needed right now, just local on the iPad at the shop.\n> simple single list pushing to roast details. The Focus-First native defaults are great. Go ahead and generate the brief.\n> simple single list pushing to roast details. The Focus-First native defaults are great. Go ahead and generate the brief.\n\n## experience.hierarchy\n- `experience.hierarchy`: \"media-led\" — stated [chat]\n> Mostly browsing roast logs and seeing which beans scored highest. No accounts needed right now, just local on the iPad at the shop.\n> Mostly browsing roast logs and seeing which beans scored highest. No accounts needed right now, just local on the iPad at the shop.\n> simple single list pushing to roast details. The Focus-First native defaults are great. Go ahead and generate the brief.\n> simple single list pushing to roast details. The Focus-First native defaults are great. Go ahead and generate the brief.\n\n## experience.motion\n- `experience.motion`: \"subtle\" — stated [chat]\n> Mostly browsing roast logs and seeing which beans scored highest. No accounts needed right now, just local on the iPad at the shop.\n> simple single list pushing to roast details. The Focus-First native defaults are great. Go ahead and generate the brief.\n\n## experience.navigation\n- `experience.navigation`: \"Single stack: home screen pushes detail screens; native back\" — proposed [factory]\n\n\n## experience.pacing\n- `experience.pacing`: \"compact\" — stated [chat]\n> Mostly browsing roast logs and seeing which beans scored highest. No accounts needed right now, just local on the iPad at the shop.\n> Mostly browsing roast logs and seeing which beans scored highest. No accounts needed right now, just local on the iPad at the shop.\n> simple single list pushing to roast details. The Focus-First native defaults are great. Go ahead and generate the brief.\n> simple single list pushing to roast details. The Focus-First native defaults are great. Go ahead and generate the brief.\n\n## experience.primary\n- `experience.primary`: \"Visual social feed with quick-entry roast logging\" — confirmed [chat]\n> I want an app like Instagram but for coffee beans. Really sleek and quick so baristas can log roast profiles between shifts.\n> I want an app like Instagram but for coffee beans. Really sleek and quick so baristas can log roast profiles between shifts.\n> I want an app like Instagram but for coffee beans. Really sleek and quick so baristas can log roast profiles between shifts.\n\n## identity.required\n- `identity.required`: false — proposed [factory]\n\n\n## product.outcome\n- `product.outcome`: \"A fast, visual coffee bean logging and sharing feed for baristas and coffee roasters\" — confirmed [chat]\n> I want an app like Instagram but for coffee beans. Really sleek and quick so baristas can log roast profiles between shifts.\n> I want an app like Instagram but for coffee beans. Really sleek and quick so baristas can log roast profiles between shifts.\n> I want an app like Instagram but for coffee beans. Really sleek and quick so baristas can log roast profiles between shifts.\n\n## release.targets\n- `release.targets`: [\"ios\",\"android\"] — proposed [factory]\n\n\n## target.audience\n- `target.audience`: \"Baristas and cafe roasters logging roast profiles between shifts\" — confirmed [chat]\n> I want an app like Instagram but for coffee beans. Really sleek and quick so baristas can log roast profiles between shifts.\n> I want an app like Instagram but for coffee beans. Really sleek and quick so baristas can log roast profiles between shifts.\n> I want an app like Instagram but for coffee beans. Really sleek and quick so baristas can log roast profiles between shifts.\n",
+    "design": "# Global design (rev 13)\n\nCanonical source: .factory/project.json. This file is generated; do not edit.\n\n- `design.direction`: \"Warm, photo-first coffee roast feed with quick card browsing and focused roast score details tailored for fast shop floor use.\" — stated [chat] (rev. 2×)\n- `design.palette`: \"amber\" — stated [chat]\n- `design.preset`: \"editorial-luxury\" — stated [chat]\n"
   },
+  "generated": {
+    "ok": true,
+    "mode": "create",
+    "appSpecHash": "af5e08c8707b5fe5b241a8e55725ee41d4f66020385309e0370bff01c1af1b26",
+    "files": {
+      "appIndexExists": true,
+      "appTsExists": true,
+      "monadPageExists": true,
+      "appIndexSource": "// GENERATED by the mobile factory (assemble). Edit app.spec.json and re-run assemble; do not edit by hand.\nimport React from 'react';\nimport { MonadPage } from '@/src/assembly';\nimport { app, store } from '@/src/factory/app';\n\nexport default function CatalogHomePage() {\n  return <MonadPage app={app} page=\"catalog-home\" store={store} />;\n}\n",
+      "appTsSnippet": "// GENERATED by the mobile factory (assemble). Edit app.spec.json and re-run assemble; do not edit by hand.\nimport { createStore, type AppSpec } from '@/src/assembly';\n\nexport const app: AppSpec = {\n  \"name\": \"The Vague Visionary\",\n  \"data\": {\n    \"bean\": [\n      {\n        \"id\": \"ethiopia-yirgacheffe\",\n        \"name\": \"Ethiopia Yirgacheffe\"\n      },\n      {\n        \"id\": \"colombia-huila\",\n        \"name\": \"Colombia Huila\"\n      }\n    ]\n  },\n  \"pages\": {\n    \"catalog-home\": {\n      \"route\": \"/\",\n "
+    },
+    "verifiedVisuals": {
+      "preset": "editorial-luxury",
+      "palette": "amber",
+      "hierarchy": "media-led",
+      "pacing": "compact"
+    }
+  },
+  "commandsExecuted": [
+    "interview record --file facts.json (3 confirmed facts)",
+    "interview confirm product.outcome,target.audience,experience.primary --quote \"I want an app like Instagram but for coffee beans. Really sleek and quick so baristas can log roast profiles between shifts.\"",
+    "interview record --file design-facts.json (5 design facts)",
+    "workflow batch init --project <app>",
+    "workflow batch set classification --project <app>",
+    "workflow batch set objects --project <app>",
+    "workflow batch set functionality --project <app>",
+    "workflow batch set pages --project <app>",
+    "workflow batch set composition --project <app>",
+    "workflow batch set content --project <app>",
+    "workflow batch set review --project <app>",
+    "interview record --file design-facts.json (5 design facts)",
+    "workflow batch init --project <app>",
+    "workflow batch set classification --project <app>",
+    "workflow batch set objects --project <app>",
+    "workflow batch set functionality --project <app>",
+    "workflow batch set pages --project <app>",
+    "workflow batch set composition --project <app>",
+    "workflow batch set content --project <app>",
+    "workflow batch set review --project <app>",
+    "workflow confirm --quote \"The brief, screens, and amber design look great. I approve this blueprint—go ahead and build the app.\"",
+    "blueprint approve --project <app>",
+    "factory generate --project <app>"
+  ],
   "metadata": {
     "runnerMode": "scripted-deterministic",
     "isLiveAgent": false,

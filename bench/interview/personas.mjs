@@ -26,6 +26,10 @@ export const PERSONAS = [
         turn: 3,
         userMessage: 'Yeah exactly, simple single list pushing to roast details. The Focus-First native defaults are great. Go ahead and generate the brief.',
       },
+      {
+        turn: 4,
+        userMessage: 'The brief, screens, and amber design look great. I approve this blueprint—go ahead and build the app.',
+      },
     ],
     expectedArtDirection: {
       hierarchy: 'action-led',
