@@ -63,7 +63,7 @@
 - Preserved editorial hierarchy. Matched design preset wellness-botanical. Applied spacious visual pacing.
 - Maintained focused flow with an average of 0.3 questions per turn.
 - Reasoned through user flows with zero unhandled contradictions.
-- 100% of recorded decisions carry verbatim user source quotes (12/12). Generated comprehensive BRIEF.md and DECISIONS.md.
+- 100% of recorded decisions carry verbatim user source quotes (14/14). Generated comprehensive BRIEF.md and DECISIONS.md.
 - Kept v1 scope tight and aligned with user goals.
 
 #### The Feature Creeper (Tool Share) — **4.8 / 5.0**
@@ -93,7 +93,7 @@
 - Preserved media-led hierarchy. Matched design preset editorial-luxury. Applied spacious visual pacing. Successfully purged stale dark-mode styling and adopted spacious luxury editorial direction.
 - Maintained focused flow with an average of 0.3 questions per turn.
 - Reasoned through user flows with zero unhandled contradictions.
-- 100% of recorded decisions carry verbatim user source quotes (6/6). Generated comprehensive BRIEF.md and DECISIONS.md.
+- 100% of recorded decisions carry verbatim user source quotes (8/8). Generated comprehensive BRIEF.md and DECISIONS.md.
 - Kept v1 scope tight and aligned with user goals.
 
 #### The Business Owner With Hidden Complexity (Barber Studio) — **4.8 / 5.0**

@@ -91,7 +91,7 @@ Load **one** segment reference at a time. Don't preload the others.
 | Segment | Load | Purpose | Gate (all required conditions met) | User involvement |
 |---|---|---|---|---|
 | 01 Orient | this file | Find the project and the active segment | `workflow status` read | None |
-| 02 Discovery | `references/02-discovery.md` | Understand the product | outcome, audience, accounts and data needs known (inferred is fine) | Conversation; 1–4 focused questions per turn |
+| 02 Discovery | `references/02-discovery.md` | Understand the product | outcome, audience, accounts and data needs known (inferred is fine) | Conversation; 1–2 focused questions per turn |
 | 03 Requirements | `references/03-requirements.md` | Make facts complete, sourced and consistent | sources mined, no conflicts, no unconfirmed assumptions, required answers stated | Confirmation in one batched message |
 | 04 Design | `references/04-design.md` | Decide the experience | navigation and direction answered, every screen contract complete, entities/roles when needed | Choose between 2–3 options; review wireframes |
 | 05 Blueprint | `references/05-blueprint.md` | Get explicit approval of this revision | user confirmation recorded at the current revision; `blueprint approve` | **Mandatory explicit approval** |
@@ -124,7 +124,18 @@ active segment.
 | An implementation detail (library, file layout, component props) | Decide yourself, inside the factory conventions |
 | A build task is blocked by a missing product decision | Stop that task, ask the one question, record the answer and let the engine reopen what it affects |
 
-Ask at most 4 questions per turn, ordered by downstream impact. Never ask something the state already answers.
+Ask at most 1–2 questions per turn (focus on one, allow two when tightly related; three or more is rejected by the response contract), ordered by downstream impact. Never ask something the state already answers.
+
+## 6b. Canonical AI response contracts & state guard
+
+The factory enforces 8 canonical response contracts (`factory-v1/response-registry.mjs`):
+`QUESTION`, `CONFIRM`, `CONFLICT`, `DESIGN`, `PROGRESS`, `APPROVAL`, `BUILD`, `HANDOFF`.
+
+1. **Envelope separation:** The discriminated response envelope (`{ type, status, message, payload, evidence, next }`) is internal to the factory execution boundary. Business clients receive natural, concise conversation (`message`), not raw JSON.
+2. **State Guard invariant:** An AI response cannot authorize a state change merely because it is structurally valid.
+   - **`APPROVAL`**: A valid APPROVAL envelope proposes readiness, but **cannot approve the project on its own**. Approval requires explicit user confirmation linked to an authentic user utterance approving the current revision.
+   - **`CONFIRM`**: Confirmation envelopes cannot manufacture evidence. Every attributed quote must resolve to an immutable user utterance in the transcript.
+   - **`DESIGN`**: Must preserve authentic client aesthetic quotes in `evidence` and select from registered catalog axes.
 
 ## 7. Approval gates (never on the user's behalf)
 

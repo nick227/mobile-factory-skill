@@ -58,7 +58,7 @@ Choosing the mode at `project init`:
 
 ## 5. User interaction
 
-- One turn asks **at most 4 questions**, numbered, each with a suggested answer the user can accept with "yes".
+- One turn asks **at most 1–2 questions** (focus on one, allow two when tightly related; 3 or more is rejected), each with a suggested answer the user can accept with "yes".
 - Offer concrete alternatives where the user is likely unsure. For example, "Just you on one phone, or shared
   between household members (needs accounts and sync)?"
 - If the user gives a complete spec, ask nothing. Ingest it, mine it and move on.

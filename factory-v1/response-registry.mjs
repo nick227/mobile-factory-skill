@@ -16,9 +16,9 @@ export const RESPONSE_TYPES = Object.freeze([
 ]);
 
 export const EXPERIENCE_AXES = Object.freeze({
-  hierarchy: ['media-led', 'typography-led', 'data-led', 'task-led'],
+  hierarchy: ['media-led', 'typography-led', 'data-led', 'task-led', 'editorial', 'action-led'],
   motion: ['subtle', 'expressive', 'none'],
-  pacing: ['compact', 'relaxed', 'monumental'],
+  pacing: ['compact', 'relaxed', 'monumental', 'dense', 'comfortable', 'spacious'],
 });
 
 const ENVELOPE_KEYS = Object.freeze(['type', 'status', 'message', 'payload', 'evidence', 'next']);

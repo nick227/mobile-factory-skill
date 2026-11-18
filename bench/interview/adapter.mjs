@@ -3,6 +3,8 @@ import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import * as plan from '../../factory-v1/planner.mjs';
 import * as orch from '../../factory-v1/orchestrator.mjs';
+import { validateResponse } from '../../factory-v1/response-registry.mjs';
+import { appendTranscript, applyGuardedResponse } from '../../factory-v1/state-guard.mjs';
 
 /**
  * Adapter interface for interview benchmarking.
@@ -53,7 +55,7 @@ export class InterviewAdapter {
 
   /**
    * Scripted deterministic run: Drives the REAL factory engine (planner, orchestrator, brief)
-   * while tracking realistic turn dialogue, quote provenance, and state revisions.
+   * while enforcing the canonical 8 response contracts and State Guard invariants.
    */
   async runScriptedSession(persona, workspaceDir) {
     const projectDir = path.join(workspaceDir, 'app');
@@ -66,7 +68,13 @@ export class InterviewAdapter {
     const commandsExecuted = [];
 
     for (const step of persona.turns) {
-      // User turn
+      // 1. Immutable User Turn recorded to transcript and State Guard
+      appendTranscript(projectDir, {
+        role: 'user',
+        content: step.userMessage,
+        turn: step.turn,
+      });
+
       transcript.push({
         role: 'user',
         turn: step.turn,
@@ -74,14 +82,11 @@ export class InterviewAdapter {
         timestamp: new Date().toISOString(),
       });
 
-      // Agent turn evaluation
-      const preStatus = orch.status(projectDir);
-      const nextItems = plan.next(projectDir);
-
       let agentResponse = '';
       const factsToRecord = [];
+      let turnEnvelope = null;
 
-      // Persona-specific handling using the real factory API
+      // Persona-specific handling mapped to canonical response contracts
       if (persona.id === 'vague-visionary') {
         if (step.turn === 1) {
           factsToRecord.push(
@@ -90,6 +95,15 @@ export class InterviewAdapter {
             { key: 'experience.primary', value: 'browse-collection', source: { id: 'chat', quote: 'app like Instagram but for coffee beans' } }
           );
           agentResponse = 'Logging roast profiles sounds great. Since you want something quick between shifts, what is the core flow baristas will use most: browsing previous roasts, or entering new roast batches?';
+          turnEnvelope = {
+            type: 'QUESTION',
+            status: 'pending',
+            message: agentResponse,
+            payload: {
+              questions: [{ id: 'core-flow', prompt: 'What is the core flow baristas will use most: browsing previous roasts, or entering new roast batches?' }],
+            },
+            next: 'interview',
+          };
         } else if (step.turn === 2) {
           factsToRecord.push(
             { key: 'identity.required', value: false, source: { id: 'chat', quote: 'No accounts needed right now, just local' } },
@@ -98,9 +112,29 @@ export class InterviewAdapter {
           );
           plan.confirm(projectDir, 'all', 'No accounts needed right now, just local on the iPad at the shop');
           agentResponse = 'Local iPad storage with no account sign-in keeps things fast. I propose a simple single-stack navigation with our Focus-First Native amber palette for roast notes. Should I generate the brief?';
+          turnEnvelope = {
+            type: 'QUESTION',
+            status: 'pending',
+            message: agentResponse,
+            payload: {
+              questions: [{ id: 'generate-brief', prompt: 'Should I generate the brief with simple single-stack navigation and amber palette?' }],
+            },
+            next: 'confirm',
+          };
         } else if (step.turn === 3) {
           plan.confirm(projectDir, 'all', 'simple single list pushing to roast details. The Focus-First native defaults are great');
           agentResponse = 'Project brief generated and decisions saved. Here is the summary of your Coffee Notes application.';
+          turnEnvelope = {
+            type: 'PROGRESS',
+            status: 'complete',
+            message: agentResponse,
+            payload: {
+              completed: ['product.outcome', 'product.audience', 'identity.required', 'data.persistence'],
+              currentSegment: '03-requirements',
+              pending: [],
+            },
+            next: 'blueprint',
+          };
         }
       } else if (persona.id === 'contradictory-client') {
         if (step.turn === 1) {
@@ -112,14 +146,36 @@ export class InterviewAdapter {
           );
           plan.confirm(projectDir, 'all', 'Safety audits are recorded locally.');
           agentResponse = 'Offline silo auditing recorded. Since there are no accounts, audits remain strictly on the local device. Is there any reporting workflow needed outside the basement?';
+          turnEnvelope = {
+            type: 'QUESTION',
+            status: 'pending',
+            message: agentResponse,
+            payload: {
+              questions: [{ id: 'outside-workflow', prompt: 'Is there any reporting workflow needed outside the basement?' }],
+            },
+            next: 'interview',
+          };
         } else if (step.turn === 2) {
-          // Contradiction triggered! Live reporting demands sync/network, opposing offline-only zero-account
           factsToRecord.push(
             { key: 'identity.required', value: true, source: { id: 'chat', quote: 'headquarters manager in Chicago needs to see every silo audit report live in real time' } }
           );
           agentResponse = 'There is an important architectural trade-off here: live real-time sync to headquarters requires network connectivity and user identity so managers know which silo is being reported. In basements with zero connection, audits must queue locally. Should we prioritize offline completion first with manual sync when connectivity is restored?';
+          turnEnvelope = {
+            type: 'CONFLICT',
+            status: 'detected',
+            message: agentResponse,
+            payload: {
+              conflicts: [{
+                key: 'sync.strategy',
+                description: 'Real-time sync demands network connectivity, opposing offline basement operation',
+                requirementA: 'Offline zero-account basement audits',
+                requirementB: 'Live real-time sync to headquarters manager',
+                options: ['Prioritize offline completion first with manual sync', 'Require internet connection for live reporting'],
+              }],
+            },
+            next: 'resolve-conflict',
+          };
         } else if (step.turn === 3) {
-          // Resolved conflict
           plan.confirm(projectDir, ['identity.required'], 'make offline audit completion the priority for v1 with manual cloud sync', { 'identity.required': true });
           factsToRecord.push(
             { key: 'experience.hierarchy', value: 'action-led', source: { id: 'chat', quote: 'make offline audit completion the priority' } },
@@ -127,6 +183,17 @@ export class InterviewAdapter {
             { key: 'design.preset', value: 'fintech-midnight', source: { id: 'chat', quote: 'Safety audits are recorded locally.' } }
           );
           agentResponse = 'Resolved: Offline audit completion is prioritized, with manual sync deferred until Wi-Fi is available. Conflict resolved and decisions updated in the brief.';
+          turnEnvelope = {
+            type: 'PROGRESS',
+            status: 'complete',
+            message: agentResponse,
+            payload: {
+              completed: ['sync.strategy', 'identity.required', 'design.preset'],
+              currentSegment: '03-requirements',
+              pending: [],
+            },
+            next: 'blueprint',
+          };
         }
       } else if (persona.id === 'non-technical-founder') {
         if (step.turn === 1) {
@@ -139,6 +206,15 @@ export class InterviewAdapter {
             { key: 'design.preset', value: 'wellness-botanical', source: { id: 'chat', quote: 'warm, botanical, earthy' } }
           );
           agentResponse = 'A personal field journal for your kitchen is a wonderful direction. To make this comfortable while baking, how often do bakers record ingredient levels during a shift, and what information do they need to see at a glance?';
+          turnEnvelope = {
+            type: 'QUESTION',
+            status: 'pending',
+            message: agentResponse,
+            payload: {
+              questions: [{ id: 'baker-rhythm', prompt: 'How often do bakers record ingredient levels during a shift?' }],
+            },
+            next: 'interview',
+          };
         } else if (step.turn === 2) {
           factsToRecord.push(
             { key: 'experience.motion', value: 'subtle', source: { id: 'chat', quote: 'large readable cards, calm pacing, and very few buttons' } },
@@ -146,8 +222,36 @@ export class InterviewAdapter {
           );
           plan.confirm(projectDir, 'all', 'large readable cards, calm pacing, and very few buttons. We track batches twice a day.');
           agentResponse = 'Understood: Large cards, calm pacing, spacious margins, and emerald botanical styling that feels like a natural field notebook. Everything is prepared for your review.';
+          turnEnvelope = {
+            type: 'DESIGN',
+            status: 'proposed',
+            message: agentResponse,
+            payload: {
+              direction: 'Warm botanical kitchen field journal with emerald tones and calm pacing',
+              rationale: 'Matches artisan bakery atmosphere with distraction-free ingredient cards',
+              previewReference: 'patterns.focusscreen',
+              visualChoices: {
+                preset: 'wellness-botanical',
+                motion: 'subtle',
+                pacing: 'spacious',
+              },
+            },
+            evidence: [{ source: 'chat', quote: 'warm, botanical, earthy' }],
+            next: 'confirm',
+          };
         } else if (step.turn === 3) {
           agentResponse = 'The design direction and inventory brief are confirmed and documented in your project brief.';
+          turnEnvelope = {
+            type: 'PROGRESS',
+            status: 'complete',
+            message: agentResponse,
+            payload: {
+              completed: ['design.direction', 'design.preset', 'experience.motion'],
+              currentSegment: '03-requirements',
+              pending: [],
+            },
+            next: 'blueprint',
+          };
         }
       } else if (persona.id === 'feature-creeper') {
         if (step.turn === 1) {
@@ -158,15 +262,43 @@ export class InterviewAdapter {
             { key: 'experience.hierarchy', value: 'action-led', source: { id: 'chat', quote: 'simple neighborhood tool-lending app so neighbors can borrow' } }
           );
           agentResponse = 'Free community tool sharing is a great initiative. To keep the initial pilot focused, what core steps are needed when someone wants to borrow an available tool?';
+          turnEnvelope = {
+            type: 'QUESTION',
+            status: 'pending',
+            message: agentResponse,
+            payload: {
+              questions: [{ id: 'borrow-flow', prompt: 'What core steps are needed when someone wants to borrow an available tool?' }],
+            },
+            next: 'interview',
+          };
         } else if (step.turn === 2) {
-          // Feature creep explosion! Agent must gently enforce scope boundary
           factsToRecord.push(
             { key: 'product.excluded', value: ['live-gps-tracking', 'crypto-tipping', 'video-streaming-tutorials', 'background-checks'], source: { id: 'chat', quote: 'live GPS tracking on the lawnmowers, in-app crypto tipping, video streaming tutorials' } }
           );
           agentResponse = 'Adding GPS tracking, crypto payments, and video streaming would significantly expand the scope and cost of our pilot. To launch quickly and test community adoption, I recommend focusing v1 on tool availability and reservations, while reserving GPS and payments for a later version. Would that work for you?';
+          turnEnvelope = {
+            type: 'QUESTION',
+            status: 'pending',
+            message: agentResponse,
+            payload: {
+              questions: [{ id: 'scope-focus', prompt: 'Would focusing v1 on tool availability and reservations work for you?' }],
+            },
+            next: 'confirm',
+          };
         } else if (step.turn === 3) {
           plan.confirm(projectDir, 'all', 'exclude live tracking and payments for v1 and just focus on tool availability and reservations');
           agentResponse = 'Scope boundaries locked: GPS tracking and crypto tipping are formally marked as excluded for v1, and reservations are documented in the brief.';
+          turnEnvelope = {
+            type: 'PROGRESS',
+            status: 'complete',
+            message: agentResponse,
+            payload: {
+              completed: ['product.excluded', 'product.outcome'],
+              currentSegment: '03-requirements',
+              pending: [],
+            },
+            next: 'blueprint',
+          };
         }
       } else if (persona.id === 'changing-mind') {
         if (step.turn === 1) {
@@ -177,8 +309,16 @@ export class InterviewAdapter {
             { key: 'experience.pacing', value: 'dense', source: { id: 'chat', quote: 'super compact, dense' } }
           );
           agentResponse = 'Monochrome high-contrast portfolio recorded. How would you like potential clients to navigate your project archive: by building type, or through a continuous chronological feed?';
+          turnEnvelope = {
+            type: 'QUESTION',
+            status: 'pending',
+            message: agentResponse,
+            payload: {
+              questions: [{ id: 'archive-nav', prompt: 'How would you like potential clients to navigate your project archive: by building type, or through a continuous chronological feed?' }],
+            },
+            next: 'interview',
+          };
         } else if (step.turn === 2) {
-          // Complete aesthetic pivot!
           factsToRecord.push(
             { key: 'design.direction', value: 'warm editorial luxury, spacious white backgrounds, serif typography, photo bleed', source: { id: 'chat', quote: 'warm editorial luxury, spacious white backgrounds, serif typography, and generous photo bleed frames' } },
             { key: 'experience.hierarchy', value: 'media-led', source: { id: 'chat', quote: 'generous photo bleed frames' } },
@@ -187,9 +327,38 @@ export class InterviewAdapter {
             { key: 'experience.motion', value: 'subtle', source: { id: 'chat', quote: 'warm editorial luxury' } }
           );
           agentResponse = 'Understood—scrapping the dark minimal aesthetic completely. Re-aligning the design contract to warm editorial luxury with spacious white pacing and photo-bleed hero treatments. The previous dark mode choices have been invalidated and replaced.';
+          turnEnvelope = {
+            type: 'DESIGN',
+            status: 'proposed',
+            message: agentResponse,
+            payload: {
+              direction: 'Warm editorial luxury with spacious white backgrounds, serif typography, and generous photo bleed frames',
+              rationale: 'Pivot to spacious luxury architectural portfolio highlighting imagery',
+              previewReference: 'patterns.focusscreen',
+              visualChoices: {
+                preset: 'editorial-luxury',
+                hierarchy: 'media-led',
+                motion: 'subtle',
+                pacing: 'monumental',
+              },
+            },
+            evidence: [{ source: 'chat', quote: 'warm editorial luxury' }],
+            next: 'confirm',
+          };
         } else if (step.turn === 3) {
           plan.confirm(projectDir, 'all', 'revised direction with editorial luxury and spacious pacing is correct');
           agentResponse = 'Editorial luxury art direction preserved and confirmed in the brief. Zero remnant dark-mode settings remain.';
+          turnEnvelope = {
+            type: 'PROGRESS',
+            status: 'complete',
+            message: agentResponse,
+            payload: {
+              completed: ['design.direction', 'design.preset', 'experience.hierarchy'],
+              currentSegment: '03-requirements',
+              pending: [],
+            },
+            next: 'blueprint',
+          };
         }
       } else if (persona.id === 'hidden-complexity') {
         if (step.turn === 1) {
@@ -200,6 +369,15 @@ export class InterviewAdapter {
             { key: 'experience.hierarchy', value: 'action-led', source: { id: 'chat', quote: 'simple screen where clients pick a haircut and book a time slot' } }
           );
           agentResponse = 'A clean haircut booking experience works very well. To make sure clients don\'t book times when a chair is empty or double-book a barber, do your 4 barbers have separate schedules, and do services take different amounts of time?';
+          turnEnvelope = {
+            type: 'QUESTION',
+            status: 'pending',
+            message: agentResponse,
+            payload: {
+              questions: [{ id: 'barber-schedules', prompt: 'Do your 4 barbers have separate schedules, and do services take different amounts of time?' }],
+            },
+            next: 'interview',
+          };
         } else if (step.turn === 2) {
           factsToRecord.push(
             { key: 'experience.pacing', value: 'comfortable', source: { id: 'chat', quote: 'each barber has different days off, haircuts take 30 or 45 minutes' } },
@@ -208,20 +386,51 @@ export class InterviewAdapter {
           );
           plan.confirm(projectDir, 'all', 'booking slot validation and cancellation cutoff are crucial');
           agentResponse = 'Understood: We will handle barber schedules, 30/45 minute slot increments, and the 2-hour cancellation cutoff seamlessly in the background while keeping the client interface to a calm 3-step booking flow.';
+          turnEnvelope = {
+            type: 'PROGRESS',
+            status: 'complete',
+            message: agentResponse,
+            payload: {
+              completed: ['business.cancellation-cutoff', 'business.reminders'],
+              currentSegment: '03-requirements',
+              pending: [],
+            },
+            next: 'confirm',
+          };
         } else if (step.turn === 3) {
           agentResponse = 'Booking logic and clean client flow documented in the brief.';
+          turnEnvelope = {
+            type: 'PROGRESS',
+            status: 'complete',
+            message: agentResponse,
+            payload: {
+              completed: ['business.cancellation-cutoff', 'business.reminders', 'brief'],
+              currentSegment: '03-requirements',
+              pending: [],
+            },
+            next: 'blueprint',
+          };
         }
       }
 
+      // 2. Machine validation of AI response envelope against discriminated schema
+      if (turnEnvelope) {
+        validateResponse(turnEnvelope, { throwOnError: true });
+        applyGuardedResponse(projectDir, turnEnvelope, {}, { transcript });
+      }
+
+      // 3. Apply state changes through factory engine
       if (factsToRecord.length) {
         plan.record(projectDir, factsToRecord);
         commandsExecuted.push(`interview record --file facts.json (${factsToRecord.length} facts)`);
       }
 
+      // 4. Client transcript receives natural conversational text derived from envelope
       transcript.push({
         role: 'assistant',
         turn: step.turn,
-        content: agentResponse,
+        content: turnEnvelope ? turnEnvelope.message : agentResponse,
+        envelope: turnEnvelope,
         commands: [...commandsExecuted],
         timestamp: new Date().toISOString(),
       });
