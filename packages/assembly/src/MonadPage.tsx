@@ -20,6 +20,7 @@ import { useStore, type Store, type Rec } from './store';
 import { fill, holds } from './template';
 import { coerce, initialValues, validate, type FormErrors, type FormValues } from './form';
 import { runActions, type ActionDeps } from './actions';
+import { MotionViewport } from './MotionViewport';
 
 const GUTTER = 20;
 type Fire = (event: EventRef | undefined, record?: Rec) => void;
@@ -949,7 +950,7 @@ export function MonadPage({ app, page: pageId, store: rawStore, customComponents
         trailing={page.headerAction ? <Button size="sm" variant="ghost" label={page.headerAction.label} onPress={() => fire(page.headerAction!.event)} /> : undefined}
       />
       {notice ? <View style={{ paddingHorizontal: GUTTER, paddingBottom: 8 }}><NoticeBanner title={notice.text} tone={notice.tone} onDismiss={() => setNotice(null)} /></View> : null}
-      <View style={{ flex: 1 }}>{body}</View>
+      <MotionViewport motion={app.design?.experience?.motion}>{body}</MotionViewport>
       {page.primary && !hasHandledPrimary ? (
         <ActionDock><Button label={page.primary.label} tone={page.primary.tone ?? 'default'} fullWidth onPress={() => fire(page.primary!.event)} /></ActionDock>
       ) : null}

@@ -43,3 +43,37 @@ export default {
   useColorScheme,
   useWindowDimensions
 };
+
+const motionListeners = new Set();
+let prefersReducedMotion = false;
+export const motionCalls = [];
+export const __setReducedMotion = (enabled) => {
+  prefersReducedMotion = Boolean(enabled);
+  for (const listener of motionListeners) listener(prefersReducedMotion);
+};
+export const AccessibilityInfo = {
+  isReduceMotionEnabled: () => Promise.resolve(prefersReducedMotion),
+  addEventListener: (_event, cb) => {
+    motionListeners.add(cb);
+    return { remove: () => motionListeners.delete(cb) };
+  },
+};
+class AnimatedValue {
+  constructor(v) { this.value = v; }
+  setValue(v) { this.value = v; }
+  stopAnimation() {}
+}
+const anim = (kind, value, config) => {
+  motionCalls.push({ kind, config });
+  return { start(callback) { value.setValue(config.toValue); callback?.({ finished: true }); }, stop() {} };
+};
+export const Animated = {
+  Value: AnimatedValue,
+  View: (props) => React.createElement('Animated.View', props, props.children),
+  timing: (v, config) => anim('timing', v, config),
+  spring: (v, config) => anim('spring', v, config),
+  parallel: (animations) => ({
+    start(callback) { animations.forEach(a => a.start()); callback?.({ finished: true }); },
+    stop() { animations.forEach(a => a.stop()); },
+  }),
+};
