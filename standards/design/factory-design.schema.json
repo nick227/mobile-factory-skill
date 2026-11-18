@@ -21,43 +21,69 @@
     },
     "palette": {
       "type": "string",
-      "enum": ["default", "kyoto", "midnight", "emerald", "crimson", "amber"],
+      "enum": [
+        "default",
+        "kyoto",
+        "midnight",
+        "emerald",
+        "crimson",
+        "amber"
+      ],
       "description": "Color palette selection."
     },
     "radius": {
       "type": "string",
-      "enum": ["sharp", "smooth", "curved"],
+      "enum": [
+        "sharp",
+        "smooth",
+        "curved"
+      ],
       "description": "Corner geometry radius scale."
     },
     "density": {
       "type": "string",
-      "enum": ["compact", "comfortable", "spacious"],
+      "enum": [
+        "compact",
+        "comfortable",
+        "spacious"
+      ],
       "description": "Spacing cadence and tap target density."
     },
     "typography": {
       "type": "string",
-      "enum": ["compact", "default", "editorial"],
+      "enum": [
+        "compact",
+        "default",
+        "editorial"
+      ],
       "description": "Typography scale and hierarchy proportions."
     },
     "surface": {
       "type": "string",
-      "enum": ["flat", "outlined", "elevated"],
+      "enum": [
+        "flat",
+        "outlined",
+        "elevated"
+      ],
       "description": "Card, modal, and container surface treatment."
     },
     "layout": {
       "type": "string",
-      "enum": ["standard", "editorial", "immersive"],
+      "enum": [
+        "standard",
+        "editorial",
+        "immersive"
+      ],
       "description": "Screen layout and content arrangement rhythm."
     },
     "media": {
       "type": "string",
-      "enum": ["contained", "edge-to-edge", "mosaic"],
+      "enum": [
+        "contained",
+        "edge-to-edge",
+        "mosaic"
+      ],
       "description": "Photography and media frame presentation style."
-    },
-    "mode": {
-      "type": "string",
-      "enum": ["light", "dark", "system"],
-      "description": "Color appearance mode."
     },
     "experience": {
       "type": "object",
@@ -65,21 +91,43 @@
       "properties": {
         "hierarchy": {
           "type": "string",
-          "enum": ["media-led", "typography-led", "data-led", "task-led"],
+          "enum": [
+            "media-led",
+            "typography-led",
+            "data-led",
+            "task-led"
+          ],
           "description": "Primary visual prominence and section ordering."
         },
         "motion": {
           "type": "string",
-          "enum": ["subtle", "expressive", "none"],
+          "enum": [
+            "subtle",
+            "expressive",
+            "none"
+          ],
           "description": "Motion curves, spring physics, and reduced-motion adherence."
         },
         "pacing": {
           "type": "string",
-          "enum": ["compact", "relaxed", "monumental"],
+          "enum": [
+            "compact",
+            "relaxed",
+            "monumental"
+          ],
           "description": "Vertical rhythm, negative space allocation, and spacing cadence."
         }
       },
       "additionalProperties": false
+    },
+    "colorMode": {
+      "type": "string",
+      "enum": [
+        "light",
+        "dark",
+        "system"
+      ],
+      "description": "Application color mode; matches AppSpec.design.colorMode and the runtime."
     }
   },
   "additionalProperties": false

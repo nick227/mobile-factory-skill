@@ -85,7 +85,13 @@ export function materialize(p,selection=p.batches?.selections?.content) {
     base.data[name]=structuredClone(rows);
   }
   if(own(selection,'design')){
-    keys(selection.design,['colorMode','preset','palette','radius','density','typography','surface','layout','media'],'content.design');
+    keys(selection.design,['colorMode','preset','palette','radius','density','typography','surface','layout','media','experience'],'content.design');
+    if(own(selection.design,'experience')){
+      const x=selection.design.experience;
+      keys(x,['hierarchy','motion','pacing'],'content.design.experience');
+      for(const axis of ['hierarchy','motion','pacing'])
+        if(!own(x,axis))throw Error('content.design.experience.'+axis+': required');
+    }
     base.design=structuredClone(selection.design);
   }
   const check=validateSpec(base);

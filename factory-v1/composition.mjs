@@ -70,7 +70,7 @@ export function compile(selection, context) {
   };
   for(const page of graph.pages){
     const raw=selection[page.id],where='composition.'+page.id;
-    only(raw,['kind','archetype','bindings','navigation','actions'],where);
+    only(raw,['kind','archetype','bindings','navigation','actions','composition'],where);
     const {kind,archetype}=raw;
     if(!ARCHETYPE_COMPAT[archetype]||!ARCHETYPE_COMPAT[archetype].includes(kind))
       throw Error(where+': incompatible Monad archetype and subject kind');
@@ -127,7 +127,8 @@ export function compile(selection, context) {
       if(bindings.body!==undefined)field(bindings.body,where+'.bindings.body');
       subject={kind,heading:titleCase(page.id.split('.').at(-1))};
     }
-    const compiled={route:page.route,title:titleCase(page.id.split('.').at(-1)),archetype,subject};
+    const compiled={route:page.route,title:titleCase(page.id.split('.').at(-1)),archetype,subject,
+      ...(raw.composition!==undefined?{composition:structuredClone(raw.composition)}:{})};
     const events={};
     const n=raw.navigation??[];
     if(!Array.isArray(n))throw Error(where+'.navigation: expected array');
