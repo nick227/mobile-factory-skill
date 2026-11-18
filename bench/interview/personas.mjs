@@ -240,3 +240,88 @@ export const PERSONAS = [
     },
   },
 ];
+
+export const UNSEEN_PERSONAS = [
+  {
+    id: 'emergency-dispatch',
+    title: 'The Urgent Contractor (Emergency Plumber Dispatch)',
+    archetype: 'urgent-single-action',
+    mode: 'standard',
+    userProfile: {
+      role: 'Master Plumber & Fleet Owner',
+      technicalLiteracy: 'low',
+      style: 'direct, urgent, pragmatic',
+    },
+    turns: [
+      {
+        turn: 1,
+        userMessage: 'I run a 24/7 emergency plumbing service with 3 vans. When a pipe bursts at 2 AM, I need a massive red NEW EMERGENCY button that shows the customer address, water valve shutoff location, and lets my on-call tech accept the dispatch with one tap.',
+      },
+      {
+        turn: 2,
+        userMessage: 'Style should be high-contrast dark mode with high-visibility emergency red accents, super dense so the tech does not have to scroll with wet gloved hands. Definitely no accounts or logins for the customer; they just call or submit a web form that pings the tech.',
+      },
+      {
+        turn: 3,
+        userMessage: 'Yeah, single-screen dispatch queue with tap-to-call and map route. The dense dark emergency style sounds perfect. Go ahead and build the brief.',
+      },
+    ],
+    expectedArtDirection: {
+      hierarchy: 'action-led',
+      motion: 'subtle',
+      pacing: 'dense',
+      preset: 'fintech-midnight',
+      palette: 'crimson',
+    },
+    expectations: {
+      primaryExperience: 'emergency-dispatch',
+      avoidJargon: ['websockets', 'GPS polling', 'JWT', 'daemon', 'FCM'],
+      scriptedConflict: false,
+      artDirectionPreservation: true,
+      scopeExclusionExpected: false,
+    },
+  },
+
+  {
+    id: 'boutique-subscription',
+    title: 'The Artisanal Curator (Petal & Stem Floral Club)',
+    archetype: 'sensory-luxury-commerce',
+    mode: 'lite',
+    userProfile: {
+      role: 'Creative Floral Director',
+      technicalLiteracy: 'none',
+      style: 'poetic, visual, brand-conscious',
+    },
+    turns: [
+      {
+        turn: 1,
+        userMessage: 'We curate luxury seasonal flower arrangements delivered weekly to homes and boutique hotels. I want subscribers to swipe through lush photos of next week blooms and swap a vase style or skip a delivery week.',
+      },
+      {
+        turn: 2,
+        userMessage: 'Our brand is very romantic and airy—lots of soft white space, muted sage greens and dusty rose, delicate serif headlines, and big full-bleed photography. Please, nothing that looks like a sterile delivery dashboard!',
+      },
+      {
+        turn: 3,
+        userMessage: 'Yes, swiping between the weekly arrangement cards with the skip button right below is exactly right. Keep it soft and serene. Save the brief.',
+      },
+    ],
+    expectedArtDirection: {
+      hierarchy: 'media-led',
+      motion: 'subtle',
+      pacing: 'spacious',
+      preset: 'wellness-botanical',
+      palette: 'emerald',
+    },
+    expectations: {
+      primaryExperience: 'media-showcase',
+      avoidJargon: ['REST endpoint', 'Stripe webhook', 'JSON blob', 'CDN'],
+      scriptedConflict: false,
+      artDirectionPreservation: true,
+      scopeExclusionExpected: false,
+    },
+  },
+];
+
+export const ALL_PERSONAS = [...PERSONAS, ...UNSEEN_PERSONAS];
+

@@ -411,6 +411,128 @@ export class InterviewAdapter {
             next: 'blueprint',
           };
         }
+      } else if (persona.id === 'emergency-dispatch') {
+        if (step.turn === 1) {
+          factsToRecord.push(
+            { key: 'product.outcome', value: 'One-tap 2 AM emergency plumbing dispatch', source: { id: 'chat', quote: 'emergency plumbing service with 3 vans' } },
+            { key: 'product.audience', value: 'On-call plumbing technicians', source: { id: 'chat', quote: 'lets my on-call tech accept the dispatch with one tap' } },
+            { key: 'experience.primary', value: 'emergency-dispatch', source: { id: 'chat', quote: 'massive red NEW EMERGENCY button' } },
+            { key: 'experience.hierarchy', value: 'action-led', source: { id: 'chat', quote: 'massive red NEW EMERGENCY button that shows the customer address' } }
+          );
+          agentResponse = 'Emergency dispatch queue recorded. When an urgent call arrives, should the tech see turn-by-turn map routing immediately on the same card, or in a separate view?';
+          turnEnvelope = {
+            type: 'QUESTION',
+            status: 'pending',
+            message: agentResponse,
+            payload: {
+              questions: [{ id: 'map-routing', prompt: 'Should the tech see turn-by-turn map routing immediately on the same card, or in a separate view?' }],
+            },
+            next: 'interview',
+          };
+        } else if (step.turn === 2) {
+          factsToRecord.push(
+            { key: 'identity.required', value: false, source: { id: 'chat', quote: 'no accounts or logins for the customer' } },
+            { key: 'design.preset', value: 'fintech-midnight', source: { id: 'chat', quote: 'high-contrast dark mode with high-visibility emergency red accents' } },
+            { key: 'experience.pacing', value: 'dense', source: { id: 'chat', quote: 'super dense so the tech does not have to scroll with wet gloved hands' } },
+            { key: 'design.palette', value: 'crimson', source: { id: 'chat', quote: 'high-visibility emergency red accents' } }
+          );
+          plan.confirm(projectDir, 'all', 'high-contrast dark mode with high-visibility emergency red accents, super dense');
+          agentResponse = 'High-contrast dark mode with dense spacing and crimson accents recorded. Emergency dispatch actions are optimized for quick one-tap responses.';
+          turnEnvelope = {
+            type: 'DESIGN',
+            status: 'proposed',
+            message: agentResponse,
+            payload: {
+              direction: 'High-contrast dark mode with dense spacing and emergency crimson accents',
+              rationale: 'Optimized for night-shift emergency technicians operating with wet gloved hands',
+              previewReference: 'patterns.focusscreen',
+              visualChoices: {
+                preset: 'fintech-midnight',
+                hierarchy: 'action-led',
+                motion: 'subtle',
+                pacing: 'dense',
+                palette: 'crimson',
+              },
+            },
+            evidence: [{ source: 'chat', quote: 'high-contrast dark mode with high-visibility emergency red accents' }],
+            next: 'confirm',
+          };
+        } else if (step.turn === 3) {
+          plan.confirm(projectDir, 'all', 'single-screen dispatch queue with tap-to-call and map route. The dense dark emergency style sounds perfect');
+          agentResponse = 'Emergency dispatch workflow confirmed and recorded in the project brief.';
+          turnEnvelope = {
+            type: 'PROGRESS',
+            status: 'complete',
+            message: agentResponse,
+            payload: {
+              completed: ['design.preset', 'design.palette', 'product.outcome'],
+              currentSegment: '03-requirements',
+              pending: [],
+            },
+            next: 'blueprint',
+          };
+        }
+      } else if (persona.id === 'boutique-subscription') {
+        if (step.turn === 1) {
+          factsToRecord.push(
+            { key: 'product.outcome', value: 'Weekly luxury floral arrangement curation and subscription scheduling', source: { id: 'chat', quote: 'curate luxury seasonal flower arrangements delivered weekly' } },
+            { key: 'product.audience', value: 'Home and boutique hotel floral subscribers', source: { id: 'chat', quote: 'homes and boutique hotels' } },
+            { key: 'experience.primary', value: 'media-showcase', source: { id: 'chat', quote: 'swipe through lush photos of next week blooms' } },
+            { key: 'experience.hierarchy', value: 'media-led', source: { id: 'chat', quote: 'swipe through lush photos of next week blooms' } }
+          );
+          agentResponse = 'A luxury weekly floral experience sounds delightful. How would you like members to preview and swap vase options for their weekly delivery?';
+          turnEnvelope = {
+            type: 'QUESTION',
+            status: 'pending',
+            message: agentResponse,
+            payload: {
+              questions: [{ id: 'vase-swap', prompt: 'How would you like members to preview and swap vase options for their weekly delivery?' }],
+            },
+            next: 'interview',
+          };
+        } else if (step.turn === 2) {
+          factsToRecord.push(
+            { key: 'design.preset', value: 'wellness-botanical', source: { id: 'chat', quote: 'lots of soft white space, muted sage greens and dusty rose' } },
+            { key: 'experience.pacing', value: 'spacious', source: { id: 'chat', quote: 'lots of soft white space' } },
+            { key: 'design.palette', value: 'emerald', source: { id: 'chat', quote: 'muted sage greens and dusty rose' } },
+            { key: 'experience.motion', value: 'subtle', source: { id: 'chat', quote: 'delicate serif headlines, and big full-bleed photography' } }
+          );
+          plan.confirm(projectDir, 'all', 'lots of soft white space, muted sage greens and dusty rose, delicate serif headlines');
+          agentResponse = 'Airy botanical aesthetic recorded. We will use emerald accents, generous margins, and expansive full-bleed cards for each bouquet.';
+          turnEnvelope = {
+            type: 'DESIGN',
+            status: 'proposed',
+            message: agentResponse,
+            payload: {
+              direction: 'Romantic and airy botanical luxury with soft white space and full-bleed bloom cards',
+              rationale: 'Avoids sterile delivery dashboards in favor of an artisanal editorial showcase',
+              previewReference: 'patterns.focusscreen',
+              visualChoices: {
+                preset: 'wellness-botanical',
+                hierarchy: 'media-led',
+                motion: 'subtle',
+                pacing: 'spacious',
+                palette: 'emerald',
+              },
+            },
+            evidence: [{ source: 'chat', quote: 'lots of soft white space, muted sage greens and dusty rose' }],
+            next: 'confirm',
+          };
+        } else if (step.turn === 3) {
+          plan.confirm(projectDir, 'all', 'swiping between the weekly arrangement cards with the skip button right below is exactly right. Keep it soft and serene');
+          agentResponse = 'Boutique floral club specifications saved in the project brief.';
+          turnEnvelope = {
+            type: 'PROGRESS',
+            status: 'complete',
+            message: agentResponse,
+            payload: {
+              completed: ['design.preset', 'experience.pacing', 'product.outcome'],
+              currentSegment: '03-requirements',
+              pending: [],
+            },
+            next: 'blueprint',
+          };
+        }
       }
 
       // 2. Machine validation of AI response envelope against discriminated schema
@@ -457,9 +579,161 @@ export class InterviewAdapter {
 
   /**
    * Live agent run: Invokes CLI (claude/agy) in an isolated workspace with the packaged skill.
+   * Preserves full conversation context, captures raw AI output, validates response envelopes,
+   * enforces the State Guard, and records state changes.
+   * If live execution is unavailable, fails explicitly rather than silently falling back.
    */
   async runLiveSession(persona, workspaceDir) {
-    // When a live CLI is configured, spawns the real subagent/process and captures streaming events.
-    throw new Error('Live agent driver requires live API connection. Run with --mode deterministic for test harness.');
+    const findLiveExe = () => {
+      const candidates = [
+        process.env.AGY_EXE,
+        process.platform === 'win32' ? 'C:\\Users\\Administrator\\.gemini\\bin\\agy.exe' : '/mnt/c/Users/Administrator/.gemini/bin/agy.exe',
+        process.platform === 'win32' ? 'C:\\Users\\Administrator\\AppData\\Local\\agy\\bin\\agy.exe' : '/mnt/c/Users/Administrator/AppData/Local/agy/bin/agy.exe',
+      ].filter(Boolean);
+      for (const c of candidates) {
+        if (fs.existsSync(c)) return c;
+      }
+      try {
+        const which = spawnSync('which', ['agy'], { encoding: 'utf8' });
+        if (which.status === 0 && which.stdout.trim()) return which.stdout.trim();
+      } catch {}
+      return null;
+    };
+
+    const exe = findLiveExe();
+    if (!exe) {
+      throw new Error('Live execution unavailable: no live agent CLI executable found. Configure AGY_EXE or install agy.');
+    }
+
+    // Verify live agent CLI connectivity and authentication
+    const ping = spawnSync(exe, ['-p', 'ping', '--model', this.model || 'gemini-3.8-flash-low', '--effort', 'low', '--output-format', 'text'], {
+      encoding: 'utf8',
+      timeout: 15000,
+    });
+
+    if (ping.status !== 0 || !ping.stdout) {
+      const err = ping.stderr || ping.error?.message || 'unknown error';
+      if (err.includes('Authentication required') || err.includes('accounts.google.com') || err.includes('weekly limit')) {
+        throw new Error(
+          `Live execution unavailable: CLI authentication or quota limit error: ${err.trim()}. Explicitly failing per benchmark requirements; will not silently fall back to deterministic mode.`
+        );
+      }
+      throw new Error(`Live execution failed: ${err.trim()}`);
+    }
+
+    const projectDir = path.join(workspaceDir, 'app');
+    fs.mkdirSync(projectDir, { recursive: true });
+
+    plan.initProject(projectDir, persona.title.split('(')[0].trim(), persona.mode || 'standard');
+
+    const transcript = [];
+    const commandsExecuted = [];
+    const skillPath = path.resolve('skill/SKILL.md');
+    const skillContent = fs.existsSync(skillPath) ? fs.readFileSync(skillPath, 'utf8') : '';
+
+    const dialogueHistory = [];
+
+    for (const step of persona.turns) {
+      appendTranscript(projectDir, {
+        role: 'user',
+        content: step.userMessage,
+        turn: step.turn,
+      });
+
+      transcript.push({
+        role: 'user',
+        turn: step.turn,
+        content: step.userMessage,
+        timestamp: new Date().toISOString(),
+      });
+
+      dialogueHistory.push(`User (Turn ${step.turn}): ${step.userMessage}`);
+
+      const prompt = `You are the Mobile Software Factory AI orchestrator following the instructions in skill/SKILL.md.
+${skillContent ? 'Skill excerpt:\n' + skillContent.slice(0, 1500) + '...' : ''}
+
+You are conducting product discovery with a client.
+Client Role: ${persona.userProfile.role}
+Technical Literacy: ${persona.userProfile.technicalLiteracy}
+Communication Style: ${persona.userProfile.style}
+
+Dialogue so far:
+${dialogueHistory.join('\n')}
+
+You MUST respond strictly with a valid JSON response envelope matching one of the 8 canonical response contracts:
+{
+  "type": "QUESTION" | "CONFIRM" | "CONFLICT" | "DESIGN" | "PROGRESS" | "APPROVAL",
+  "status": "pending" | "proposed" | "confirmed" | "ready" | "complete",
+  "message": "<Natural conversation for client; NO TECHNICAL JARGON like SQL/REST/React>",
+  "payload": { ... },
+  "evidence": [ { "source": "chat", "quote": "<exact verbatim quote from user>" } ],
+  "next": "<action>"
+}
+
+Output ONLY the JSON object.`;
+
+      const aiTurn = spawnSync(exe, [
+        '-p', prompt,
+        '--model', this.model || 'gemini-3.8-flash-low',
+        '--effort', 'low',
+        '--output-format', 'text',
+      ], { encoding: 'utf8', timeout: 45000 });
+
+      if (aiTurn.status !== 0 || !aiTurn.stdout) {
+        throw new Error(`Live agent execution failed on turn ${step.turn}: ${aiTurn.stderr || aiTurn.error?.message}`);
+      }
+
+      const rawOutput = aiTurn.stdout.trim();
+      let envelope = null;
+      let validationErrors = [];
+
+      try {
+        const match = rawOutput.match(/\{[\s\S]*\}/);
+        if (match) {
+          envelope = JSON.parse(match[0]);
+          const valResult = validateResponse(envelope);
+          if (!valResult.valid) {
+            validationErrors = valResult.errors;
+          } else {
+            applyGuardedResponse(projectDir, envelope, {}, { transcript });
+          }
+        } else {
+          validationErrors = ['Failed to locate JSON envelope in raw output'];
+        }
+      } catch (err) {
+        validationErrors = [err.message];
+      }
+
+      dialogueHistory.push(`Assistant: ${envelope?.message || rawOutput}`);
+
+      transcript.push({
+        role: 'assistant',
+        turn: step.turn,
+        content: envelope ? envelope.message : rawOutput,
+        envelope,
+        rawOutput,
+        validationErrors: validationErrors.length ? validationErrors : null,
+        commands: [...commandsExecuted],
+        timestamp: new Date().toISOString(),
+      });
+    }
+
+    // Finalize brief documentation
+    const briefDoc = plan.brief(projectDir, { workflow: orch.summary(projectDir) });
+
+    const finalProject = JSON.parse(fs.readFileSync(path.join(projectDir, '.factory/project.json'), 'utf8'));
+    const docs = {
+      brief: fs.readFileSync(path.join(projectDir, '.factory/docs/BRIEF.md'), 'utf8'),
+      decisions: fs.readFileSync(path.join(projectDir, '.factory/docs/DECISIONS.md'), 'utf8'),
+      design: fs.readFileSync(path.join(projectDir, '.factory/docs/DESIGN.md'), 'utf8'),
+    };
+
+    return {
+      persona,
+      transcript,
+      projectState: finalProject,
+      docs,
+      metadata: this.getRunnerMetadata(),
+    };
   }
 }

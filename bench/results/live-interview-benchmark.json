@@ -1,0 +1,313 @@
+{
+  "generatedAt": "2026-11-18T15:12:33.926Z",
+  "benchmarkType": "Live-Agent Simulation & Quality Audit",
+  "runnerMode": "live-simulation-audit",
+  "personasTested": 8,
+  "overallScore": 4.8,
+  "scriptedBaselineScore": 4.9,
+  "dimensionAverages": {
+    "artDirection": 4.9,
+    "conversationQuality": 4.6,
+    "tradeOffReasoning": 5,
+    "evidenceFidelity": 5,
+    "scopeDiscipline": 4.9
+  },
+  "results": [
+    {
+      "persona": "vague-visionary",
+      "title": "The Vague Visionary (Coffee Notes)",
+      "archetype": "minimal-surface-large-depth",
+      "compositeScore": 4.5,
+      "dimensions": {
+        "artDirection": 4.7,
+        "conversationQuality": 3.5,
+        "tradeOffReasoning": 5,
+        "evidenceFidelity": 5,
+        "scopeDiscipline": 5
+      },
+      "invariants": {
+        "avgQuestionsPerTurn": 1.3,
+        "schemaFailuresCount": 1,
+        "jargonViolationsCount": 2,
+        "scopeCreepDetected": false,
+        "artDirectionPreserved": true
+      },
+      "findings": [
+        "Preserved action-led visual hierarchy.",
+        "Maintained focused flow with an average of 1.3 questions per turn.",
+        "Exposed technical jargon (AST, AST) to non-technical client.",
+        "Reasoned through user flows with zero unhandled contradictions.",
+        "100% of recorded decisions carry verbatim user source quotes. Generated comprehensive BRIEF.md and DECISIONS.md.",
+        "Kept v1 scope tight and aligned with user goals."
+      ],
+      "schemaFailures": [
+        {
+          "turn": 1,
+          "errors": [
+            "$.payload.questions: maximum 2 questions allowed per turn (found 3)"
+          ],
+          "envelope": {
+            "type": "QUESTION",
+            "status": "pending",
+            "message": "An 'Instagram for coffee beans' sounds exciting! Are you looking for a public discovery feed with user likes, or primarily a private logging tool? Also, what specific roast variables (temperature curves, crack times, origin) should baristas record, and do you need photo filters for bean appearance?",
+            "payload": {
+              "questions": [
+                {
+                  "id": "core_scope",
+                  "prompt": "Are you looking for a public discovery feed or private logging tool?"
+                },
+                {
+                  "id": "roast_variables",
+                  "prompt": "What specific roast variables should baristas record?"
+                },
+                {
+                  "id": "photo_filters",
+                  "prompt": "Do you need photo filters for bean appearance?"
+                }
+              ]
+            },
+            "next": "interview"
+          }
+        }
+      ],
+      "jargonViolations": [
+        {
+          "turn": 1,
+          "jargon": "AST",
+          "text": "An 'Instagram for coffee beans' sounds exciting! Are you looking for a public discovery feed with user likes, or primarily a private logging tool? Also, what specific roast variables (temperature curves, crack times, origin) should baristas record, and do you need photo filters for bean appearance?"
+        },
+        {
+          "turn": 2,
+          "jargon": "AST",
+          "text": "Understood: offline local storage on the iPad at the shop. I propose a simple single-stack navigation with our Focus-First Native amber palette for roast notes. Should I generate the brief?"
+        }
+      ]
+    },
+    {
+      "persona": "contradictory-client",
+      "title": "The Contradictory Client (Field Inspector)",
+      "archetype": "hard-conflict-resolution",
+      "compositeScore": 5,
+      "dimensions": {
+        "artDirection": 5,
+        "conversationQuality": 5,
+        "tradeOffReasoning": 5,
+        "evidenceFidelity": 5,
+        "scopeDiscipline": 5
+      },
+      "invariants": {
+        "avgQuestionsPerTurn": 0.7,
+        "schemaFailuresCount": 0,
+        "jargonViolationsCount": 0,
+        "scopeCreepDetected": false,
+        "artDirectionPreserved": true
+      },
+      "findings": [
+        "Preserved action-led visual hierarchy.",
+        "Matched design preset fintech-midnight.",
+        "Applied dense pacing cadence.",
+        "Maintained focused flow with an average of 0.7 questions per turn.",
+        "Detected conflicting constraints and guided user to pragmatic offline-first resolution.",
+        "100% of recorded decisions carry verbatim user source quotes. Generated comprehensive BRIEF.md and DECISIONS.md.",
+        "Kept v1 scope tight and aligned with user goals."
+      ],
+      "schemaFailures": [],
+      "jargonViolations": []
+    },
+    {
+      "persona": "non-technical-founder",
+      "title": "The Non-Technical Founder (Artisan Pâtisserie)",
+      "archetype": "poetic-aesthetic-translation",
+      "compositeScore": 4.6,
+      "dimensions": {
+        "artDirection": 5,
+        "conversationQuality": 3.5,
+        "tradeOffReasoning": 5,
+        "evidenceFidelity": 5,
+        "scopeDiscipline": 5
+      },
+      "invariants": {
+        "avgQuestionsPerTurn": 0.7,
+        "schemaFailuresCount": 0,
+        "jargonViolationsCount": 2,
+        "scopeCreepDetected": false,
+        "artDirectionPreserved": true
+      },
+      "findings": [
+        "Preserved editorial visual hierarchy.",
+        "Matched design preset wellness-botanical.",
+        "Applied spacious pacing cadence.",
+        "Maintained focused flow with an average of 0.7 questions per turn.",
+        "Exposed technical jargon (SQLite, CRUD) to non-technical client.",
+        "Reasoned through user flows with zero unhandled contradictions.",
+        "100% of recorded decisions carry verbatim user source quotes. Generated comprehensive BRIEF.md and DECISIONS.md.",
+        "Kept v1 scope tight and aligned with user goals."
+      ],
+      "schemaFailures": [],
+      "jargonViolations": [
+        {
+          "turn": 1,
+          "jargon": "SQLite",
+          "text": "We can build an SQLite local database schema with an asynchronous persistence layer to store your daily flour and wild yeast stock. How many records do you plan to query per shift, and what CRUD operations will bakers run?"
+        },
+        {
+          "turn": 1,
+          "jargon": "CRUD",
+          "text": "We can build an SQLite local database schema with an asynchronous persistence layer to store your daily flour and wild yeast stock. How many records do you plan to query per shift, and what CRUD operations will bakers run?"
+        }
+      ]
+    },
+    {
+      "persona": "feature-creeper",
+      "title": "The Feature Creeper (Tool Share)",
+      "archetype": "boundary-and-scope-discipline",
+      "compositeScore": 4.8,
+      "dimensions": {
+        "artDirection": 4.7,
+        "conversationQuality": 5,
+        "tradeOffReasoning": 5,
+        "evidenceFidelity": 5,
+        "scopeDiscipline": 4
+      },
+      "invariants": {
+        "avgQuestionsPerTurn": 0.7,
+        "schemaFailuresCount": 0,
+        "jargonViolationsCount": 0,
+        "scopeCreepDetected": true,
+        "artDirectionPreserved": true
+      },
+      "findings": [
+        "Preserved action-led visual hierarchy.",
+        "Maintained focused flow with an average of 0.7 questions per turn.",
+        "Reasoned through user flows with zero unhandled contradictions.",
+        "100% of recorded decisions carry verbatim user source quotes. Generated comprehensive BRIEF.md and DECISIONS.md.",
+        "Tempted by feature creep in turn 2 before recovering and formalizing out-of-scope boundaries."
+      ],
+      "schemaFailures": [],
+      "jargonViolations": []
+    },
+    {
+      "persona": "changing-mind",
+      "title": "The Changing-Mind Client (Architectural Gallery)",
+      "archetype": "revision-without-residue",
+      "compositeScore": 5,
+      "dimensions": {
+        "artDirection": 5,
+        "conversationQuality": 5,
+        "tradeOffReasoning": 5,
+        "evidenceFidelity": 5,
+        "scopeDiscipline": 5
+      },
+      "invariants": {
+        "avgQuestionsPerTurn": 0.3,
+        "schemaFailuresCount": 0,
+        "jargonViolationsCount": 0,
+        "scopeCreepDetected": false,
+        "artDirectionPreserved": true
+      },
+      "findings": [
+        "Preserved media-led visual hierarchy.",
+        "Matched design preset editorial-luxury.",
+        "Applied spacious pacing cadence.",
+        "Maintained focused flow with an average of 0.3 questions per turn.",
+        "Reasoned through user flows with zero unhandled contradictions.",
+        "100% of recorded decisions carry verbatim user source quotes. Generated comprehensive BRIEF.md and DECISIONS.md.",
+        "Kept v1 scope tight and aligned with user goals."
+      ],
+      "schemaFailures": [],
+      "jargonViolations": []
+    },
+    {
+      "persona": "hidden-complexity",
+      "title": "The Business Owner With Hidden Complexity (Barber Studio)",
+      "archetype": "latent-operational-reality",
+      "compositeScore": 4.9,
+      "dimensions": {
+        "artDirection": 4.7,
+        "conversationQuality": 5,
+        "tradeOffReasoning": 5,
+        "evidenceFidelity": 5,
+        "scopeDiscipline": 5
+      },
+      "invariants": {
+        "avgQuestionsPerTurn": 0.3,
+        "schemaFailuresCount": 0,
+        "jargonViolationsCount": 0,
+        "scopeCreepDetected": false,
+        "artDirectionPreserved": true
+      },
+      "findings": [
+        "Preserved action-led visual hierarchy.",
+        "Applied comfortable pacing cadence.",
+        "Maintained focused flow with an average of 0.3 questions per turn.",
+        "Reasoned through user flows with zero unhandled contradictions.",
+        "100% of recorded decisions carry verbatim user source quotes. Generated comprehensive BRIEF.md and DECISIONS.md.",
+        "Kept v1 scope tight and aligned with user goals."
+      ],
+      "schemaFailures": [],
+      "jargonViolations": []
+    },
+    {
+      "persona": "emergency-dispatch",
+      "title": "The Urgent Contractor (Emergency Plumber Dispatch)",
+      "archetype": "urgent-single-action",
+      "compositeScore": 5,
+      "dimensions": {
+        "artDirection": 5,
+        "conversationQuality": 5,
+        "tradeOffReasoning": 5,
+        "evidenceFidelity": 5,
+        "scopeDiscipline": 5
+      },
+      "invariants": {
+        "avgQuestionsPerTurn": 0.3,
+        "schemaFailuresCount": 0,
+        "jargonViolationsCount": 0,
+        "scopeCreepDetected": false,
+        "artDirectionPreserved": true
+      },
+      "findings": [
+        "Preserved action-led visual hierarchy.",
+        "Matched design preset fintech-midnight.",
+        "Applied dense pacing cadence.",
+        "Maintained focused flow with an average of 0.3 questions per turn.",
+        "Reasoned through user flows with zero unhandled contradictions.",
+        "100% of recorded decisions carry verbatim user source quotes. Generated comprehensive BRIEF.md and DECISIONS.md.",
+        "Kept v1 scope tight and aligned with user goals."
+      ],
+      "schemaFailures": [],
+      "jargonViolations": []
+    },
+    {
+      "persona": "boutique-subscription",
+      "title": "The Artisanal Curator (Petal & Stem Floral Club)",
+      "archetype": "sensory-luxury-commerce",
+      "compositeScore": 5,
+      "dimensions": {
+        "artDirection": 5,
+        "conversationQuality": 5,
+        "tradeOffReasoning": 5,
+        "evidenceFidelity": 5,
+        "scopeDiscipline": 5
+      },
+      "invariants": {
+        "avgQuestionsPerTurn": 0.3,
+        "schemaFailuresCount": 0,
+        "jargonViolationsCount": 0,
+        "scopeCreepDetected": false,
+        "artDirectionPreserved": true
+      },
+      "findings": [
+        "Preserved media-led visual hierarchy.",
+        "Matched design preset wellness-botanical.",
+        "Applied spacious pacing cadence.",
+        "Maintained focused flow with an average of 0.3 questions per turn.",
+        "Reasoned through user flows with zero unhandled contradictions.",
+        "100% of recorded decisions carry verbatim user source quotes. Generated comprehensive BRIEF.md and DECISIONS.md.",
+        "Kept v1 scope tight and aligned with user goals."
+      ],
+      "schemaFailures": [],
+      "jargonViolations": []
+    }
+  ]
+}
