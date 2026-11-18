@@ -74,6 +74,7 @@ export function Button({
       style={(state) => [
         {
           minHeight,
+          minWidth: 44,
           borderRadius: tokens.radius.md,
           paddingHorizontal,
           flexDirection: 'row',

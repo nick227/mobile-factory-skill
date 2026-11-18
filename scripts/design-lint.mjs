@@ -1,42 +1,37 @@
 // Automated, enforceable design linter for factory mobile application specs.
 // Enforces structural requirements: design directives, archetype variant compatibility,
-// single primary CTA invariants, touch target geometry, and WCAG color contrast.
+// CTA constraints and palette contrast. Control geometry is tested against actual UI component styles.
 // Visual aesthetics (hierarchy rhythm, whitespace, art direction) remain reserved for visual review.
 
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import ts from 'typescript';
 import { ARCHETYPES, ARCHETYPE_VARIANTS, validateSpec } from '../factory-v1/assembler.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
-// Standard verified factory color palettes
-export const FACTORY_PALETTES = {
-  default: {
-    light: { background: '#FFFFFF', surface: '#F5F6F7', text: '#16181C', muted: '#646A72', primary: '#1D4ED8', onPrimary: '#FFFFFF' },
-    dark: { background: '#101114', surface: '#1C1F23', text: '#F5F6F8', muted: '#B3B8C0', primary: '#8FB2FF', onPrimary: '#101114' },
-  },
-  kyoto: {
-    light: { background: '#FAF8F5', surface: '#F2EFE9', text: '#241E19', muted: '#786F66', primary: '#B84A28', onPrimary: '#FFFFFF' },
-    dark: { background: '#181512', surface: '#24201B', text: '#F5F0EB', muted: '#ABA094', primary: '#F07A54', onPrimary: '#181512' },
-  },
-  midnight: {
-    light: { background: '#F8FAFC', surface: '#F1F5F9', text: '#0F172A', muted: '#64748B', primary: '#0284C7', onPrimary: '#FFFFFF' },
-    dark: { background: '#090D16', surface: '#131B2E', text: '#F1F5F9', muted: '#94A3B8', primary: '#38BDF8', onPrimary: '#090D16' },
-  },
-  emerald: {
-    light: { background: '#F7FAF8', surface: '#EEF4F0', text: '#14231B', muted: '#5E7166', primary: '#15803D', onPrimary: '#FFFFFF' },
-    dark: { background: '#0D1711', surface: '#16251C', text: '#EEF6F1', muted: '#9AB0A2', primary: '#4ADE80', onPrimary: '#0D1711' },
-  },
-  crimson: {
-    light: { background: '#FCF9F9', surface: '#F8EFEF', text: '#261316', muted: '#7D6569', primary: '#BE123C', onPrimary: '#FFFFFF' },
-    dark: { background: '#170A0D', surface: '#261318', text: '#FDF2F4', muted: '#BA9DA3', primary: '#FB7185', onPrimary: '#170A0D' },
-  },
-  amber: {
-    light: { background: '#FDFBF7', surface: '#F7F2E8', text: '#2B2113', muted: '#7A6F5E', primary: '#D97706', onPrimary: '#FFFFFF' },
-    dark: { background: '#16130B', surface: '#241E12', text: '#FBF6EA', muted: '#ABA08C', primary: '#FBBF24', onPrimary: '#16130B' },
-  },
-};
+// Parse the canonical runtime token source, not a second hand-maintained palette map.
+// This is a development-time linter; the generated application never bundles TypeScript parsing.
+export function loadRuntimePalettes(tokenFile = path.join(root, 'packages/ui/src/foundation/tokens.ts')) {
+  const tree = ts.createSourceFile(tokenFile, fs.readFileSync(tokenFile, 'utf8'), ts.ScriptTarget.Latest, true);
+  const variable = tree.statements.filter(ts.isVariableStatement)
+    .flatMap(s => [...s.declarationList.declarations])
+    .find(d => d.name.getText(tree) === 'palettes');
+  if (!variable || !variable.initializer || !ts.isObjectLiteralExpression(variable.initializer))
+    throw Error('Design lint: could not read canonical runtime palettes');
+  const parseObject = node => {
+    if (!ts.isObjectLiteralExpression(node)) throw Error('Design lint: unexpected palette structure');
+    return Object.fromEntries(node.properties.map(prop => {
+      if (!ts.isPropertyAssignment(prop)) throw Error('Design lint: palette properties must be static');
+      const name = prop.name.getText(tree).replace(/^['"]|['"]$/g,'');
+      const init = prop.initializer;
+      return [name, ts.isStringLiteral(init) ? init.text : parseObject(init)];
+    }));
+  };
+  return parseObject(variable.initializer);
+}
+export const FACTORY_PALETTES = loadRuntimePalettes();
 
 // Relative luminance calculator (WCAG standard)
 function hexToRgb(hex) {
@@ -126,14 +121,11 @@ export function lintDesign(spec) {
         errors.push(`${p}: multiple competing primary CTAs detected (${primaryCount} primary actions); mobile focus requires at most 1 dominant action`);
       }
 
-      // 5. Touch Target Minimums
-      if (page.headerAction && page.headerAction.label && page.headerAction.label.length < 2) {
-        warnings.push(`${p}.headerAction: label '${page.headerAction.label}' may result in sub-44pt touch width without adequate padding`);
-      }
+      // Actual touch-target geometry belongs to rendered UI tests, not label-length guesses.
     }
   }
 
-  // 6. Color Contrast Verification
+  // 5. Color Contrast Verification
   const paletteName = spec.design?.palette || 'default';
   if (FACTORY_PALETTES[paletteName]) {
     const pair = FACTORY_PALETTES[paletteName];

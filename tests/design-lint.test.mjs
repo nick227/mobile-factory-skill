@@ -3,7 +3,8 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { lintDesign, contrastRatio, FACTORY_PALETTES } from '../scripts/design-lint.mjs';
+import { lintDesign, contrastRatio, FACTORY_PALETTES, loadRuntimePalettes } from '../scripts/design-lint.mjs';
+import { DESIGN_AXES, EXPERIENCE_AXES } from '../factory-v1/assembler.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const examplesDir = path.join(root, 'packages/assembly/examples');
@@ -101,4 +102,22 @@ test('Design Linter: does not penalize sophisticated asymmetrical layouts or del
   const result = lintDesign(base);
   assert.equal(result.ok, true);
   assert.deepEqual(result.errors, []);
+});
+
+test('design schema, compiler, and canonical runtime palette keys stay aligned', () => {
+  const schema=JSON.parse(fs.readFileSync(path.join(root,'standards/design/factory-design.schema.json'),'utf8'));
+  for(const [key,options] of Object.entries(DESIGN_AXES))
+    assert.deepEqual(new Set(schema.properties[key].enum),new Set(options),'schema '+key);
+  for(const [key,options] of Object.entries(EXPERIENCE_AXES))
+    assert.deepEqual(new Set(schema.properties.experience.properties[key].enum),new Set(options),'experience '+key);
+  assert.deepEqual(Object.keys(FACTORY_PALETTES).sort(),DESIGN_AXES.palette.slice().sort());
+  assert.deepEqual(FACTORY_PALETTES,loadRuntimePalettes());
+  assert.equal(schema.properties.mode,undefined);
+});
+test('design linter no longer guesses touch geometry from short action labels', () => {
+  const spec=JSON.parse(fs.readFileSync(path.join(examplesDir,'botanical.spec.json'),'utf8'));
+  spec.pages.sanctuary.headerAction.label='X';
+  const result=lintDesign(spec);
+  assert.equal(result.ok,true);
+  assert.ok(result.warnings.every(x=>!x.includes('sub-44pt')));
 });

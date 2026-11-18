@@ -69,7 +69,7 @@ export const ARCHETYPE_VARIANTS = {
   'system-settings': ['grouped-cards', 'inset-grouped', 'minimal-divider'],
 };
 
-const DESIGN_AXES = {
+export const DESIGN_AXES = {
   preset: ['minimal-pro', 'kyoto-craft', 'fintech-midnight', 'wellness-botanical', 'editorial-luxury', 'playful-consumer'],
   palette: ['default', 'kyoto', 'midnight', 'emerald', 'crimson', 'amber'],
   radius: ['sharp', 'smooth', 'curved'],
