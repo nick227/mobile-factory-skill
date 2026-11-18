@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import crypto from 'node:crypto';
 import { spawnSync } from 'node:child_process';
 import * as plan from '../../factory-v1/planner.mjs';
 import * as orch from '../../factory-v1/orchestrator.mjs';
@@ -608,7 +609,7 @@ export class InterviewAdapter {
     // Verify live agent CLI connectivity and authentication
     const ping = spawnSync(exe, ['-p', 'ping', '--model', this.model || 'gemini-3.8-flash-low', '--effort', 'low', '--output-format', 'text'], {
       encoding: 'utf8',
-      timeout: 15000,
+      timeout: 45000,
     });
 
     if (ping.status !== 0 || !ping.stdout) {
@@ -628,6 +629,7 @@ export class InterviewAdapter {
 
     const transcript = [];
     const commandsExecuted = [];
+    const sessionConversationId = crypto.randomUUID();
     const skillPath = path.resolve('skill/SKILL.md');
     const skillContent = fs.existsSync(skillPath) ? fs.readFileSync(skillPath, 'utf8') : '';
 
@@ -660,30 +662,55 @@ Communication Style: ${persona.userProfile.style}
 Dialogue so far:
 ${dialogueHistory.join('\n')}
 
-You MUST respond strictly with a valid JSON response envelope matching one of the 8 canonical response contracts:
+You MUST respond strictly with a valid JSON response envelope matching one of the canonical response contracts:
 {
   "type": "QUESTION" | "CONFIRM" | "CONFLICT" | "DESIGN" | "PROGRESS" | "APPROVAL",
   "status": "pending" | "proposed" | "confirmed" | "ready" | "complete",
   "message": "<Natural conversation for client; NO TECHNICAL JARGON like SQL/REST/React>",
-  "payload": { ... },
-  "evidence": [ { "source": "chat", "quote": "<exact verbatim quote from user>" } ],
-  "next": "<action>"
+  "payload": <payload object matching type below>,
+  "evidence": [ { "source": "chat", "quote": "<exact verbatim substring quote from user>" } ],
+  "next": "<action string>"
 }
+
+Payload shapes by type:
+- For "QUESTION":
+  "payload": { "questions": [ { "id": "<id>", "prompt": "<question string>" } ] } (max 2 questions)
+- For "CONFIRM":
+  "payload": { "items": [ { "key": "<key e.g. product.outcome>", "value": "<value>", "inference": "<inference>" } ] }
+- For "DESIGN":
+  "payload": {
+    "direction": "<summary>",
+    "rationale": "<rationale>",
+    "previewReference": "patterns.focusscreen",
+    "visualChoices": {
+      "preset": "minimal-pro" | "wellness-botanical" | "editorial-luxury" | "fintech-midnight",
+      "hierarchy": "media-led" | "action-led" | "editorial",
+      "motion": "subtle",
+      "pacing": "compact" | "relaxed" | "monumental" | "dense" | "spacious",
+      "palette": "amber" | "emerald" | "slate" | "crimson"
+    }
+  }
+- For "PROGRESS":
+  "payload": { "completed": ["<keys>"], "currentSegment": "03-requirements", "pending": [] }
 
 Output ONLY the JSON object.`;
 
       const aiTurn = spawnSync(exe, [
         '-p', prompt,
+        '--conversation', sessionConversationId,
+        '--disable-slash-commands',
         '--model', this.model || 'gemini-3.8-flash-low',
         '--effort', 'low',
         '--output-format', 'text',
-      ], { encoding: 'utf8', timeout: 45000 });
+      ], { encoding: 'utf8', timeout: 90000 });
 
       if (aiTurn.status !== 0 || !aiTurn.stdout) {
         throw new Error(`Live agent execution failed on turn ${step.turn}: ${aiTurn.stderr || aiTurn.error?.message}`);
       }
 
       const rawOutput = aiTurn.stdout.trim();
+      console.log(`[Turn ${step.turn}] Raw AI stdout:`, rawOutput);
+      if (aiTurn.stderr) console.log(`[Turn ${step.turn}] AI stderr:`, aiTurn.stderr);
       let envelope = null;
       let validationErrors = [];
 
